@@ -1,6 +1,9 @@
 package nick.echec;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,9 +24,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     btn50, btn51, btn52, btn53, btn54, btn55, btn56, btn57,
     btn60, btn61, btn62, btn63, btn64, btn65, btn66, btn67,
     btn70, btn71, btn72, btn73, btn74, btn75, btn76, btn77;*/
-    //Button arrayBtn[] =new Button[64];
     RelativeLayout layout;
     ArrayList<MoveListener> lstMoveListener;
+    private Rect sourceRect;    // the rectangle to be drawn from the animation bitmap
+    private int spriteWidth;    // the width of the sprite to calculate the cut out rectangle
+    private int spriteHeight;   // the height of the sprite
+    private Bitmap bitmap;      // the animation sequence
+
+    public void draw(Canvas canvas) {
+        // where to draw the sprite
+        Rect destRect = new Rect(20, 20, 20 + spriteWidth, 20 + spriteHeight);
+        canvas.drawBitmap(bitmap, sourceRect, destRect, null);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
