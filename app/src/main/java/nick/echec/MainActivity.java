@@ -1,6 +1,7 @@
 package nick.echec;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -26,16 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     btn70, btn71, btn72, btn73, btn74, btn75, btn76, btn77;*/
     RelativeLayout layout;
     ArrayList<MoveListener> lstMoveListener;
-    private Rect sourceRect;    // the rectangle to be drawn from the animation bitmap
-    private int spriteWidth;    // the width of the sprite to calculate the cut out rectangle
-    private int spriteHeight;   // the height of the sprite
-    private Bitmap bitmap;      // the animation sequence
-
-    public void draw(Canvas canvas) {
-        // where to draw the sprite
-        Rect destRect = new Rect(20, 20, 20 + spriteWidth, 20 + spriteHeight);
-        canvas.drawBitmap(bitmap, sourceRect, destRect, null);
-    }
+    ImageView img00;
+    RelativeLayout.LayoutParams params;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +48,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 v.setOnClickListener(this);
             }
         }
+
+        img00 = new ImageView(this);
+        img00.setImageResource(R.drawable.chesspawn);
+        params = new RelativeLayout.LayoutParams(30, 40);
+        params.leftMargin = 50;
+        params.topMargin = 60;
+        layout.addView(img00, params);
     }
 
     @Override

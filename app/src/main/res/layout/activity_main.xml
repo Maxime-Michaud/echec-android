@@ -602,4 +602,13 @@
         android:layout_alignLeft="@+id/btn67"
         android:layout_alignStart="@+id/btn67" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:layout_below="@+id/btn74"
+        android:layout_toRightOf="@+id/btn23"
+        android:layout_toEndOf="@+id/btn23"
+        android:layout_marginTop="23dp" />
+
 </RelativeLayout>
