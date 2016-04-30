@@ -1,6 +1,4 @@
-<resources>
-    <string name="app_name">Echec</string>
-    <string name="SQL">CREATE TABLE IF NOT EXISTS type_compte(
+CREATE TABLE IF NOT EXISTS type_compte(
 	id INT PRIMARY KEY,
 	nom VARCHAR(25)
 );
@@ -10,8 +8,8 @@ CREATE TABLE IF NOT EXISTS status_relation(
 	nom VARCHAR(200)
 );
 
-INSERT OR REPLACE INTO type_compte VALUES (1, \'Publique\'), (2, \'Privé\'), (3, \'Amis seulement\');
-INSERT OR REPLACE INTO status_relation VALUES (1, \'Ami\'), (2, "Attente de demande d\'ami"), (3, \'Refusé\'), (4, \'Bloqué\');
+INSERT OR REPLACE INTO type_compte VALUES (1, 'Publique'), (2, 'Privé'), (3, 'Amis seulement');
+INSERT OR REPLACE INTO status_relation VALUES (1, 'Ami'), (2, "Attente de demande d'ami"), (3, 'Refusé'), (4, 'Bloqué');
 
 CREATE TABLE IF NOT EXISTS grille(
 	id INT PRIMARY KEY,
@@ -22,7 +20,7 @@ CREATE TABLE IF NOT EXISTS grille(
 CREATE TABLE IF NOT EXISTS utilisateur(
 	id INT PRIMARY KEY,
 	login VARCHAR(25),
-	password VARCHAR(32), /*Hash MD5 sans salt. M\'en crisse que ca soit pas sécuritaire, c\'est mieux que rien et c\'est pour un tp anyway*/
+	password VARCHAR(32), /*Hash MD5 sans salt. M'en crisse que ca soit pas sécuritaire, c'est mieux que rien et c'est pour un tp anyway*/
 	nom VARCHAR(100),
 	prenom VARCHAR(100),
 	email VARCHAR(100),
@@ -41,7 +39,7 @@ CREATE TABLE IF NOT EXISTS relation(
 CREATE TABLE IF NOT EXISTS defi(
 	id INT PRIMARY KEY,
 	nom VARCHAR(50),
-	nb_tours_max INT, 	/*0 = on s\'en sacre*/
+	nb_tours_max INT, 	/*0 = on s'en sacre*/
 	score FLOAT,		/*Score donné par les utilisateur*/
 	difficulte FLOAT,	/*Score donné par les utilisateur*/
 	grille INT,
@@ -70,5 +68,4 @@ CREATE TABLE IF NOT EXISTS tours(
 	description VARCHAR(10),
 	CONSTRAINT PK_tour PRIMARY KEY (partie, tour),
 	FOREIGN KEY (partie) REFERENCES partie(id)
-);</string>
-</resources>
+);

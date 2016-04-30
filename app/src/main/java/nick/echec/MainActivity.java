@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import db.Manager;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     int cliqueX, cliqueY;
    /* Button btn00, btn01, btn02, btn03, btn04, btn05, btn06, btn07,
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         params.leftMargin = 50;
         params.topMargin = 60;
         layout.addView(img00, params);
+
+        Manager db = Manager.getManager();
     }
 
     @Override
