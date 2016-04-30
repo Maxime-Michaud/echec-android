@@ -31,7 +31,7 @@ public class Manager {
         return manager;
     }
 
-    private Manager() {
+    protected Manager() {
         context = null;
         db = null;
     }
@@ -42,8 +42,24 @@ public class Manager {
      */
     public void init(Context context)
     {
+        if (this.context != null || db != null)
+            throw new IllegalStateException("Le dbmanager ne doit pas etre réinitialisé");
+
         this.context = context.getApplicationContext();
         db = this.context.openOrCreateDatabase("EchecDB", 0, null);
+
+        String sql = context.getResources().getString(R.string.SQL);
+
+        for(String s: sql.split(";"))
+            db.execSQL(s);
+    }
+
+    /**
+     * Initialise la bd a partir de son nom.
+     * @param dbName Nom complet de la BD
+     */
+    protected void init(String dbName){
+        db = SQLiteDatabase.openOrCreateDatabase(dbName, null);
 
         String sql = context.getResources().getString(R.string.SQL);
 
@@ -92,7 +108,7 @@ public class Manager {
      * @throws DbNonInitialiseeException Lorsque le gestionnaire n'a pas été initialisé
      */
     public boolean authentifier(String username, String password) throws DbNonInitialiseeException {
-        if (db == null || context == null)
+        if (db == null)
             throw new DbNonInitialiseeException();
 
         /*Ah, java, déjà en retard de 10 ans lorsqu'il a été dévellopé. Pas de support pour les arguments par défaut?
