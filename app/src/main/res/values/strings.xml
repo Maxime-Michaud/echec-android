@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS status_relation(
 );
 
 INSERT OR REPLACE INTO type_compte VALUES (1, \'Publique\'), (2, \'Privé\'), (3, \'Amis seulement\');
-INSERT OR REPLACE INTO status_relation VALUES (1, \'Ami\'), (2, "Attente de demande d\'ami"), (3, \'Refusé\'), (4, \'Bloqué\');
+INSERT OR REPLACE INTO status_relation VALUES (1, \'Ami\'), (2, \'Attente de demande d\'\'ami\'), (3, \'Refusé\'), (4, \'Bloqué\');
 
 CREATE TABLE IF NOT EXISTS grille(
 	id INT PRIMARY KEY,
