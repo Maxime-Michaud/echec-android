@@ -18,7 +18,7 @@ public class Pion {
                 {
                     if (y - i >= 0)
                     {
-                        arrayList.add(Integer.toString(y - (i + 1)) + Integer.toString(x) + "B");
+                        arrayList.add(Integer.toString(y - (i + 1)) + Integer.toString(x) + "H");
                     }
 
                 }
@@ -27,7 +27,7 @@ public class Pion {
             {
                 if (y - 1 >= 0)
                 {
-                    arrayList.add(Integer.toString(y - 1) + Integer.toString(x) + "B");
+                    arrayList.add(Integer.toString(y - 1) + Integer.toString(x) + "C");
                 }
             }
             if(y-1 >= 0)
@@ -56,7 +56,7 @@ public class Pion {
             {
                 if (y + 1 <= 7)
                 {
-                    arrayList.add(Integer.toString(y + 1) + Integer.toString(x) + "B");
+                    arrayList.add(Integer.toString(y + 1) + Integer.toString(x) + "C");
                 }
             }
             if(y+1 <= 7)

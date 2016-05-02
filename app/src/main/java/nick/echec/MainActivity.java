@@ -49,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
     Pion pion = new Pion();                                 //Controlleur de pion
     Fou fou = new Fou();                                    //Controlleur de fou
+    Tour tour = new Tour();
+    Reine reine = new Reine();
+    Cheval cheval = new Cheval();
+    Roi roi = new Roi();
     String pionEnMouvement;                                 //Le pion qui est sélection pour un mouvement
     int nbPionBlancMort = 0;
     int nbPionNoirMort = 0;
@@ -267,9 +271,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         {
                             case 'T':
                                 nomPiece = "Tour";
+                                mouvDispos = tour.mouvement(cliqueX,cliqueY);
                                 break;
                             case 'C':
                                 nomPiece = "Cheval";
+                                mouvDispos = cheval.mouvement(cliqueX,cliqueY);
                                 break;
                             case 'F':
                                 nomPiece = "Fou";
@@ -277,9 +283,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 break;
                             case 'Q':
                                 nomPiece = "Reine";
+                                mouvDispos = reine.mouvement(cliqueX, cliqueY);
                                 break;
                             case 'K':
                                 nomPiece = "Roi";
+                                mouvDispos = roi.mouvement(cliqueX, cliqueY);
                                 break;
                             case 'P':
                                 boolean premierTour = false;
@@ -477,22 +485,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String posTemp = Character.toString(s2.charAt(3)) + Character.toString(s2.charAt(4));
                 if(mouvDispo.equals(posTemp))
                 {
-                    if(s.charAt(2) != 'B')
+                    if(s.charAt(2) != 'C')
                     {
                         if(pionEnMouvement.charAt(1) != s2.charAt(1))
                         {
-                            mouvCauseMort.add(s);
-                            enleverMouvApres(s, false);
+                            if(pionEnMouvement.charAt(0) != 'P')
+                                mouvCauseMort.add(s);
+                            if(s.charAt(2) != 'E' && s.charAt(2) != 'K')
+                                enleverMouvApres(s, false);
                         }
                         else
                         {
-                            enleverMouvApres(s, true);
+                            if(s.charAt(2) != 'E' && s.charAt(2) != 'K')
+                                enleverMouvApres(s, true);
                         }
                         it.remove();
                     }
                     else
                     {
-                        enleverMouvApres(s, true);
+                        if(pionEnMouvement.charAt(1) != s2.charAt(1))
+                        {
+                            enleverMouvApres(s, true);
+                        }
                     }
 
                 }
@@ -580,6 +594,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
             }
+
+            if(mouv.charAt(2) == 'C')
+                posX = 8;
             posX += aSupprimerX;
             posY += aSupprimerY;
         }
