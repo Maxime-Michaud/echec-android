@@ -230,4 +230,28 @@ public class GestionnaireBD {
         db = null;
         context = null;
     }
+
+    /**
+     * Met a jour des donnés dans la BD.
+     * @param data Objet a mettre a jour dans la bd
+     * @return True si l'update se produit,
+     *         False si aucune update ne se produit,
+     */
+    public <T extends DBModel> boolean update(T data) {
+        if (data instanceof Utilisateur)
+            return updateUtilisateur((Utilisateur) data);
+
+        return false;
+    }
+
+    /**
+     * Update l'utilisateur dans la bd
+     * @param u utilisateur a updater
+     * @return True si l'update se produit,
+     *         False si aucune update ne se produit,
+     */
+    private boolean updateUtilisateur(Utilisateur u) {
+        ContentValues cv = new ContentValues();
+        cv.put("updated", 1);
+    }
 }

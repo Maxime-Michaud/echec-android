@@ -7,7 +7,7 @@ import java.util.Map;
  * Contiens les informations d'un joueur
  * Created by Maxime on 4/30/2016.
  */
-public class Utilisateur {
+public class Utilisateur extends DBModel{
     enum TYPE_COMPTE{
         Publique,
         Privé,

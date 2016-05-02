@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS utilisateur(
 	prenom VARCHAR(100),
 	email VARCHAR(100),
 	type_compte INT,
+	updated INT,		/*0 = pas updaté, 1 = updaté. Les rangées updatés doivent etre push sur le serveur*/
 	FOREIGN KEY (type_compte) REFERENCES type_compte(id)
 );
 
@@ -45,6 +46,7 @@ CREATE TABLE IF NOT EXISTS defi(
 	score FLOAT,		/*Score donné par les utilisateur*/
 	difficulte FLOAT,	/*Score donné par les utilisateur*/
 	grille INT,
+	updated INT,		/*0 = pas updaté, 1 = updaté. Les rangées updatés doivent etre push sur le serveur*/
 	FOREIGN KEY (grille) REFERENCES grille(id)
 );
 
@@ -58,10 +60,11 @@ CREATE TABLE IF NOT EXISTS partie(
 	gagnant INT,
 	noir INT,
 	blanc INT,
+	nouvelle INT,		/*0 = pas nouvelle, 1 = nouvelle. Les rangées nouvelle doivent etre push sur le serveur*/
 	FOREIGN KEY (grille) REFERENCES grille(id),
 	FOREIGN KEY (gagnant) REFERENCES utilisateur(id),
 	FOREIGN KEY (noir) REFERENCES utilisateur(id),
-	FOREIGN KEY (blanc) REFERENCES utilisateur(id)
+	FOREIGN KEY (blanc) REFERENCES utilisateur(id) 
 );
 
 CREATE TABLE IF NOT EXISTS tours(
