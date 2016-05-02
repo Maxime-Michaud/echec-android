@@ -1,4 +1,4 @@
-package nick.echec;
+package nick.echec.test.bd;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
