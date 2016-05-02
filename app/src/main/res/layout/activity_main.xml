@@ -18,7 +18,8 @@
         android:layout_centerVertical="false"
         android:layout_centerHorizontal="false"
         android:layout_marginTop="112dp"
-        android:layout_marginLeft="14dp" />
+        android:layout_marginLeft="14dp"
+        android:tag="1"/>
 
     <Button
         android:layout_width="40dp"

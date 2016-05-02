@@ -22,17 +22,12 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    int cliqueX, cliqueY;
-    /* Button btn00, btn01, btn02, btn03, btn04, btn05, btn06, btn07,
-     btn10, btn11, btn12, btn13, btn14, btn15, btn16, btn17,
-     btn20, btn21, btn22, btn23, btn24, btn25, btn26, btn27,
-     btn30, btn31, btn32, btn33, btn34, btn35, btn36, btn37,
-     btn40, btn41, btn42, btn43, btn44, btn45, btn46, btn47,
-     btn50, btn51, btn52, btn53, btn54, btn55, btn56, btn57,
-     btn60, btn61, btn62, btn63, btn64, btn65, btn66, btn67,
-     btn70, btn71, btn72, btn73, btn74, btn75, btn76, btn77;*/
+    int cliqueX, cliqueY;   //ou le joueur a cliqué
     RelativeLayout layout;
     ArrayList<MoveListener> lstMoveListener;
     ImageView PN1, PN2, PN3, PN4, PN5, PN6, PN7, PN8;
@@ -43,20 +38,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     RelativeLayout.LayoutParams params;
     Bitmap bitmap;
     Resources r;
-    boolean[] premierTourPionsNoirs = new boolean[8];
-    boolean premierTourPionsBlancs[] = new boolean[8];
-    boolean tourBlanc = true;
-    ArrayList<String> mouvDispos;
+    boolean[] premierTourPionsNoirs = new boolean[8];       //Si le pion peut bouger de 2 ou non
+    boolean premierTourPionsBlancs[] = new boolean[8];      //Si le pion peut bouger de 2 ou non
+    boolean tourBlanc = true;                               //Si c'est le tour des pions blanc ou non
+    boolean estEnSelectionMouv = false;                     //Si le joueur est en sélection de la case à bouger le pion
+    ArrayList<String> mouvDispos;                           //Les mouvements disponibles sans les mouvements qui tuent un pion
+    ArrayList<String> mouvCauseMort;                        //Les mouvements disponible qui causent la mort d'un pion
+    //Toutes les pièces et leur position; la lettre du nom de la pièce (Pion, Tour, Fou, Roi, (Q)Reine, (K)Roi), le no de la pièce, sa position Y, sa position X (c inversé mais jmen caliss je continue sur mon brainfart)
     String pieces[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
             "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
+    Pion pion = new Pion();                                 //Controlleur de pion
+    Fou fou = new Fou();                                    //Controlleur de fou
+    String pionEnMouvement;                                 //Le pion qui est sélection pour un mouvement
+    int nbPionBlancMort = 0;
+    int nbPionNoirMort = 0;
+    ArrayList<String> toRemove;                             //Les mouvement à enlever de l'array
 
-    public static Bitmap couperImage(Bitmap bitmap, int posx, int posy) {
+    /**
+     *
+     * @param bitmap L'image
+     * @param posx la position en x commencant à 0 de la partie voulu
+     * @param posy la position en y commencant à 0 de la partie voulu
+     * @param nbImgLargeur Le nombre d'image en largeur
+     * @param nbImageHauteur Le nombre d'image en hauteur
+     * @return la partie de l'image découpé
+     */
+    public static Bitmap couperImage(Bitmap bitmap, int posx, int posy, int nbImgLargeur, int nbImageHauteur) {
         int topLx, topLy;
         topLx = posx * (bitmap.getWidth() / 6);
         topLy = posy * (bitmap.getHeight() / 2);
-        return Bitmap.createBitmap(bitmap, topLx, topLy, bitmap.getWidth() / 6, bitmap.getHeight() / 2);
+        return Bitmap.createBitmap(bitmap, topLx, topLy, bitmap.getWidth() / nbImgLargeur, bitmap.getHeight() / nbImageHauteur);
     }
 
+    /**
+     * initialisations des paramètres
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -66,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         layout = (RelativeLayout) findViewById(R.id.relative);
         r = getResources();
         mouvDispos = new ArrayList<>();
+        mouvCauseMort = new ArrayList<>();
         for(int i = 0;i < 8;i++)
         {
             premierTourPionsBlancs[i] = true;
@@ -79,14 +97,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         pionsNoirs = new ArrayList<>();
+
+        //Les images des pions et leur tag pour les reconnaître dans d'autre fonction
         PN1 = new ImageView(this);
+        PN1.setTag("PN1");
         PN2 = new ImageView(this);
+        PN2.setTag("PN2");
         PN3 = new ImageView(this);
+        PN3.setTag("PN3");
         PN4 = new ImageView(this);
+        PN4.setTag("PN4");
         PN5 = new ImageView(this);
+        PN5.setTag("PN5");
         PN6 = new ImageView(this);
+        PN6.setTag("PN6");
         PN7 = new ImageView(this);
+        PN7.setTag("PN7");
         PN8 = new ImageView(this);
+        PN8.setTag("PN8");
         pionsNoirs.add(PN1);
         pionsNoirs.add(PN2);
         pionsNoirs.add(PN3);
@@ -102,13 +130,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         pionsBlancs = new ArrayList<>();
         PB1 = new ImageView(this);
+        PB1.setTag("PB1");
         PB2 = new ImageView(this);
+        PB2.setTag("PB2");
         PB3 = new ImageView(this);
+        PB3.setTag("PB3");
         PB4 = new ImageView(this);
+        PB4.setTag("PB4");
         PB5 = new ImageView(this);
+        PB5.setTag("PB5");
         PB6 = new ImageView(this);
+        PB6.setTag("PB6");
         PB7 = new ImageView(this);
+        PB7.setTag("PB7");
         PB8 = new ImageView(this);
+        PB8.setTag("PB8");
         pionsBlancs.add(PB1);
         pionsBlancs.add(PB2);
         pionsBlancs.add(PB3);
@@ -122,44 +158,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         TN1 = new ImageView(this);
         setPawn(TN1, 0, 0, 2, 0);
+        TN1.setTag("TN1");
         TN2 = new ImageView(this);
         setPawn(TN2, 7, 0, 2, 0);
+        TN2.setTag("TN2");
         FN1 = new ImageView(this);
         setPawn(FN1, 2, 0, 3, 0);
+        FN1.setTag("FN1");
         FN2 = new ImageView(this);
         setPawn(FN2,5,0,3,0);
+        FN2.setTag("FN2");
         CN1 = new ImageView(this);
         setPawn(CN1, 1, 0, 4, 0);
+        CN1.setTag("CN1");
         CN2 = new ImageView(this);
         setPawn(CN2, 6, 0, 4, 0);
+        CN2.setTag("CN2");
         KN1 = new ImageView(this);
         setPawn(KN1,3,0,1,0);
+        KN1.setTag("KN1");
         QN1 = new ImageView(this);
         setPawn(QN1,4,0,0,0);
+        QN1.setTag("QN1");
         
         TB1 = new ImageView(this);
         setPawn(TB1,0,7,2,1);
+        TB1.setTag("TB1");
         TB2 = new ImageView(this);
         setPawn(TB2,7,7,2,1);
+        TB2.setTag("TB2");
         FB1 = new ImageView(this);
         setPawn(FB1,2,7,3,1);
+        FB1.setTag("FB1");
         FB2 = new ImageView(this);
         setPawn(FB2,5,7,3,1);
+        FB2.setTag("FB2");
         CB1 = new ImageView(this);
         setPawn(CB1,1,7,4,1);
+        CB1.setTag("CB1");
         CB2 = new ImageView(this);
         setPawn(CB2,6,7,4,1);
+        CB2.setTag("CB2");
         KB1 = new ImageView(this);
         setPawn(KB1,3,7,1,1);
+        KB1.setTag("KB1");
         QB1 = new ImageView(this);
         setPawn(QB1,4,7,0,1);
+        QB1.setTag("QB1");
 
 
     }
 
+    /**
+     *
+     * @param img l'imageView a setter en tant que pion
+     * @param posX la position en x du pion sur le jeu
+     * @param posY la position en y du pion sur le jeu
+     * @param imgX la position en x du sprite dans l'image, en partant de 0
+     * @param imgY la position en y du sprite dans l'image, en partant de 0
+     */
     public void setPawn(final ImageView img,int posX, int posY, int imgX, int imgY)
     {
-        Bitmap bitmapTemp = couperImage(bitmap, imgX, imgY);
+        Bitmap bitmapTemp = couperImage(bitmap, imgX, imgY, 6, 2);
         int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8 + (37 * posX), r.getDisplayMetrics());
         int py = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 108 + (37 * posY), r.getDisplayMetrics());
         int test180 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, r.getDisplayMetrics());
@@ -170,97 +230,390 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         layout.addView(img, params);
     }
 
+    /**
+     * Sur le clique de n'importe quel case
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         cliqueY = Character.getNumericValue(v.getResources().getResourceEntryName(v.getId()).charAt(3));
         cliqueX = Character.getNumericValue(v.getResources().getResourceEntryName(v.getId()).charAt(4));
-        for(String s : pieces)
+        if(!estEnSelectionMouv)
         {
-            String caseClique = String.valueOf(cliqueY) + String.valueOf(cliqueX);
-            String temp = String.valueOf(s.charAt(3)) + s.charAt(4);
-            if (caseClique.equals(temp))
+            for(String s : pieces)
             {
-                String nomCouleur;
-                switch (s.charAt(1))
+                String caseClique = String.valueOf(cliqueY) + String.valueOf(cliqueX);
+                String temp = String.valueOf(s.charAt(3)) + s.charAt(4);
+                if (caseClique.equals(temp))
                 {
-                    case 'N':
-                        nomCouleur = "noir";
-                        break;
-                    case 'B':
-                        nomCouleur = "blanc";
-                        break;
-                    default:
-                        nomCouleur = "AUCUNECOULEUR";
-                        break;
-                }
-                boolean valide = (tourBlanc && nomCouleur == "blanc") ||(!tourBlanc && nomCouleur == "noir");
-                if(valide)
-                {
-                    String nomPiece;
-                    switch (s.charAt(0))
+                    String nomCouleur;
+                    switch (s.charAt(1))
                     {
-                        case 'T':
-                            nomPiece = "Tour";
+                        case 'N':
+                            nomCouleur = "noir";
                             break;
-                        case 'C':
-                            nomPiece = "Cheval";
-                            break;
-                        case 'F':
-                            nomPiece = "Fou";
-                            break;
-                        case 'Q':
-                            nomPiece = "Reine";
-                            break;
-                        case 'K':
-                            nomPiece = "Roi";
-                            break;
-                        case 'P':
-                            nomPiece = "Pion";
-                            MouvPionPossible(cliqueX,cliqueY,s);
+                        case 'B':
+                            nomCouleur = "blanc";
                             break;
                         default:
-                            nomPiece = "AUCUNNOM";
+                            nomCouleur = "AUCUNECOULEUR";
                             break;
+                    }
+                    boolean valide = (tourBlanc && nomCouleur == "blanc") ||(!tourBlanc && nomCouleur == "noir");
+                    if(valide)
+                    {
+                        String nomPiece;
+                        switch (s.charAt(0))
+                        {
+                            case 'T':
+                                nomPiece = "Tour";
+                                break;
+                            case 'C':
+                                nomPiece = "Cheval";
+                                break;
+                            case 'F':
+                                nomPiece = "Fou";
+                                mouvDispos = fou.mouvement(cliqueX, cliqueY);
+                                break;
+                            case 'Q':
+                                nomPiece = "Reine";
+                                break;
+                            case 'K':
+                                nomPiece = "Roi";
+                                break;
+                            case 'P':
+                                boolean premierTour = false;
+                                if(nomCouleur.equals("blanc") && premierTourPionsBlancs[Character.getNumericValue(s.charAt(2) - 1)])
+                                {
+                                    premierTour = true;
+                                }
+                                else if(nomCouleur.equals("noir") && premierTourPionsNoirs[Character.getNumericValue(s.charAt(2) - 1)])
+                                {
+                                    premierTour = true;
+                                }
+                                mouvDispos = pion.mouvement(cliqueX,cliqueY,premierTour, s.charAt(1));
+                                break;
+                            default:
+                                nomPiece = "AUCUNNOM";
+                                break;
+
+                        }
+                        if(mouvDispos.size() > 0)
+                        {
+                            pionEnMouvement = s;
+                            validerLesCasesDispoPourMouvement();
+                            dessinerMouvDispo();
+                            estEnSelectionMouv = true;
+
+                        }
 
                     }
-                    if(tourBlanc)
-                        layout.setBackgroundColor(Color.BLACK);
-                    else
-                        layout.setBackgroundColor(Color.WHITE);
-                    tourBlanc= !tourBlanc;
-                    Toast.makeText(getApplicationContext(),"mouv dispo: " + (mouvDispos.size() > 0? mouvDispos.get(0):null) + " " + (mouvDispos.size() > 1? mouvDispos.get(1):null),Toast.LENGTH_SHORT).show();
-                    mouvDispos.clear();
-                    return;
-                }
 
+                }
+            }
+        }
+        else
+        {
+            boolean mouvValide = false;
+            boolean tuePion = false;
+            String nomPionMort = "";
+            for(int i = 0; i < mouvDispos.size();i++)
+            {
+                if(!mouvValide && (Character.getNumericValue(mouvDispos.get(i).charAt(0)) == cliqueY && Character.getNumericValue(mouvDispos.get(i).charAt(1)) == cliqueX))
+                {
+                    mouvValide = true;
+                }
+                layout.removeViewAt(layout.getChildCount() -1);
+            }
+            for(int i = 0; i < mouvCauseMort.size();i++)
+            {
+                if(!mouvValide && (Character.getNumericValue(mouvCauseMort.get(i).charAt(0)) == cliqueY && Character.getNumericValue(mouvCauseMort.get(i).charAt(1)) == cliqueX))
+                {
+                    mouvValide = true;
+                    //tuePion = true;
+                    if(tourBlanc)
+                    {
+                        nomPionMort = "N";
+                        nbPionNoirMort++;
+                    }
+
+                    else
+                    {
+                        nomPionMort = "B";
+                        nbPionBlancMort++;
+                    }
+                    nomPionMort += Integer.toString(cliqueY);
+                    nomPionMort += Integer.toString(cliqueX);
+                    int j = 0;
+                    for(String s : pieces)
+                    {
+                        String posTemp = Character.toString(s.charAt(1)) + Character.toString(s.charAt(3)) + Character.toString(s.charAt(4));
+                        if(posTemp.equals(nomPionMort))
+                        {
+                            bougerPiece(s,Character.toString(nomPionMort.charAt(0)));
+                            List<String> list = new ArrayList<String>(Arrays.asList(pieces));
+                            list.removeAll(Arrays.asList(s));
+                            pieces = list.toArray(new String[list.size()]);
+                            pieces = list.toArray(pieces);
+                            break;
+                        }
+                        j++;
+                    }
+                }
+                layout.removeViewAt(layout.getChildCount() -1);
+            }
+            mouvDispos.clear();
+            mouvCauseMort.clear();
+            if(mouvValide)
+            {
+                int k = 0;
+                for(String string: pieces)
+                {
+                    if (pionEnMouvement.equals(string))
+                    {
+                        String nouvelPos = Integer.toString(cliqueY) + Integer.toString(cliqueX);
+                        String nomPiece = Character.toString(string.charAt(0)) + Character.toString(string.charAt(1)) + Character.toString(string.charAt(2));
+                        bougerPiece(string, nouvelPos);
+                        pieces[k] = nomPiece +nouvelPos;
+                        if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'B')
+                        {
+                            premierTourPionsBlancs[Character.getNumericValue(pionEnMouvement.charAt(2) -1)] = false;
+                        }
+                        else if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'N')
+                        {
+                            premierTourPionsNoirs[Character.getNumericValue(pionEnMouvement.charAt(2) -1)] = false;
+                        }
+                        pionEnMouvement = "";
+                        break;
+
+                    }
+                    k++;
+                }
+                if(tourBlanc)
+                    layout.setBackgroundColor(Color.BLACK);
+                else
+                    layout.setBackgroundColor(Color.WHITE);
+                tourBlanc= !tourBlanc;
+
+            }
+            estEnSelectionMouv = false;
+        }
+
+    }
+
+    public void bougerPiece(String nomPiece, String nouvelPos)
+    {
+        int anciennePosX = Character.getNumericValue(nomPiece.charAt(4));
+        int anciennePosY = Character.getNumericValue(nomPiece.charAt(3));
+        int nouvPosX, nouvPosY;
+        if(nouvelPos.equals("B"))
+        {
+            nouvPosX = 0;
+            nouvPosY = 8;
+        }
+        else if(nouvelPos.equals("N"))
+        {
+            nouvPosX = 0;
+            nouvPosY = -1;
+        }
+        else
+        {
+            nouvPosX = Character.getNumericValue(nouvelPos.charAt(1));
+            nouvPosY = Character.getNumericValue(nouvelPos.charAt(0));
+        }
+
+
+        int mouvX = nouvPosX-anciennePosX;
+        int mouvY = nouvPosY-anciennePosY;
+        String nomImgView = Character.toString(nomPiece.charAt(0)) + Character.toString(nomPiece.charAt(1)) + Character.toString(nomPiece.charAt(2));
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (nouvelPos.equals("N")?(37 * mouvX) + 10* nbPionNoirMort:(nouvelPos.equals("B")?(37 * mouvX) + 10 * nbPionBlancMort:37 * mouvX)), r.getDisplayMetrics());
+        int py = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 37 * mouvY, r.getDisplayMetrics());
+        for(int i = 0; i < layout.getChildCount();i++)
+        {
+            View v = layout.getChildAt(i);
+            if (v instanceof ImageView && v.getTag().equals(nomImgView))
+            {
+                v.animate().translationX(v.getTranslationX() + px).setDuration(1000);
+                v.animate().translationY(v.getTranslationY() + py).setDuration(1000);
+                break;
             }
         }
     }
 
-    public void MouvPionPossible(int posx, int posy, String nom)
+    /**
+     * Valide les cases disponibles selon le contenu de mouvDispos,
+     * A = un mouvement de pion en diagonal
+     * B = un mouvement de pion en ligne droite
+     * Les lettres indiquent comment le déplacement se trace:
+     * H haut, B bas, D diagonal
+     */
+    public void validerLesCasesDispoPourMouvement()
     {
-        if(nom.charAt(1) == 'B')
+        toRemove = new ArrayList<>();
+        Iterator<String> it = mouvDispos.iterator();
+        while(it.hasNext())
         {
-            int pos = (Character.getNumericValue(nom.charAt(2))) - 1;
-            if (premierTourPionsBlancs[pos])
+            String s = it.next();
+            if(toRemove.contains(s))
             {
-                for(int i = 0; i < 2;i++)
+                continue;
+            }
+            String mouvDispo = Character.toString(s.charAt(0)) + Character.toString(s.charAt(1)); //les 2 chiffre du mouvement disponible ex: 54
+            if (s.charAt(2) == 'A')
+            {
+                for(String s2 : pieces)
                 {
-                    if (posy - i >= 0)
+                    String posTemp = Character.toString(s2.charAt(3)) + Character.toString(s2.charAt(4));
+                    if (mouvDispo.equals(posTemp))
                     {
-                        for(int j = 0; j < pieces.length;j++)
+                        mouvCauseMort.add(s);
+                    }
+                }
+                toRemove.add(s);
+                continue;
+            }
+            for(String s2 : pieces)
+            {
+                String posTemp = Character.toString(s2.charAt(3)) + Character.toString(s2.charAt(4));
+                if(mouvDispo.equals(posTemp))
+                {
+                    if(s.charAt(2) != 'B')
+                    {
+                        if(pionEnMouvement.charAt(1) != s2.charAt(1))
                         {
-                            if(Character.getNumericValue(pieces[j].charAt(3)) == posx && Character.getNumericValue(pieces[j].charAt(4)) == posy)
-                            {
-                                continue;
-                            }
+                            mouvCauseMort.add(s);
+                            enleverMouvApres(s, false);
                         }
-                        mouvDispos.add(Integer.toString(posy - (i + 1)) + Integer.toString(posx));
+                        else
+                        {
+                            enleverMouvApres(s, true);
+                        }
+                        it.remove();
+                    }
+                    else
+                    {
+                        enleverMouvApres(s, true);
                     }
 
                 }
             }
         }
+        for(String s : toRemove)
+        {
+            mouvDispos.remove(s);
+        }
+        if(mouvDispos.size() == 0)
+        {
+            estEnSelectionMouv=false;
+        }
+    }
+
+    public void enleverMouvApres(String mouv, boolean caseActuel)
+    {
+        int posDepartX = Character.getNumericValue(mouv.charAt(1));
+        int posDepartY = Character.getNumericValue(mouv.charAt(0));
+        int aSupprimerX = 0;
+        int aSupprimerY = 0;
+        int posX, posY;             //La position a détruire
+        switch (mouv.charAt(2))
+        {
+            case 'H':
+                aSupprimerY = -1;
+                break;
+            case 'B':
+                aSupprimerY = 1;
+                break;
+            case 'G':
+                aSupprimerX = -1;
+                break;
+            case 'D':
+                aSupprimerX = 1;
+                break;
+            case 'X':
+                switch (mouv.charAt(3))
+                {
+                    case 'H':
+                        aSupprimerY = -1;
+                        break;
+                    case 'B':
+                        aSupprimerY = 1;
+                        break;
+                    default:
+                        break;
+                }
+                switch (mouv.charAt(4))
+                {
+                    case 'G':
+                        aSupprimerX = -1;
+                        break;
+                    case 'D':
+                        aSupprimerX = 1;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+        if(caseActuel)
+        {
+            posX = posDepartX;
+            posY = posDepartY;
+        }
+        else
+        {
+            posX =posDepartX + aSupprimerX;
+            posY =posDepartY + aSupprimerY;
+        }
+
+        while((posX >= 0 && posX <= 7) && (posY >= 0 && posY <= 7))
+        {
+            for(String s : mouvDispos)
+            {
+                int posTempY = Character.getNumericValue(s.charAt(0));
+                int posTempX = Character.getNumericValue(s.charAt(1));
+                if (posX == posTempX && posY == posTempY)
+                {
+                    toRemove.add(s);
+                    break;
+                }
+
+            }
+            posX += aSupprimerX;
+            posY += aSupprimerY;
+        }
+    }
+
+    public void dessinerMouvDispo()
+    {
+        Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.square);
+        Bitmap bitmapTemp = couperImage(bitmap2, 1, 0, 6, 1);
+        int test180 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, r.getDisplayMetrics());
+        for(String s :mouvDispos)
+        {
+            ImageView img = new ImageView(this);
+            img.setImageBitmap(bitmapTemp);
+            params = new RelativeLayout.LayoutParams(test180, test180);
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14 + (37 * Character.getNumericValue(s.charAt(1))), r.getDisplayMetrics());
+            int py = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 112 + (37 * Character.getNumericValue(s.charAt(0))), r.getDisplayMetrics());
+            params.leftMargin = px;
+            params.topMargin = py;
+            layout.addView(img, params);
+        }
+        for(String s :mouvCauseMort)
+        {
+            bitmapTemp = couperImage(bitmap2, 0, 0, 6, 1);
+            ImageView img = new ImageView(this);
+            img.setImageBitmap(bitmapTemp);
+            params = new RelativeLayout.LayoutParams(test180, test180);
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14 + (37 * Character.getNumericValue(s.charAt(1))), r.getDisplayMetrics());
+            int py = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 112 + (37 * Character.getNumericValue(s.charAt(0))), r.getDisplayMetrics());
+            params.leftMargin = px;
+            params.topMargin = py;
+            layout.addView(img, params);
+        }
+
     }
 
     public void addMoveListener(MoveListener ml)
