@@ -1,19 +1,12 @@
-package db;
+package data;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ResourceBundle;
-import java.util.Scanner;
 
 import nick.echec.R;
 
@@ -22,16 +15,17 @@ import nick.echec.R;
  * C'est vraiment juste ça. Oui, c'est quand même plate comme description.
  * Created by Maxime on 4/29/2016.
  */
-public class Manager {
-    private static Manager manager = new Manager();
+public class GestionnaireBD {
+    private static GestionnaireBD gestionnaireBD = new GestionnaireBD();
     private Context context;
     private SQLiteDatabase db;
+    private static final String dbName = "EchecDB";
 
-    public static Manager getManager() {
-        return manager;
+    public static GestionnaireBD getGestionnaireBD() {
+        return gestionnaireBD;
     }
 
-    protected Manager() {
+    protected GestionnaireBD() {
         context = null;
         db = null;
     }
@@ -46,7 +40,7 @@ public class Manager {
             throw new IllegalStateException("Le dbmanager ne doit pas etre réinitialisé");
 
         this.context = context.getApplicationContext();
-        db = this.context.openOrCreateDatabase("EchecDB", 0, null);
+        db = this.context.openOrCreateDatabase(dbName, 0, null);
 
         String sql = context.getResources().getString(R.string.SQL);
 
@@ -62,9 +56,8 @@ public class Manager {
         db = SQLiteDatabase.openOrCreateDatabase(dbName, null);
 
         String sql = context.getResources().getString(R.string.SQL);
-
         for(String s: sql.split(";"))
-            db.execSQL(s);
+            db.execSQL(s + ";");
     }
 
     /**
@@ -136,4 +129,105 @@ public class Manager {
         return false;
     }
 
+    /**
+     * Ajoute un utilisateur a la bd.
+     *
+     * L'utilisateur doit etre connecté a internet puisqu'il faut valider que le nom qu'il choisit n'existe pas actuellement
+     * @param username Nom de l'utilisateur
+     * @param password Password de l'utilisateur (plaintext)
+     * @return Si l'utilisateur est créé.
+     * False si le username est déjà pris, true sinon
+     * @throws DbNonInitialiseeException Lorsque le gestionnaire n'a pas été initialisé
+     */
+    public boolean ajouterUtilisateur(String username, String password){
+        if (db == null)
+            throw new DbNonInitialiseeException();
+
+
+        if (!internetAjouterUtilisateur(username, password))
+            return false;
+
+        int id = getDernierIdUtilisateur() + 1;
+
+        ContentValues cv = new ContentValues();
+        cv.put("id", id);
+        cv.put("login", username);
+        cv.put("password", md5(password));
+        cv.put("type_compte", 4);   //Compte anonyme
+
+        try {
+            return db.insertOrThrow("utilisateur", null, cv) != -1;
+        }
+        catch (Exception e)
+        {
+            System.err.println(e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get l'id du dernier utilisateur
+     * @return
+     */
+    private int getDernierIdUtilisateur() {
+        //TODO devrais getter sur les interwebs
+        Cursor c = db.rawQuery("select id from utilisateur order by id desc limit 1;", null);
+        return c.moveToFirst() ? c.getInt(0) : 1;
+    }
+
+    /**
+     * Obtiens un utilisateur de la base de donnée.
+     * @param username nom de l'utilisateur a getter
+     * @return L'utilisateur ou null si il n'existe pas
+     */
+    public Utilisateur GetUtilisateur(String username) {
+        //TODO devrais getter sur internet
+        if (db == null)
+            throw new DbNonInitialiseeException();
+
+        Cursor c = db.rawQuery( "SELECT u.id, u.login, u.nom, u.prenom, u.email, u.type_compte " +
+                                "FROM utilisateur u " +
+                                "WHERE u.login = ?;", new String[] {
+                                username});
+        if (c.moveToFirst())
+            return new Utilisateur(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getInt(5));
+        else
+            return null;
+    }
+
+    /**
+     * Ajoute un utilisateur a la bd.
+     *
+     * @param username Nom de l'utilisateur
+     * @param password Password de l'utilisateur (plaintext)
+     * @return Si l'utilisateur est créé.
+     * False si le username est déjà pris ou si il y a une erreur quelconque, true sinon
+     * @throws DbNonInitialiseeException Lorsque le gestionnaire n'a pas été initialisé
+     */
+    private boolean internetAjouterUtilisateur(String username, String password) {
+        /* TODO En attendant que l'API pour l'accès a la bd du serveur soit dévellopé on vérifie dans la bd locale,
+         mais après ça ça serais pertinent que la fonction fasse ce que son nom suggère */
+
+        return db.query("utilisateur", new String[]{"login"}, "login = ?", new String[]{username}, null, null, null).getCount() == 0;
+    }
+
+    /**
+     * Ferme la connection a la base de donnée. La connection peut ensuite etre réinitialisée si nécéssaire.
+     */
+    public void close()
+    {
+        db.close();
+        db = null;
+        context = null;
+    }
+
+    /**
+     * Drop toutes les données de la db locale
+     */
+    public void dropAll() {
+        db.close();
+        context.deleteDatabase(dbName);
+        db = null;
+        context = null;
+    }
 }

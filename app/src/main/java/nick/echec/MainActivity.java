@@ -1,22 +1,17 @@
 package nick.echec;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import db.Manager;
+import data.GestionnaireBD;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     int cliqueX, cliqueY;
@@ -58,7 +53,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         params.topMargin = 60;
         layout.addView(img00, params);
 
-        Manager db = Manager.getManager();
+        GestionnaireBD db = GestionnaireBD.getGestionnaireBD();
+        db.init(this);
+        db.ajouterUtilisateur("TEst", "Test 4");
     }
 
     @Override

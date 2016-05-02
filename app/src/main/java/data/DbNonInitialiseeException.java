@@ -1,4 +1,4 @@
-package db;
+package data;
 
 /**
  * Exception lancée par le gestionnaire de base de donnée si il est utilisé sans avoir été initialisé
