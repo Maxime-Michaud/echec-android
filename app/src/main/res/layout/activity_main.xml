@@ -15,8 +15,11 @@
         android:layout_height="300dp"
         android:id="@+id/imageView"
         android:src="@drawable/grid"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerVertical="false"
+        android:layout_centerHorizontal="false"
+        android:layout_marginTop="112dp"
+        android:layout_marginLeft="14dp"
+        android:tag="1"/>
 
     <Button
         android:layout_width="40dp"
@@ -601,14 +604,5 @@
         android:layout_alignTop="@+id/btn74"
         android:layout_alignLeft="@+id/btn67"
         android:layout_alignStart="@+id/btn67" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView2"
-        android:layout_below="@+id/btn74"
-        android:layout_toRightOf="@+id/btn23"
-        android:layout_toEndOf="@+id/btn23"
-        android:layout_marginTop="23dp" />
 
 </RelativeLayout>
