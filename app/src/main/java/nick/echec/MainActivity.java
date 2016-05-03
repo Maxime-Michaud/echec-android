@@ -51,12 +51,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Toutes les pièces et leur position; la lettre du nom de la pièce (Pion, Tour, Fou, Roi, (Q)Reine, (K)Roi), le no de la pièce, sa position Y, sa position X (c inversé mais jmen caliss je continue sur mon brainfart)
     String pieces[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
             "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
-    Pion pion = new Pion();                                 //Controlleur de pion
-    Fou fou = new Fou();                                    //Controlleur de fou
+    AI newAI = new AI('N');
+    //Les controlleurs de pièces
+    Pion pion = new Pion();
+    Fou fou = new Fou();
     Tour tour = new Tour();
     Reine reine = new Reine();
     Cheval cheval = new Cheval();
     Roi roi = new Roi();
+
     String pionEnMouvement;                                 //Le pion qui est sélection pour un mouvement
     int nbPionBlancMort = 0;
     int nbPionNoirMort = 0;
@@ -148,23 +151,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         {
                             case 'T':
                                 nomPiece = "Tour";
-                                mouvDispos = tour.mouvement(cliqueX,cliqueY);
+                                tour.mouvement(cliqueX,cliqueY,mouvDispos);
                                 break;
                             case 'C':
                                 nomPiece = "Cheval";
-                                mouvDispos = cheval.mouvement(cliqueX,cliqueY);
+                                cheval.mouvement(cliqueX,cliqueY,mouvDispos);
                                 break;
                             case 'F':
                                 nomPiece = "Fou";
-                                mouvDispos = fou.mouvement(cliqueX, cliqueY);
+                                fou.mouvement(cliqueX, cliqueY, mouvDispos);
                                 break;
                             case 'Q':
                                 nomPiece = "Reine";
-                                mouvDispos = reine.mouvement(cliqueX, cliqueY);
+                                reine.mouvement(cliqueX, cliqueY,mouvDispos);
                                 break;
                             case 'K':
                                 nomPiece = "Roi";
-                                mouvDispos = roi.mouvement(cliqueX, cliqueY);
+                                roi.mouvement(cliqueX, cliqueY,mouvDispos);
                                 break;
                             case 'P':
                                 boolean premierTour = false;
@@ -176,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 {
                                     premierTour = true;
                                 }
-                                mouvDispos = pion.mouvement(cliqueX,cliqueY,premierTour, s.charAt(1));
+                                pion.mouvement(cliqueX,cliqueY,premierTour, s.charAt(1),mouvDispos);
                                 break;
                             default:
                                 nomPiece = "AUCUNNOM";
@@ -199,9 +202,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else
         {
-            boolean mouvValide = false;
-            boolean tuePion = false;
-            String nomPionMort = "";
+            finaliserTour(false);
+            if((newAI.couleur == 'N' && !tourBlanc) || (newAI.couleur == 'B' && tourBlanc))
+            {
+
+                String newPos;
+                StringBuilder temp = new StringBuilder();
+                newPos = newAI.choisirPieceRandom(pieces, premierTourPionsNoirs, premierTourPionsBlancs, mouvDispos, mouvCauseMort, temp);
+                pionEnMouvement = temp.toString();
+                cliqueY = Character.getNumericValue(newPos.charAt(0));
+                cliqueX = Character.getNumericValue(newPos.charAt(1));
+                finaliserTour(true);
+            }
+        }
+
+    }
+
+    public void finaliserTour(boolean tourAi)
+    {
+        boolean mouvValide = false;
+        boolean tuePion = false;
+        String nomPionMort = "";
+        if(!tourAi)
+        {
             for(int i = 0; i < mouvDispos.size();i++)
             {
                 if(!mouvValide && (Character.getNumericValue(mouvDispos.get(i).charAt(0)) == cliqueY && Character.getNumericValue(mouvDispos.get(i).charAt(1)) == cliqueX))
@@ -210,84 +233,84 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 layout.removeViewAt(layout.getChildCount() -1);
             }
-            for(int i = 0; i < mouvCauseMort.size();i++)
-            {
-                if(!mouvValide && (Character.getNumericValue(mouvCauseMort.get(i).charAt(0)) == cliqueY && Character.getNumericValue(mouvCauseMort.get(i).charAt(1)) == cliqueX))
-                {
-                    mouvValide = true;
-                    //tuePion = true;
-                    if(tourBlanc)
-                    {
-                        nomPionMort = "N";
-                        nbPionNoirMort++;
-                    }
-
-                    else
-                    {
-                        nomPionMort = "B";
-                        nbPionBlancMort++;
-                    }
-                    nomPionMort += Integer.toString(cliqueY);
-                    nomPionMort += Integer.toString(cliqueX);
-                    int j = 0;
-                    for(String s : pieces)
-                    {
-                        String posTemp = Character.toString(s.charAt(1)) + Character.toString(s.charAt(3)) + Character.toString(s.charAt(4));
-                        if(posTemp.equals(nomPionMort))
-                        {
-                            if(s.charAt(0) == 'K')
-                                partieTerminer(s, this);
-                            bougerPiece(s,Character.toString(nomPionMort.charAt(0)), false);
-                            List<String> list = new ArrayList<String>(Arrays.asList(pieces));
-                            list.removeAll(Arrays.asList(s));
-                            pieces = list.toArray(new String[list.size()]);
-                            pieces = list.toArray(pieces);
-                            break;
-                        }
-                        j++;
-                    }
-                }
-                layout.removeViewAt(layout.getChildCount() -1);
-            }
-            mouvDispos.clear();
-            mouvCauseMort.clear();
-            if(mouvValide)
-            {
-                int k = 0;
-                for(String string: pieces)
-                {
-                    if (pionEnMouvement.equals(string))
-                    {
-                        String nouvelPos = Integer.toString(cliqueY) + Integer.toString(cliqueX);
-                        String nomPiece = Character.toString(string.charAt(0)) + Character.toString(string.charAt(1)) + Character.toString(string.charAt(2));
-                        bougerPiece(string, nouvelPos, false);
-                        pieces[k] = nomPiece +nouvelPos;
-                        if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'B')
-                        {
-                            premierTourPionsBlancs[Character.getNumericValue(pionEnMouvement.charAt(2) -1)] = false;
-                        }
-                        else if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'N')
-                        {
-                            premierTourPionsNoirs[Character.getNumericValue(pionEnMouvement.charAt(2) -1)] = false;
-                        }
-                        pionEnMouvement = "";
-                        break;
-
-                    }
-                    k++;
-                }
-                if(tourBlanc)
-                    layout.setBackgroundColor(Color.BLACK);
-                else
-                    layout.setBackgroundColor(Color.WHITE);
-                tourBlanc= !tourBlanc;
-
-            }
-            estEnSelectionMouv = false;
         }
 
-    }
+        for(int i = 0; i < mouvCauseMort.size();i++)
+        {
+            if(!mouvValide && (Character.getNumericValue(mouvCauseMort.get(i).charAt(0)) == cliqueY && Character.getNumericValue(mouvCauseMort.get(i).charAt(1)) == cliqueX))
+            {
+                mouvValide = true;
+                //tuePion = true;
+                if(tourBlanc)
+                {
+                    nomPionMort = "N";
+                    nbPionNoirMort++;
+                }
 
+                else
+                {
+                    nomPionMort = "B";
+                    nbPionBlancMort++;
+                }
+                nomPionMort += Integer.toString(cliqueY);
+                nomPionMort += Integer.toString(cliqueX);
+                int j = 0;
+                for(String s : pieces)
+                {
+                    String posTemp = Character.toString(s.charAt(1)) + Character.toString(s.charAt(3)) + Character.toString(s.charAt(4));
+                    if(posTemp.equals(nomPionMort))
+                    {
+                        if(s.charAt(0) == 'K')
+                            partieTerminer(s, this);
+                        bougerPiece(s,Character.toString(nomPionMort.charAt(0)), false);
+                        List<String> list = new ArrayList<String>(Arrays.asList(pieces));
+                        list.removeAll(Arrays.asList(s));
+                        pieces = list.toArray(new String[list.size()]);
+                        pieces = list.toArray(pieces);
+                        break;
+                    }
+                    j++;
+                }
+            }
+            if(!tourAi)
+                layout.removeViewAt(layout.getChildCount() -1);
+        }
+        mouvDispos.clear();
+        mouvCauseMort.clear();
+        if(mouvValide || tourAi)
+        {
+            int k = 0;
+            for(String string: pieces)
+            {
+                if (pionEnMouvement.equals(string))
+                {
+                    String nouvelPos = Integer.toString(cliqueY) + Integer.toString(cliqueX);
+                    String nomPiece = Character.toString(string.charAt(0)) + Character.toString(string.charAt(1)) + Character.toString(string.charAt(2));
+                    bougerPiece(string, nouvelPos, false);
+                    pieces[k] = nomPiece +nouvelPos;
+                    if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'B')
+                    {
+                        premierTourPionsBlancs[Character.getNumericValue(pionEnMouvement.charAt(2) -1)] = false;
+                    }
+                    else if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'N')
+                    {
+                        premierTourPionsNoirs[Character.getNumericValue(pionEnMouvement.charAt(2) -1)] = false;
+                    }
+                    break;
+
+                }
+                k++;
+            }
+            if(tourBlanc)
+                layout.setBackgroundColor(Color.BLACK);
+            else
+                layout.setBackgroundColor(Color.WHITE);
+            tourBlanc= !tourBlanc;
+
+        }
+        estEnSelectionMouv = false;
+        pionEnMouvement = "";
+    }
     public void bougerPiece(String nomPiece, String nouvelPos, boolean initialisation)
     {
         //TODO mettre sa dans un thread quon peut faire un while pour attendre que les pièces aient finis de bouger pour la fct recommencer()
@@ -388,6 +411,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 enleverMouvApres(s, true);
                         }
                         it.remove();
+                        break;
                     }
                     else
                     {

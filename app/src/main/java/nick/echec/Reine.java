@@ -6,8 +6,7 @@ import java.util.ArrayList;
  * Created by Nicholas1 on 2016-05-02.
  */
 public class Reine {
-    public ArrayList<String> mouvement(int x, int y) {
-        ArrayList<String> arrayList = new ArrayList<>();
+    public void mouvement(int x, int y,  final ArrayList<String> arrayList) {
         //Par à gauche
         int tempX, tempY;
         tempX = x - 1;
@@ -69,6 +68,5 @@ public class Reine {
             tempX += 1;
             tempY += 1;
         }
-        return arrayList;
     }
 }

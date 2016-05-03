@@ -6,9 +6,8 @@ import java.util.ArrayList;
  * Created by Nicholas1 on 2016-05-02.
  */
 public class Roi {
-    public ArrayList<String> mouvement(int x, int y)
+    public void mouvement(int x, int y,  final ArrayList<String> arrayList)
     {
-        ArrayList<String> arrayList = new ArrayList<>();
         //Par en haut
         if(y - 1 >= 0)
             arrayList.add(Integer.toString(y-1) +  Integer.toString(x) + "K");
@@ -33,6 +32,5 @@ public class Roi {
         //Par en bas à droite
         if(y + 1 <= 7 && x + 1 <= 7)
             arrayList.add(Integer.toString(y+1) +  Integer.toString(x + 1) + "K");
-        return arrayList;
     }
 }
