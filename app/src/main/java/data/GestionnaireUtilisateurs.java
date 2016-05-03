@@ -299,4 +299,11 @@ public class GestionnaireUtilisateurs {
                                   "r.user_2 = ? AND r.status_relation == 2",            //Demandes d'amis recu par l'utilisateur
                             new String[]{Integer.toString(id), Integer.toString(id)});
     }
+
+    /**
+     * Efface les utilisateurs enregistrer dans l'arraylist. Utile pour les tests unitaire qui clear la bd, pas grand chose d'autre
+     */
+    static void effacerEnregistrer(){
+        users.clear();
+    }
 }

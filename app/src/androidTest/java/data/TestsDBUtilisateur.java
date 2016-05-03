@@ -21,6 +21,7 @@ public class TestsDBUtilisateur {
     @After
     public void tearDown() throws Exception {
         MoteurBD.getMoteurBD().dropAll();
+        GestionnaireUtilisateurs.effacerEnregistrer();
     }
 
     /**
