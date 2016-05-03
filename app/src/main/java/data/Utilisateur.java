@@ -2,6 +2,10 @@ package data;
 
 import android.support.annotation.Nullable;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +58,22 @@ public class Utilisateur{
                     return 4;
             }
             return 0;
+        }
+
+        public static RELATION fromInt(int anInt) {
+            switch (anInt)
+            {
+            case 1:
+            return Ami;
+            case 2:
+            return Attente_de_demande_dami;
+            case 3:
+            return Refusé;
+            case 4:
+            return Bloqué;
+            default:
+                return Bloqué;
+        }
         }
     }
 
@@ -155,12 +175,29 @@ public class Utilisateur{
     }
 
     /**
+     * Charge les relations de la base de données en mémoire
+     */
+    private void loadRelations() {
+        relations = GestionnaireUtilisateurs.getRelations(id);
+    }
+
+    private List<Utilisateur> getUtilisateursPourRelation(RELATION rel)
+    {
+        if (relations == null)
+            loadRelations();
+
+        return  Stream.of(relations)
+                        .filter(e -> e.getValue() == rel)
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toList());
+    }
+
+    /**
      * Obtiens la liste d'amis de l'utilisateur
      * @return
      */
     public List<Utilisateur> getAmis(){
-        //TODO
-        throw new UnsupportedOperationException("");
+        return Collections.unmodifiableList(getUtilisateursPourRelation(RELATION.Ami));
     }
 
     /**
@@ -169,8 +206,7 @@ public class Utilisateur{
      */
     public List<Utilisateur> getDemandesAmis()
     {
-        //TODO
-        throw new UnsupportedOperationException("");
+        return Collections.unmodifiableList(getUtilisateursPourRelation(RELATION.Attente_de_demande_dami));
     }
 
     /**
@@ -179,8 +215,7 @@ public class Utilisateur{
      */
     public List<Utilisateur> getDemandesRefuse()
     {
-        //TODO
-        throw new UnsupportedOperationException("");
+        return Collections.unmodifiableList(getUtilisateursPourRelation(RELATION.Refusé));
     }
 
     /**
@@ -189,8 +224,7 @@ public class Utilisateur{
      */
     public List<Utilisateur> getBloques()
     {
-        //TODO
-        throw new UnsupportedOperationException("");
+        return Collections.unmodifiableList(getUtilisateursPourRelation(RELATION.Bloqué));
     }
 
     /**

@@ -6,12 +6,17 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Crée et gère les modifications des utilisateurs
  * Created by Maxime on 5/2/2016.
  */
 public class GestionnaireUtilisateurs {
+    static private ArrayList<Utilisateur> users = new ArrayList<>();
+
 
     /**
      * Selectionne le hash du password dans la base de donné pour l'utilisateur
@@ -59,6 +64,17 @@ public class GestionnaireUtilisateurs {
         }
     }
 
+    private static boolean insertRelation(int usr1, int usr2, int rel)
+    {
+        SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+        ContentValues cv = new ContentValues();
+        cv.put("user_1", usr1);
+        cv.put("user_2", usr2);
+        cv.put("status_relation", rel);
+
+        return db.insert("relation", null, cv) != -1;
+    }
+
     /**
      * Get l'id du dernier utilisateur
      * @return
@@ -67,7 +83,12 @@ public class GestionnaireUtilisateurs {
         SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
         //TODO devrais getter sur les interwebs
         Cursor c = db.rawQuery("select id from utilisateur order by id desc limit 1;", null);
-        return c.moveToFirst() ? c.getInt(0) : 1;
+        try {
+            return c.moveToFirst() ? c.getInt(0) : 1;
+        }
+        finally {
+            c.close();
+        }
     }
 
     /**
@@ -81,10 +102,10 @@ public class GestionnaireUtilisateurs {
         if (db == null)
             throw new DbNonInitialiseeException();
 
-        return db.rawQuery(     "SELECT u.id, u.login, u.nom, u.prenom, u.email, u.type_compte " +
-                "FROM utilisateur u " +
-                "WHERE u.login = ?;", new String[] {
-                username});
+        return db.rawQuery( "SELECT u.id, u.login, u.nom, u.prenom, u.email, u.type_compte " +
+                            "FROM utilisateur u " +
+                            "WHERE u.login = ?;", new String[] {
+                            username});
     }
 
     /**
@@ -221,4 +242,44 @@ public class GestionnaireUtilisateurs {
     }
 
 
+    public static boolean ajouterRelation(Utilisateur u1, Utilisateur u2, Utilisateur.RELATION r) {
+        if (r == Utilisateur.RELATION.Ami)
+            return insertRelation(u1.getId(), u2.getId(), r.toInt()) && insertRelation(u2.getId(), u1.getId(), r.toInt());
+
+        return insertRelation(u1.getId(), u2.getId(), r.toInt());
+    }
+
+    /**
+     * Cherche les relations d'un utilisateur dans la bd
+     * @param id id de l'utilisateur
+     * @return
+     */
+    static Map<Utilisateur,Utilisateur.RELATION> getRelations(int u) {
+        Map<Utilisateur, Utilisateur.RELATION> rels = new HashMap<>();
+        Cursor c = selectRelations(u);
+
+        try {
+            while (c.moveToNext())
+            {
+                if (c.getInt(0) == 2)
+                    rels.put(getUtilisateur(c.getString(1)), Utilisateur.RELATION.fromInt(c.getInt(0)));
+                else
+                    rels.put(getUtilisateur(c.getString(2)), Utilisateur.RELATION.fromInt(c.getInt(0)));
+            }
+        }
+        finally {
+            c.close();
+        }
+        return rels;
+    }
+
+    private static Cursor selectRelations(int id) {
+        SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+        return db.rawQuery( "SELECT r.status_relation, u1.login, u2.login " +
+                            "FROM relation r INNER JOIN utilisateur u1 ON r.user_1 = u1.id " +
+                                            "INNER JOIN utilisateur u2 ON r.user_2 = u2.id " +
+                            "WHERE r.user_1 = ? AND r.status_relation != 2 OR " +       //Tout sauf les demandes d'amis par l'utilisateur
+                                  "r.user_2 = ? AND r.status_relation == 2",            //Demandes d'amis recu par l'utilisateur
+                            new String[]{Integer.toString(id), Integer.toString(id)});
+    }
 }

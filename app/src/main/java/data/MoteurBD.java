@@ -29,18 +29,21 @@ public class MoteurBD {
      * Initialise le gestionnaire de bd
      * @param context Contexte pour les données.
      */
-    public void init(Context context)
+    public static void init(Context context)
     {
-        if (this.context != null || db != null)
+        MoteurBD m = getMoteurBD();
+        if (context == null)
+            throw new IllegalArgumentException("Le contexte ne peut pas etre null");
+        if (m.context != null || m.db != null)
             throw new IllegalStateException("Le dbmanager ne doit pas etre réinitialisé");
 
-        this.context = context.getApplicationContext();
-        db = this.context.openOrCreateDatabase(dbName, 0, null);
+        m.context = context.getApplicationContext();
+        m.db = m.context.openOrCreateDatabase(dbName, 0, null);
 
         String sql = context.getResources().getString(R.string.SQL);
 
         for(String s: sql.split(";"))
-            db.execSQL(s);
+            m.db.execSQL(s);
     }
 
     /**
