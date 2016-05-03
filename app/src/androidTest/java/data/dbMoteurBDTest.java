@@ -15,13 +15,12 @@ public class dbMoteurBDTest {
 
     @Before
     public void setUp() throws Exception {
-        moteurBD = MoteurBD.getMoteurBD();
-        moteurBD.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
+        MoteurBD.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
     }
 
     @After
     public void tearDown() throws Exception {
-        moteurBD.dropAll();
+        MoteurBD.getMoteurBD().dropAll();
     }
 
     /**
@@ -86,16 +85,20 @@ public class dbMoteurBDTest {
         final String password = "1234",
                 username = "Abcd";
 
+        moteurBD = MoteurBD.getMoteurBD();
+
         moteurBD.dropAll();
 
+        MoteurBD.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
         moteurBD = MoteurBD.getMoteurBD();
-        moteurBD.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
+
         GestionnaireUtilisateurs.ajouterUtilisateur(username, password);
         Assert.assertTrue(GestionnaireUtilisateurs.authentifier(username, password));
         moteurBD.dropAll();
 
+        MoteurBD.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
         moteurBD = MoteurBD.getMoteurBD();
-        moteurBD.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
+
         Assert.assertFalse(GestionnaireUtilisateurs.authentifier(username, password));
     }
 
@@ -126,6 +129,85 @@ public class dbMoteurBDTest {
 
         GestionnaireUtilisateurs.update(u);
         Assert.assertNotEquals(GestionnaireUtilisateurs.getUtilisateur("usr1").getEmail(),
-                               GestionnaireUtilisateurs.getUtilisateur("usr2").getEmail());
+                GestionnaireUtilisateurs.getUtilisateur("usr2").getEmail());
     }
+
+    /**
+     * Teste que les relations sont bien ajoutées
+     */
+    @Test
+    public void amis(){
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+
+        Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
+                    u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
+
+        GestionnaireUtilisateurs.ajouterRelation(u1, u2, Utilisateur.RELATION.Ami);
+
+        Assert.assertTrue(u1.getAmis().contains(u2));
+        Assert.assertTrue(u2.getAmis().contains(u1));
+        Assert.assertTrue(GestionnaireUtilisateurs.getUtilisateur("usr2").getAmis().contains(u1));
+        Assert.assertFalse(GestionnaireUtilisateurs.getUtilisateur("usr3").getAmis().contains(u2));
+    }
+
+    /**
+     * Teste que les relations sont bien ajoutées
+     */
+    @Test
+    public void demandes(){
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+
+        Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
+                    u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
+
+        GestionnaireUtilisateurs.ajouterRelation(u1, u2, Utilisateur.RELATION.Attente_de_demande_dami);
+
+        Assert.assertTrue(u1.getDemandesAmis().contains(u2));
+        Assert.assertTrue(GestionnaireUtilisateurs.getUtilisateur("usr1").getDemandesAmis().contains(u2));
+        Assert.assertFalse(GestionnaireUtilisateurs.getUtilisateur("usr3").getDemandesAmis().contains(u2));
+    }
+
+    /**
+     * Teste que les relations sont bien ajoutées
+     */
+    @Test
+    public void amiRefuse(){
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+
+        Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
+                u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
+
+        GestionnaireUtilisateurs.ajouterRelation(u1, u2, Utilisateur.RELATION.Refusé);
+
+        Assert.assertTrue(u1.getDemandesRefuse().contains(u2));
+        Assert.assertTrue(GestionnaireUtilisateurs.getUtilisateur("usr1").getDemandesRefuse().contains(u2));
+        Assert.assertFalse(GestionnaireUtilisateurs.getUtilisateur("usr3").getDemandesRefuse().contains(u2));
+    }
+
+    /**
+     * Teste que les relations sont bien ajoutées
+     */
+    @Test
+    public void bloque(){
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
+        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+
+        Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
+                u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
+
+        GestionnaireUtilisateurs.ajouterRelation(u1, u2, Utilisateur.RELATION.Bloqué);
+
+        Assert.assertTrue(u1.getBloques().contains(u2));
+        Assert.assertTrue(GestionnaireUtilisateurs.getUtilisateur("usr1").getBloques().contains(u2));
+        Assert.assertFalse(GestionnaireUtilisateurs.getUtilisateur("usr3").getBloques().contains(u2));
+    }
+
+
 }
