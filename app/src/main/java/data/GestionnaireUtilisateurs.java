@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.annimon.stream.Stream;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -98,6 +100,7 @@ public class GestionnaireUtilisateurs {
      */
     private static Cursor selectUtilisateur(String username) {
         SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+
         //TODO devrais getter sur internet si possible
         if (db == null)
             throw new DbNonInitialiseeException();
@@ -235,10 +238,24 @@ public class GestionnaireUtilisateurs {
         return updateUtilisateur(u.getId(), cv);
     }
 
+    /**
+     * Obtiens l'utilisateur ayant le username donné
+     * @param login
+     * @return
+     */
     public static Utilisateur getUtilisateur(String login)
     {
+        Utilisateur u = Stream.of(users).filter(usr -> usr.getUsername().equals(login)).findFirst().orElse(null);
+
+        if (u != null)
+            return u;
+
         Cursor c = selectUtilisateur(login);
-        return c.moveToFirst() ? new Utilisateur(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getInt(5)) : null;
+        if(c.moveToFirst())
+           u = new Utilisateur(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getInt(5));
+
+        users.add(u);
+        return u;
     }
 
 
