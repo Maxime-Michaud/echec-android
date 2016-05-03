@@ -1,6 +1,14 @@
 package nick.echec;
 
+import android.support.v7.app.AppCompatActivity;
+
+
 import android.content.Intent;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +28,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -83,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         lstMoveListener = new ArrayList<>();
         setContentView(R.layout.activity_main);
         layout = (RelativeLayout) findViewById(R.id.relative);
@@ -213,6 +223,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         QB1.setTag("QB1");
 
 
+
+        //recommencer();
+        initialiserUneGille(pieces);
     }
 
     /**
@@ -360,7 +373,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         String posTemp = Character.toString(s.charAt(1)) + Character.toString(s.charAt(3)) + Character.toString(s.charAt(4));
                         if(posTemp.equals(nomPionMort))
                         {
-                            bougerPiece(s,Character.toString(nomPionMort.charAt(0)));
+                            if(s.charAt(0) == 'K')
+                                partieTerminer(s, this);
+                            bougerPiece(s,Character.toString(nomPionMort.charAt(0)), false);
                             List<String> list = new ArrayList<String>(Arrays.asList(pieces));
                             list.removeAll(Arrays.asList(s));
                             pieces = list.toArray(new String[list.size()]);
@@ -383,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         String nouvelPos = Integer.toString(cliqueY) + Integer.toString(cliqueX);
                         String nomPiece = Character.toString(string.charAt(0)) + Character.toString(string.charAt(1)) + Character.toString(string.charAt(2));
-                        bougerPiece(string, nouvelPos);
+                        bougerPiece(string, nouvelPos, false);
                         pieces[k] = nomPiece +nouvelPos;
                         if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'B')
                         {
@@ -411,10 +426,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void bougerPiece(String nomPiece, String nouvelPos)
+    public void bougerPiece(String nomPiece, String nouvelPos, boolean initialisation)
     {
-        int anciennePosX = Character.getNumericValue(nomPiece.charAt(4));
-        int anciennePosY = Character.getNumericValue(nomPiece.charAt(3));
+        //TODO mettre sa dans un thread quon peut faire un while pour attendre que les pièces aient finis de bouger pour la fct recommencer()
+        int anciennePosX, anciennePosY;
+        if(!initialisation)
+            anciennePosX = Character.getNumericValue(nomPiece.charAt(4));
+        else
+            anciennePosX = 4;
+        if(!initialisation)
+            anciennePosY = Character.getNumericValue(nomPiece.charAt(3));
+        else
+            anciennePosY = (nomPiece.charAt(1) == 'B'?8:-1);
         int nouvPosX, nouvPosY;
         if(nouvelPos.equals("B"))
         {
@@ -476,7 +499,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String posTemp = Character.toString(s2.charAt(3)) + Character.toString(s2.charAt(4));
                     if (mouvDispo.equals(posTemp))
                     {
-                        mouvCauseMort.add(s);
+                        if(pionEnMouvement.charAt(1) != s2.charAt(1))
+                            mouvCauseMort.add(s);
                     }
                 }
                 toRemove.add(s);
@@ -635,6 +659,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    public void partieTerminer(String s, final Context c)
+    {
+        Toast.makeText(this, "La partie est terminé, le roi mort est " + s, Toast.LENGTH_LONG).show();
+        new AlertDialog.Builder(this)
+                .setTitle("Partie terminé")
+                .setMessage("Voulez-vous recommencer?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        recommencer();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(c,"Vous pouvez recommencer en cliquant sur l'option dans le menu", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    public void initialiserUneGille(String tousPieces[])
+    {
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pawns);
+        pieces = tousPieces;
+
+        for(int i = 0;i < 8;i++)
+        {
+            premierTourPionsBlancs[i] = true;
+            premierTourPionsNoirs[i] = true;
+        }
+
+        lstMoveListener = new ArrayList<>();
+        setContentView(R.layout.activity_main);
+        layout = (RelativeLayout) findViewById(R.id.relative);
+        r = getResources();
+        mouvDispos = new ArrayList<>();
+        mouvCauseMort = new ArrayList<>();
+        for (int j = 0; j < layout.getChildCount(); j++) {
+            View v = layout.getChildAt(j);
+            if (v instanceof Button) {
+                v.setBackgroundColor(Color.TRANSPARENT);
+                v.setOnClickListener(this);
+            }
+        }
+
+        pionsNoirs = new ArrayList<>();
+
+        //Les images des pions et leur tag pour les reconnaître dans d'autre fonction
+        pionsNoirs.add(PN1);
+        pionsNoirs.add(PN2);
+        pionsNoirs.add(PN3);
+        pionsNoirs.add(PN4);
+        pionsNoirs.add(PN5);
+        pionsNoirs.add(PN6);
+        pionsNoirs.add(PN7);
+        pionsNoirs.add(PN8);
+        int test = 0;
+        for(String s : tousPieces)
+        {
+            int couleur = (s.charAt(1) == 'B'?1:0);
+            int pion = (s.charAt(0) == 'P'?5:s.charAt(0) == 'C'?4:s.charAt(0) == 'F'?3:s.charAt(0) == 'T'?2:s.charAt(0) == 'K'?1:0);
+            int posX = 4;
+            int posY = (s.charAt(1) == 'B'?8:-1);
+            ImageView image = new ImageView(this);
+            image.setTag(Character.toString(s.charAt(0)) + Character.toString(s.charAt(1)) + Character.toString(s.charAt(2)));
+            setPawn(image, posX, posY, pion, couleur);
+            String nouvelPos = Character.toString(s.charAt(3)) + Character.toString(s.charAt(4));
+            bougerPiece(s, nouvelPos, true);
+        }
+    }
+
     public void addMoveListener(MoveListener ml)
     {
         lstMoveListener.add(ml);
@@ -646,5 +741,143 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             v.onMove();
         }
+    }
+
+    public void recommencer()
+    {
+        lstMoveListener = new ArrayList<>();
+        setContentView(R.layout.activity_main);
+        layout = (RelativeLayout) findViewById(R.id.relative);
+        r = getResources();
+        mouvDispos = new ArrayList<>();
+        mouvCauseMort = new ArrayList<>();
+        for(int i = 0;i < 8;i++)
+        {
+            premierTourPionsBlancs[i] = true;
+            premierTourPionsNoirs[i] = true;
+        }
+        for (int j = 0; j < layout.getChildCount(); j++) {
+            View v = layout.getChildAt(j);
+            if (v instanceof Button) {
+                v.setBackgroundColor(Color.TRANSPARENT);
+                v.setOnClickListener(this);
+            }
+        }
+        if(tourBlanc)
+            layout.setBackgroundColor(Color.BLACK);
+        else
+            layout.setBackgroundColor(Color.WHITE);
+        tourBlanc= !tourBlanc;
+        pionsNoirs = new ArrayList<>();
+        String piecesTemp[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
+                "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
+        pieces = piecesTemp;
+        //Les images des pions et leur tag pour les reconnaître dans d'autre fonction
+        PN1 = new ImageView(this);
+        PN1.setTag("PN1");
+        PN2 = new ImageView(this);
+        PN2.setTag("PN2");
+        PN3 = new ImageView(this);
+        PN3.setTag("PN3");
+        PN4 = new ImageView(this);
+        PN4.setTag("PN4");
+        PN5 = new ImageView(this);
+        PN5.setTag("PN5");
+        PN6 = new ImageView(this);
+        PN6.setTag("PN6");
+        PN7 = new ImageView(this);
+        PN7.setTag("PN7");
+        PN8 = new ImageView(this);
+        PN8.setTag("PN8");
+        pionsNoirs.add(PN1);
+        pionsNoirs.add(PN2);
+        pionsNoirs.add(PN3);
+        pionsNoirs.add(PN4);
+        pionsNoirs.add(PN5);
+        pionsNoirs.add(PN6);
+        pionsNoirs.add(PN7);
+        pionsNoirs.add(PN8);
+
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pawns);
+        for (int i = 0; i < 8; i++) {
+            setPawn(pionsNoirs.get(i),i,1,5,0);
+        }
+        pionsBlancs = new ArrayList<>();
+        PB1 = new ImageView(this);
+        PB1.setTag("PB1");
+        PB2 = new ImageView(this);
+        PB2.setTag("PB2");
+        PB3 = new ImageView(this);
+        PB3.setTag("PB3");
+        PB4 = new ImageView(this);
+        PB4.setTag("PB4");
+        PB5 = new ImageView(this);
+        PB5.setTag("PB5");
+        PB6 = new ImageView(this);
+        PB6.setTag("PB6");
+        PB7 = new ImageView(this);
+        PB7.setTag("PB7");
+        PB8 = new ImageView(this);
+        PB8.setTag("PB8");
+        pionsBlancs.add(PB1);
+        pionsBlancs.add(PB2);
+        pionsBlancs.add(PB3);
+        pionsBlancs.add(PB4);
+        pionsBlancs.add(PB5);
+        pionsBlancs.add(PB6);
+        pionsBlancs.add(PB7);
+        pionsBlancs.add(PB8);
+        for (int i = 0; i < 8; i++) {
+            setPawn(pionsBlancs.get(i),i,6,5,1);
+        }
+        TN1 = new ImageView(this);
+        setPawn(TN1, 0, 0, 2, 0);
+        TN1.setTag("TN1");
+        TN2 = new ImageView(this);
+        setPawn(TN2, 7, 0, 2, 0);
+        TN2.setTag("TN2");
+        FN1 = new ImageView(this);
+        setPawn(FN1, 2, 0, 3, 0);
+        FN1.setTag("FN1");
+        FN2 = new ImageView(this);
+        setPawn(FN2,5,0,3,0);
+        FN2.setTag("FN2");
+        CN1 = new ImageView(this);
+        setPawn(CN1, 1, 0, 4, 0);
+        CN1.setTag("CN1");
+        CN2 = new ImageView(this);
+        setPawn(CN2, 6, 0, 4, 0);
+        CN2.setTag("CN2");
+        KN1 = new ImageView(this);
+        setPawn(KN1,3,0,1,0);
+        KN1.setTag("KN1");
+        QN1 = new ImageView(this);
+        setPawn(QN1,4,0,0,0);
+        QN1.setTag("QN1");
+
+        TB1 = new ImageView(this);
+        setPawn(TB1,0,7,2,1);
+        TB1.setTag("TB1");
+        TB2 = new ImageView(this);
+        setPawn(TB2,7,7,2,1);
+        TB2.setTag("TB2");
+        FB1 = new ImageView(this);
+        setPawn(FB1,2,7,3,1);
+        FB1.setTag("FB1");
+        FB2 = new ImageView(this);
+        setPawn(FB2,5,7,3,1);
+        FB2.setTag("FB2");
+        CB1 = new ImageView(this);
+        setPawn(CB1,1,7,4,1);
+        CB1.setTag("CB1");
+        CB2 = new ImageView(this);
+        setPawn(CB2,6,7,4,1);
+        CB2.setTag("CB2");
+        KB1 = new ImageView(this);
+        setPawn(KB1,3,7,1,1);
+        KB1.setTag("KB1");
+        QB1 = new ImageView(this);
+        setPawn(QB1,4,7,0,1);
+        QB1.setTag("QB1");
     }
 }
