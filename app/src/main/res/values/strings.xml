@@ -13,12 +13,6 @@ CREATE TABLE IF NOT EXISTS status_relation(
 INSERT OR REPLACE INTO type_compte VALUES (1, \'Publique\'), (2, \'Privé\'), (3, \'Amis seulement\'), (4, \'Anonyme\');
 INSERT OR REPLACE INTO status_relation VALUES (1, \'Ami\'), (2, \'Attente de demande d\'\'ami\'), (3, \'Refusé\'), (4, \'Bloqué\');
 
-CREATE TABLE IF NOT EXISTS grille(
-	id INT PRIMARY KEY,
-	url VARCHAR(100),
-	fichier_local VARCHAR(256) /*Si le fichier a été downloader sur android ou le path sur le serveur.*/
-);
-
 CREATE TABLE IF NOT EXISTS utilisateur(
 	id INT PRIMARY KEY,
 	login VARCHAR(25),
