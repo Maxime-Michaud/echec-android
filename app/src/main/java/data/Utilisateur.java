@@ -7,12 +7,29 @@ import java.util.Map;
  * Contiens les informations d'un joueur
  * Created by Maxime on 4/30/2016.
  */
-public class Utilisateur extends DBModel{
+public class Utilisateur{
     enum TYPE_COMPTE{
         Publique,
         Privé,
         Amis_seulement,
-        Anonyme
+        Anonyme;
+
+        public int toInt()
+        {
+            switch (this)
+            {
+                case Publique:
+                    return 1;
+                case Privé:
+                    return 2;
+                case Amis_seulement:
+                    return 3;
+                case Anonyme:
+                    return 4;
+                default:
+                    return 0;
+            }
+        }
     }
     enum RELATION{
         Ami,
@@ -21,15 +38,21 @@ public class Utilisateur extends DBModel{
         Bloqué
     }
 
-    int id;
-    String username;
-    String nom;
-    String prenom;
-    String email;
-    TYPE_COMPTE type;
-    List<Parties> parties;
-    Map<Utilisateur, RELATION> relations;
-    List<Defi> defisEssaye;
+    private int id;
+    private String username;
+    private String nom;
+    private String prenom;
+    private String email;
+    private TYPE_COMPTE type;
+
+    private List<Parties> parties;
+    private List<Parties> nouvellesParties;
+
+    private Map<Utilisateur, RELATION> relations;
+    private Map<Utilisateur, RELATION> nouvellesRelation;
+
+    private List<Defi> defisEssaye;
+    private List<Defi> nouveauxDefisEssaye;
 
     /**
      * Initialise un utilisateur
