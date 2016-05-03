@@ -6,9 +6,8 @@ import java.util.ArrayList;
  * Created by Nick on 2016-05-01.
  */
 public class Fou {
-    public ArrayList<String> mouvement(int x, int y)
+    public void mouvement(int x, int y, final ArrayList<String> arrayList)
     {
-        ArrayList<String> arrayList = new ArrayList<>();
         //Par en haut à gauche
         int tempX, tempY;
         tempX = x - 1;
@@ -46,6 +45,5 @@ public class Fou {
             tempX += 1;
             tempY += 1;
         }
-        return arrayList;
     }
 }

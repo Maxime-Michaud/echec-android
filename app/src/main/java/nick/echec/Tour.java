@@ -7,9 +7,8 @@ import java.util.ArrayList;
  */
 public class Tour
 {
-    public ArrayList<String> mouvement(int x, int y)
+    public void mouvement(int x, int y,  final ArrayList<String> arrayList)
     {
-        ArrayList<String> arrayList = new ArrayList<>();
         //Par à gauche
         int tempX, tempY;
         tempX = x - 1;
@@ -43,6 +42,5 @@ public class Tour
             arrayList.add(Integer.toString(tempY) +  Integer.toString(tempX) + "H");
             tempY -= 1;
         }
-        return arrayList;
     }
 }

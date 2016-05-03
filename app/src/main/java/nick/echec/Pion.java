@@ -7,9 +7,8 @@ import java.util.ArrayList;
  */
 public class Pion {
 
-    public ArrayList<String> mouvement(int x, int y, boolean premierMove, char couleur)
+    public void mouvement(int x, int y, boolean premierMove, char couleur, final ArrayList<String> arrayList)
     {
-        ArrayList<String> arrayList = new ArrayList<>();
         if(couleur == 'B')
         {
             if (premierMove)
@@ -67,6 +66,5 @@ public class Pion {
                     arrayList.add(Integer.toString(y + 1) + Integer.toString(x + 1) + "A");
             }
         }
-        return arrayList;
     }
 }
