@@ -254,9 +254,9 @@ public class GestionnaireUtilisateurs {
      * @param id id de l'utilisateur
      * @return
      */
-    static Map<Utilisateur,Utilisateur.RELATION> getRelations(int u) {
+    static Map<Utilisateur,Utilisateur.RELATION> getRelations(int id) {
         Map<Utilisateur, Utilisateur.RELATION> rels = new HashMap<>();
-        Cursor c = selectRelations(u);
+        Cursor c = selectRelations(id);
 
         try {
             while (c.moveToNext())

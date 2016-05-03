@@ -166,9 +166,8 @@ public class dbMoteurBDTest {
 
         GestionnaireUtilisateurs.ajouterRelation(u1, u2, Utilisateur.RELATION.Attente_de_demande_dami);
 
-        Assert.assertTrue(u1.getDemandesAmis().contains(u2));
-        Assert.assertTrue(GestionnaireUtilisateurs.getUtilisateur("usr1").getDemandesAmis().contains(u2));
-        Assert.assertFalse(GestionnaireUtilisateurs.getUtilisateur("usr3").getDemandesAmis().contains(u2));
+        Assert.assertTrue(GestionnaireUtilisateurs.getUtilisateur("usr2").getDemandesAmis().contains(u1));
+        Assert.assertFalse(GestionnaireUtilisateurs.getUtilisateur("usr1").getDemandesAmis().contains(u2));
     }
 
     /**
