@@ -42,11 +42,11 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btnEntrainement:
-                //ouvrireDefi();
+                ouvrireDefi();
                 break;
 
             case R.id.btnOption:
-                //ouvrireOption();
+                ouvrireOption();
                 break;
 
             default:
@@ -58,12 +58,14 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             Intent secondeActivite = new Intent(MenuActivity.this, MainActivity.class);
             startActivity(secondeActivite);
     }
-/*
+
     public void ouvrireOption(){
-        setContentView(R.layout.activity_menu_option);
+        Intent secondeActivite = new Intent(MenuActivity.this, OptionActivity.class);
+        startActivity(secondeActivite);
     }
 
     public void ouvrireDefi(){
-        setContentView(R.layout.activity_menu_defi);
-    }*/
+        Intent secondeActivite = new Intent(MenuActivity.this, MainActivity.class);
+        startActivity(secondeActivite);
+    }
 }
