@@ -1,5 +1,6 @@
 package nick.echec;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lstMoveListener = new ArrayList<>();
         setContentView(R.layout.activity_main);
         layout = (RelativeLayout) findViewById(R.id.relative);
+        Intent intent = getIntent();
         r = getResources();
         mouvDispos = new ArrayList<>();
         mouvCauseMort = new ArrayList<>();
