@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS relation(
 	CONSTRAINT PK_relation PRIMARY KEY (user_1, user_2)
 );
 
-CREATE TABLE IF NOT EXISTS defi(
+	CREATE TABLE IF NOT EXISTS defi(
 	id INT PRIMARY KEY,
 	nom VARCHAR(50),
 	nb_tours_max INT, 	/*0 = on s\'en sacre*/
