@@ -17,7 +17,7 @@ public class Defi {
      * Initialise un défi avec toutes ses propriétés
      * @param id
      * @param nom
-     * @param toursMax Nombres de tours maximum pour réussir e défi. 0 = pas de maximum
+     * @param toursMax Nombres de tours maximum pour réussir le défi. 0 = pas de maximum
      * @param score
      * @param difficulte
      * @param grille
