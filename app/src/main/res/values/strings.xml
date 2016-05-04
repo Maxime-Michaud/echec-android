@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS defi(
 	score FLOAT,		/*Score donné par les utilisateur*/
 	difficulte FLOAT,	/*Score donné par les utilisateur*/
 	nombre_evaluations INT,
-	grille VARCHAR(500),
+	grille VARCHAR(384),	/*64 pieces * 6 char/piece. */
 	updated INT,		/*0 = pas updaté, 1 = updaté. Les rangées updatés doivent etre push sur le serveur*/
 	FOREIGN KEY (grille) REFERENCES grille(id)
 );
