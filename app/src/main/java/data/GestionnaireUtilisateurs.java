@@ -197,7 +197,7 @@ public class GestionnaireUtilisateurs {
      * False si le username est déjà pris, true sinon
      * @throws DbNonInitialiseeException Lorsque le gestionnaire n'a pas été initialisé
      */
-    public static boolean ajouterUtilisateur(String username, String password){
+    public static boolean ajouter(String username, String password){
         if (!internetAjouterUtilisateur(username, password))
             return false;
 

@@ -32,7 +32,7 @@ public class TestsDBUtilisateur {
         final String password = "1234",
                 username = "Abcd";
 
-        GestionnaireUtilisateurs.ajouterUtilisateur(username, password);
+        GestionnaireUtilisateurs.ajouter(username, password);
         Assert.assertTrue(GestionnaireUtilisateurs.authentifier(username, password));
     }
 
@@ -44,7 +44,7 @@ public class TestsDBUtilisateur {
         final String password = "1234",
                 username = "Abcd";
 
-        GestionnaireUtilisateurs.ajouterUtilisateur(username, password);
+        GestionnaireUtilisateurs.ajouter(username, password);
         Assert.assertFalse(GestionnaireUtilisateurs.authentifier(username, "NOT " + password));
     }
 
@@ -63,7 +63,7 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void AjouterUtilisateur(){
-        Assert.assertTrue(GestionnaireUtilisateurs.ajouterUtilisateur("Abcd", "1234"));
+        Assert.assertTrue(GestionnaireUtilisateurs.ajouter("Abcd", "1234"));
     }
 
     /**
@@ -74,8 +74,8 @@ public class TestsDBUtilisateur {
         final String password = "1234",
                 username = "Abcd";
 
-        GestionnaireUtilisateurs.ajouterUtilisateur(username, password);
-        Assert.assertFalse(GestionnaireUtilisateurs.ajouterUtilisateur(username, "NOT " + password));
+        GestionnaireUtilisateurs.ajouter(username, password);
+        Assert.assertFalse(GestionnaireUtilisateurs.ajouter(username, "NOT " + password));
     }
 
     /**
@@ -93,7 +93,7 @@ public class TestsDBUtilisateur {
         MoteurBD.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
         moteurBD = MoteurBD.getMoteurBD();
 
-        GestionnaireUtilisateurs.ajouterUtilisateur(username, password);
+        GestionnaireUtilisateurs.ajouter(username, password);
         Assert.assertTrue(GestionnaireUtilisateurs.authentifier(username, password));
         moteurBD.dropAll();
 
@@ -108,7 +108,7 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void UpdateUser(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("Username", "Password");
+        GestionnaireUtilisateurs.ajouter("Username", "Password");
         Utilisateur u = GestionnaireUtilisateurs.getUtilisateur("Username");
 
         u.setEmail("email@email.email");
@@ -122,8 +122,8 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void UpdateSingleUser(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
+        GestionnaireUtilisateurs.ajouter("usr1", "");
+        GestionnaireUtilisateurs.ajouter("usr2", "");
 
         Utilisateur u = GestionnaireUtilisateurs.getUtilisateur("usr1");
         u.setEmail("email@email.email");
@@ -138,9 +138,9 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void amis(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+        GestionnaireUtilisateurs.ajouter("usr1", "");
+        GestionnaireUtilisateurs.ajouter("usr2", "");
+        GestionnaireUtilisateurs.ajouter("usr3", "");
 
         Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
                     u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
@@ -158,9 +158,9 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void demandes(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+        GestionnaireUtilisateurs.ajouter("usr1", "");
+        GestionnaireUtilisateurs.ajouter("usr2", "");
+        GestionnaireUtilisateurs.ajouter("usr3", "");
 
         Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
                     u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
@@ -176,9 +176,9 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void amiRefuse(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+        GestionnaireUtilisateurs.ajouter("usr1", "");
+        GestionnaireUtilisateurs.ajouter("usr2", "");
+        GestionnaireUtilisateurs.ajouter("usr3", "");
 
         Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
                 u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
@@ -195,9 +195,9 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void bloque(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+        GestionnaireUtilisateurs.ajouter("usr1", "");
+        GestionnaireUtilisateurs.ajouter("usr2", "");
+        GestionnaireUtilisateurs.ajouter("usr3", "");
 
         Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
                 u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");

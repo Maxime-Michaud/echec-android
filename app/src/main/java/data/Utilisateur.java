@@ -89,8 +89,7 @@ public class Utilisateur{
 
     private Map<Utilisateur, RELATION> relations;
 
-    private List<Defi> defisEssaye;
-    private List<Defi> nouveauxDefisEssaye;
+    private List<ResultatDefi> defis;
 
     /**
      * Initialise un utilisateur
@@ -110,7 +109,7 @@ public class Utilisateur{
         this.type = intToType(type);
 
         parties = null;
-        defisEssaye = null;
+        defis = null;
         relations = null;
     }
 
@@ -231,7 +230,7 @@ public class Utilisateur{
      * Obtiens la liste des défis essayés par l'utilisateur
      * @return
      */
-    public List<Defi> getDefisEssaye() {
+    public List<ResultatDefi> getDefisEssaye() {
         //TODO
         throw new UnsupportedOperationException("");
     }
