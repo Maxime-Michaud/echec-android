@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.annimon.stream.Stream;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -28,6 +29,19 @@ public class GestionnaireDefi {
                 Stream.of(grille)
                         .filter(s -> s.length() > 0)
                         .allMatch(s -> Pattern.matches("[PTFCQK][NB].[0-7][0-7]", s));
+    }
+
+
+    /**
+     * Sélectionne tous les résultats des défis d'un utilisateur
+     * @param u Utilisateur duquel on cherche les résultats
+     * @return Curseur contenant les résultats
+     */
+    private static Cursor selectResultat(Utilisateur u) {
+        SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+        return db.rawQuery("SELECT id, nb_tour, reussi, defi " +
+                            "FROM defi_utilisateurs " +
+                            "WHERE utilisateur = ?", new String[]{Integer.toString(u.getId())});
     }
 
     /**
@@ -144,6 +158,17 @@ public class GestionnaireDefi {
         }
     }
 
+    private static Defi get(int anInt) {
+        Cursor c = selectDefi(anInt);
+
+        try {
+            return c.moveToFirst() ? new Defi(c.getInt(0), c.getString(1), c.getInt(2), c.getFloat(3), c.getFloat(4), c.getString(5), c.getInt(6))
+                    :null;
+        }
+        finally {
+            c.close();
+        }
+    }
     /**
      * Sélectionne le défi dans la bd
      * @param nom
@@ -168,14 +193,29 @@ public class GestionnaireDefi {
      * @return
      */
     static List<ResultatDefi> getResultats(Utilisateur u){
-        throw new UnsupportedOperationException();
+        Cursor c = selectResultat(u);
+
+        ArrayList<ResultatDefi> resultats = new ArrayList<>();
+
+        try{
+            while (c.moveToNext())
+            {
+                /* id, nb_tour, reussi, defi*/
+                resultats.add(new ResultatDefi(get(c.getInt(3)), c.getInt(1), c.getInt(2) == 1));
+            }
+        }
+        finally {
+            c.close();
+        }
+        return resultats
     }
+
 
     /**
      * Ajoute une tentative de défi a l'utilisateur
      */
     static boolean ajouterResultat(Utilisateur u, ResultatDefi r)
     {
-        insertResultat
+        return insertResultat(u.getId(), r.getDefi().getId(), r.getNbTour(), r.isReussi());
     }
 }
