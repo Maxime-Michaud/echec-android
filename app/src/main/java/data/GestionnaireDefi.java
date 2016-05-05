@@ -39,9 +39,9 @@ public class GestionnaireDefi {
      */
     private static Cursor selectResultat(Utilisateur u) {
         SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
-        return db.rawQuery("SELECT id, nb_tour, reussi, defi " +
-                            "FROM defi_utilisateurs " +
-                            "WHERE utilisateur = ?", new String[]{Integer.toString(u.getId())});
+        return db.rawQuery("SELECT du.id, du.nb_tour, du.reussi, d.nom " +
+                            "FROM defi_utilisateurs du INNER JOIN defi d ON d.id = du.defi " +
+                            "WHERE du.utilisateur = ?", new String[]{Integer.toString(u.getId())});
     }
 
     /**
@@ -61,7 +61,7 @@ public class GestionnaireDefi {
         cv.put("grille", grille);
 
         return insertDefiInternet(nom, nbTours, grille) &&
-                db.insert("defi", null, cv) != -1;
+                db.insertOrThrow("defi", null, cv) != -1;
     }
 
     private static int getDernierID() {
@@ -158,17 +158,6 @@ public class GestionnaireDefi {
         }
     }
 
-    private static Defi get(int anInt) {
-        Cursor c = selectDefi(anInt);
-
-        try {
-            return c.moveToFirst() ? new Defi(c.getInt(0), c.getString(1), c.getInt(2), c.getFloat(3), c.getFloat(4), c.getString(5), c.getInt(6))
-                    :null;
-        }
-        finally {
-            c.close();
-        }
-    }
     /**
      * Sélectionne le défi dans la bd
      * @param nom
@@ -200,16 +189,14 @@ public class GestionnaireDefi {
         try{
             while (c.moveToNext())
             {
-                /* id, nb_tour, reussi, defi*/
-                resultats.add(new ResultatDefi(get(c.getInt(3)), c.getInt(1), c.getInt(2) == 1));
+                resultats.add(new ResultatDefi(get(c.getString(3)), c.getInt(1), c.getInt(2) == 1));
             }
         }
         finally {
             c.close();
         }
-        return resultats
+        return resultats;
     }
-
 
     /**
      * Ajoute une tentative de défi a l'utilisateur

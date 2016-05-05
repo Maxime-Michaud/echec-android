@@ -231,8 +231,7 @@ public class Utilisateur{
      * @return
      */
     public List<ResultatDefi> getDefisEssaye() {
-        //TODO
-        throw new UnsupportedOperationException("");
+        return Collections.unmodifiableList(GestionnaireDefi.getResultats(this));
     }
 
     /**
