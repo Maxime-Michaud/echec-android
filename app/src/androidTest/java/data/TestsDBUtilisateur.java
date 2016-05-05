@@ -21,6 +21,7 @@ public class TestsDBUtilisateur {
     @After
     public void tearDown() throws Exception {
         MoteurBD.getMoteurBD().dropAll();
+        GestionnaireUtilisateurs.effacerEnregistrer();
     }
 
     /**
@@ -31,7 +32,7 @@ public class TestsDBUtilisateur {
         final String password = "1234",
                 username = "Abcd";
 
-        GestionnaireUtilisateurs.ajouterUtilisateur(username, password);
+        GestionnaireUtilisateurs.ajouter(username, password);
         Assert.assertTrue(GestionnaireUtilisateurs.authentifier(username, password));
     }
 
@@ -43,7 +44,7 @@ public class TestsDBUtilisateur {
         final String password = "1234",
                 username = "Abcd";
 
-        GestionnaireUtilisateurs.ajouterUtilisateur(username, password);
+        GestionnaireUtilisateurs.ajouter(username, password);
         Assert.assertFalse(GestionnaireUtilisateurs.authentifier(username, "NOT " + password));
     }
 
@@ -62,7 +63,7 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void AjouterUtilisateur(){
-        Assert.assertTrue(GestionnaireUtilisateurs.ajouterUtilisateur("Abcd", "1234"));
+        Assert.assertTrue(GestionnaireUtilisateurs.ajouter("Abcd", "1234"));
     }
 
     /**
@@ -73,8 +74,8 @@ public class TestsDBUtilisateur {
         final String password = "1234",
                 username = "Abcd";
 
-        GestionnaireUtilisateurs.ajouterUtilisateur(username, password);
-        Assert.assertFalse(GestionnaireUtilisateurs.ajouterUtilisateur(username, "NOT " + password));
+        GestionnaireUtilisateurs.ajouter(username, password);
+        Assert.assertFalse(GestionnaireUtilisateurs.ajouter(username, "NOT " + password));
     }
 
     /**
@@ -92,7 +93,7 @@ public class TestsDBUtilisateur {
         MoteurBD.init(InstrumentationRegistry.getInstrumentation().getTargetContext());
         moteurBD = MoteurBD.getMoteurBD();
 
-        GestionnaireUtilisateurs.ajouterUtilisateur(username, password);
+        GestionnaireUtilisateurs.ajouter(username, password);
         Assert.assertTrue(GestionnaireUtilisateurs.authentifier(username, password));
         moteurBD.dropAll();
 
@@ -107,13 +108,13 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void UpdateUser(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("Username", "Password");
-        Utilisateur u = GestionnaireUtilisateurs.getUtilisateur("Username");
+        GestionnaireUtilisateurs.ajouter("Username", "Password");
+        Utilisateur u = GestionnaireUtilisateurs.get("Username");
 
         u.setEmail("email@email.email");
 
         Assert.assertTrue(GestionnaireUtilisateurs.update(u));
-        Assert.assertEquals(u, GestionnaireUtilisateurs.getUtilisateur("Username"));
+        Assert.assertEquals(u, GestionnaireUtilisateurs.get("Username"));
     }
 
     /**
@@ -121,15 +122,15 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void UpdateSingleUser(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
+        GestionnaireUtilisateurs.ajouter("usr1", "");
+        GestionnaireUtilisateurs.ajouter("usr2", "");
 
-        Utilisateur u = GestionnaireUtilisateurs.getUtilisateur("usr1");
+        Utilisateur u = GestionnaireUtilisateurs.get("usr1");
         u.setEmail("email@email.email");
 
         GestionnaireUtilisateurs.update(u);
-        Assert.assertNotEquals(GestionnaireUtilisateurs.getUtilisateur("usr1").getEmail(),
-                GestionnaireUtilisateurs.getUtilisateur("usr2").getEmail());
+        Assert.assertNotEquals(GestionnaireUtilisateurs.get("usr1").getEmail(),
+                GestionnaireUtilisateurs.get("usr2").getEmail());
     }
 
     /**
@@ -137,19 +138,19 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void amis(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+        GestionnaireUtilisateurs.ajouter("usr1", "");
+        GestionnaireUtilisateurs.ajouter("usr2", "");
+        GestionnaireUtilisateurs.ajouter("usr3", "");
 
-        Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
-                    u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
+        Utilisateur u1 = GestionnaireUtilisateurs.get("usr1"),
+                    u2 = GestionnaireUtilisateurs.get("usr2");
 
         GestionnaireUtilisateurs.ajouterRelation(u1, u2, Utilisateur.RELATION.Ami);
 
         Assert.assertTrue(u1.getAmis().contains(u2));
         Assert.assertTrue(u2.getAmis().contains(u1));
-        Assert.assertTrue(GestionnaireUtilisateurs.getUtilisateur("usr2").getAmis().contains(u1));
-        Assert.assertFalse(GestionnaireUtilisateurs.getUtilisateur("usr3").getAmis().contains(u2));
+        Assert.assertTrue(GestionnaireUtilisateurs.get("usr2").getAmis().contains(u1));
+        Assert.assertFalse(GestionnaireUtilisateurs.get("usr3").getAmis().contains(u2));
     }
 
     /**
@@ -157,17 +158,17 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void demandes(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+        GestionnaireUtilisateurs.ajouter("usr1", "");
+        GestionnaireUtilisateurs.ajouter("usr2", "");
+        GestionnaireUtilisateurs.ajouter("usr3", "");
 
-        Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
-                    u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
+        Utilisateur u1 = GestionnaireUtilisateurs.get("usr1"),
+                    u2 = GestionnaireUtilisateurs.get("usr2");
 
         GestionnaireUtilisateurs.ajouterRelation(u1, u2, Utilisateur.RELATION.Attente_de_demande_dami);
 
-        Assert.assertTrue(GestionnaireUtilisateurs.getUtilisateur("usr2").getDemandesAmis().contains(u1));
-        Assert.assertFalse(GestionnaireUtilisateurs.getUtilisateur("usr1").getDemandesAmis().contains(u2));
+        Assert.assertTrue(GestionnaireUtilisateurs.get("usr2").getDemandesAmis().contains(u1));
+        Assert.assertFalse(GestionnaireUtilisateurs.get("usr1").getDemandesAmis().contains(u2));
     }
 
     /**
@@ -175,18 +176,18 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void amiRefuse(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+        GestionnaireUtilisateurs.ajouter("usr1", "");
+        GestionnaireUtilisateurs.ajouter("usr2", "");
+        GestionnaireUtilisateurs.ajouter("usr3", "");
 
-        Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
-                u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
+        Utilisateur u1 = GestionnaireUtilisateurs.get("usr1"),
+                u2 = GestionnaireUtilisateurs.get("usr2");
 
         GestionnaireUtilisateurs.ajouterRelation(u1, u2, Utilisateur.RELATION.Refusé);
 
         Assert.assertTrue(u1.getDemandesRefuse().contains(u2));
-        Assert.assertTrue(GestionnaireUtilisateurs.getUtilisateur("usr1").getDemandesRefuse().contains(u2));
-        Assert.assertFalse(GestionnaireUtilisateurs.getUtilisateur("usr3").getDemandesRefuse().contains(u2));
+        Assert.assertTrue(GestionnaireUtilisateurs.get("usr1").getDemandesRefuse().contains(u2));
+        Assert.assertFalse(GestionnaireUtilisateurs.get("usr3").getDemandesRefuse().contains(u2));
     }
 
     /**
@@ -194,18 +195,18 @@ public class TestsDBUtilisateur {
      */
     @Test
     public void bloque(){
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr1", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr2", "");
-        GestionnaireUtilisateurs.ajouterUtilisateur("usr3", "");
+        GestionnaireUtilisateurs.ajouter("usr1", "");
+        GestionnaireUtilisateurs.ajouter("usr2", "");
+        GestionnaireUtilisateurs.ajouter("usr3", "");
 
-        Utilisateur u1 = GestionnaireUtilisateurs.getUtilisateur("usr1"),
-                u2 = GestionnaireUtilisateurs.getUtilisateur("usr2");
+        Utilisateur u1 = GestionnaireUtilisateurs.get("usr1"),
+                u2 = GestionnaireUtilisateurs.get("usr2");
 
         GestionnaireUtilisateurs.ajouterRelation(u1, u2, Utilisateur.RELATION.Bloqué);
 
         Assert.assertTrue(u1.getBloques().contains(u2));
-        Assert.assertTrue(GestionnaireUtilisateurs.getUtilisateur("usr1").getBloques().contains(u2));
-        Assert.assertFalse(GestionnaireUtilisateurs.getUtilisateur("usr3").getBloques().contains(u2));
+        Assert.assertTrue(GestionnaireUtilisateurs.get("usr1").getBloques().contains(u2));
+        Assert.assertFalse(GestionnaireUtilisateurs.get("usr3").getBloques().contains(u2));
     }
 
 

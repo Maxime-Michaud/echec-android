@@ -89,8 +89,7 @@ public class Utilisateur{
 
     private Map<Utilisateur, RELATION> relations;
 
-    private List<Defi> defisEssaye;
-    private List<Defi> nouveauxDefisEssaye;
+    private List<ResultatDefi> defis;
 
     /**
      * Initialise un utilisateur
@@ -110,7 +109,7 @@ public class Utilisateur{
         this.type = intToType(type);
 
         parties = null;
-        defisEssaye = null;
+        defis = null;
         relations = null;
     }
 
@@ -231,7 +230,7 @@ public class Utilisateur{
      * Obtiens la liste des défis essayés par l'utilisateur
      * @return
      */
-    public List<Defi> getDefisEssaye() {
+    public List<ResultatDefi> getDefisEssaye() {
         //TODO
         throw new UnsupportedOperationException("");
     }
@@ -292,6 +291,29 @@ public class Utilisateur{
     @Override
     public int hashCode() {
         return getId();
+    }
+
+    /**
+     * Ajoute le résultat d'un défi a la bd
+     * @param defi défi effectué par l'utilisateur
+     * @param nbTours nombre de tours
+     * @param reussi si l'utilisateur a réussi
+     * @return
+     */
+    public boolean ajouterResultat(Defi defi, int nbTours, boolean reussi)
+    {
+        return GestionnaireDefi.ajouterResultat(this, new ResultatDefi(defi, nbTours, reussi));
+    }
+
+    /**
+     * Ajoute une relation a un utilisateur
+     * @param u Utilisateur avec lequel on ajoute une relation
+     * @param r type de relation a ajoutée a l'utilisateur
+     * @return
+     */
+    public boolean ajouterRelation(Utilisateur u, RELATION r)
+    {
+        return GestionnaireUtilisateurs.ajouterRelation(this, u, r);
     }
 
     /**
