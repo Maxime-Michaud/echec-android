@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Toutes les pièces et leur position; la lettre du nom de la pièce (Pion, Tour, Fou, Roi, (Q)Reine, (K)Roi), le no de la pièce, sa position Y, sa position X (c inversé mais jmen caliss je continue sur mon brainfart)
     String pieces[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
             "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
-    AI newAI = new AI('N');
+    AI2 newAI = new AI2('N');
     //Les controlleurs de pièces
     Pion pion = new Pion();
     Fou fou = new Fou();
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Sur le clique de n'importe quel case
+     * Sur le clique de n'importe quel case, va détecter quel type de pièce est sur la case et donner les mouvement possible
      * @param v
      */
     @Override

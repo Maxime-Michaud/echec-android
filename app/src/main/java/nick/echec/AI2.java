@@ -1,13 +1,15 @@
 package nick.echec;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 /**
  * Created by Nick on 2016-05-03.
  */
-public class AI {
+public class AI2 {
     Pion pion = new Pion();
     Fou fou = new Fou();
     Tour tour = new Tour();
@@ -18,7 +20,7 @@ public class AI {
     ArrayList<String> toRemove;                             //Les mouvement à enlever de l'array
 
 
-    public AI(char couleurAI)
+    public AI2(char couleurAI)
     {
         couleur = couleurAI;
     }
@@ -27,41 +29,134 @@ public class AI {
     {
         boolean ok = false;
         int nombreAleatoire = -1;
-        while(!ok)
+        ArrayList<String> piecesCouleurs = new ArrayList<>();
+        ArrayList<String> piecesCouleursEnnemi = new ArrayList<>();
+        for(String s : pieces)
         {
-            StringBuilder zText = new StringBuilder ();
-            do
+            if(s.charAt(1) == couleur)
             {
-                pionEnMouvement.delete(0, pionEnMouvement.capacity());
-                Random rand = new Random();
-                nombreAleatoire = rand.nextInt((pieces.length - 1) - 0 + 1);
-                pionEnMouvement.append(pieces[nombreAleatoire]);
-            }while(pionEnMouvement.toString().charAt(1) != couleur);
-
-            ajouterMouvDispo(pionEnMouvement.toString(), pionNoir, pionBlanc, mouvDispos);
-            validerLesCasesDispoPourMouvement(pieces, mouvDispos,mouvCauseMort, pionEnMouvement.toString());
-            if (mouvDispos.size() > 0 && pionEnMouvement.toString().charAt(1) == couleur)
-                ok = true;
+                piecesCouleurs.add(s);
+            }
             else
             {
-                pionEnMouvement.delete(0, pionEnMouvement.capacity());
-                mouvDispos.clear();
+                piecesCouleursEnnemi.add(s);
+            }
+        }
+        ArrayList<Integer> pointsMouvCauseMort = new ArrayList<>();
+        ArrayList<Integer> pointsMouvVert = new ArrayList<>();
+        int i = 0;
+        ArrayList<String> meillMouvChaquePiece = new ArrayList<>();
+        for(String s : piecesCouleurs)
+        {
+            pionEnMouvement.append(pieces[i]);
+            ajouterMouvDispo(pionEnMouvement.toString(), pionNoir, pionBlanc, mouvDispos);
+            validerLesCasesDispoPourMouvement(pieces, mouvDispos, mouvCauseMort, pionEnMouvement.toString());
+            for (String move:mouvCauseMort)
+            {
+                int pointPieceQuiBouge = getPointagePieceQuiBouge(s);
+                String pieceMorte = "";
+                for(String pionMort : piecesCouleursEnnemi)
+                {
+                    if(pionMort.charAt(3) == move.charAt(0) && pionMort.charAt(4) == move.charAt(1))
+                    {
+                        pieceMorte = pionMort;
+                        int pointPionMange = getPointagePieceQuiBouge(pieceMorte);
+                        pointsMouvCauseMort.add(pointPionMange*2 - pointPieceQuiBouge);
+                        break;
+                    }
+
+                }
+
+            }
+            for (String move:mouvDispos)
+            {
+                int pointPieceQuiBouge = 1;
+                String pieceMorte = "";
+                String newPieces[] = pieces;
+                List<String> list = new ArrayList<String>(Arrays.asList(pieces));
+                list.removeAll(Arrays.asList(s));
+                newPieces = list.toArray(new String[list.size()]);
+                newPieces = list.toArray(pieces);
+                ArrayList<String> piecesCouleursEnnemi2 = new ArrayList<>();
+                for(String s3 : newPieces)
+                {
+                    if(s3.charAt(1) == couleur)
+                    {
+                        piecesCouleursEnnemi2.add(s3);
+                    }
+                }
+                for(String pionBouge : piecesCouleursEnnemi2)
+                {
+                    String pionEnMouvement2 = pionBouge;
+                    ArrayList<String>  mouvDispos2 = new ArrayList<>();
+                    ArrayList<String>  mouvCauseMort2 = new ArrayList<>();
+                    ajouterMouvDispo(pionEnMouvement2, pionNoir, pionBlanc, mouvDispos2);
+                    validerLesCasesDispoPourMouvement(newPieces, mouvDispos2, mouvCauseMort2, pionEnMouvement2);
+                    for(String mort : mouvCauseMort2)
+                    {
+                        for (String pieceAi: piecesCouleurs)
+                        {
+                            if(pieceAi.charAt(3) == mort.charAt(0) && pieceAi.charAt(4) == mort.charAt(1))
+                            {
+                                pointPieceQuiBouge -= 2 *getPointagePieceQuiBouge(pieceAi);
+                            }
+                        }
+
+                    }
+
+                }
+                pointsMouvVert.add(pointPieceQuiBouge);
             }
 
-        }
-        Random rand = new Random();
-        //Priorise un mouvement qui cause la mort d'une pièce
-        if(!mouvCauseMort.isEmpty())
-        {
-            nombreAleatoire = rand.nextInt((mouvCauseMort.size() - 1) - 0 + 1);
-            return mouvCauseMort.get(nombreAleatoire);
-        }
-        else
-        {
-            nombreAleatoire = rand.nextInt((mouvDispos.size() - 1) - 0 + 1);
-            return mouvDispos.get(nombreAleatoire);
+
+
+            pionEnMouvement.delete(0, pionEnMouvement.capacity());
+            mouvDispos.clear();
+            i++;
+
+            boolean mouvDispo = false;
+            int meilleurScore = -1;
+            int meilleurScorePos = -1;
+            int j = 0;
+            for(String pieceTemp : mouvCauseMort)
+            {
+                if(pointsMouvCauseMort.get(j) > meilleurScore)
+                {
+                    meilleurScorePos = j;
+                    meilleurScore = pointsMouvCauseMort.get(j);
+                }
+                j++;
+            }
+            j = 0;
+            for(String pieceTemp : mouvDispos)
+            {
+                if(pointsMouvVert.get(j) > meilleurScore)
+                {
+                    meilleurScorePos = j;
+                    meilleurScore = pointsMouvCauseMort.get(j);
+                    mouvDispo = true;
+                }
+                j++;
+            }
+            if(!mouvDispos.isEmpty() || !mouvCauseMort.isEmpty())
+            {
+                if(mouvDispo)
+                {
+                    meillMouvChaquePiece.add(mouvDispos.get(meilleurScorePos));
+                }
+                else
+                {
+                    meillMouvChaquePiece.add(mouvCauseMort.get(meilleurScorePos));
+                }
+            }
+            piecesCouleurs = new ArrayList<>();
+            piecesCouleursEnnemi = new ArrayList<>();
+            pointsMouvCauseMort = new ArrayList<>();
+            pointsMouvVert = new ArrayList<>();
         }
 
+
+        return "test";
     }
 
     public ArrayList<String> ajouterMouvDispo(final String s,final boolean pionNoir[],final boolean pionBlanc[],final ArrayList<String> mouvDispos) {
@@ -237,6 +332,27 @@ public class AI {
                 posX = 8;
             posX += aSupprimerX;
             posY += aSupprimerY;
+        }
+    }
+    public int getPointagePieceQuiBouge(String s)
+    {
+        switch (s.charAt(0))
+        {
+            case 'P':
+                return 1;
+            case 'C':
+                return 2;
+            case 'F':
+                return 3;
+            case 'T':
+                return 4;
+            case 'Q':
+                return 8;
+            case 'K':
+                return 16;
+            default:
+                return 0;
+
         }
     }
 }
