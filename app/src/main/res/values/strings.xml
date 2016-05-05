@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">Echec</string>
+    <string name="b_retour">Retour</string>
+    <string name="b_jouer">Jouer</string>
+    <string name="b_defi">Défi</string>
+    <string name="b_option">Option</string>
+    <string name="o_opt1">Niveau de difficulté:</string>
+    <string name="d_type">Type de défi:</string>
+    <string name="d_choix">Choix du défi:</string>
+    <string name="d_reussi">Réussi:</string>
+    <string name="d_diff">Difficulté:</string>
     <string name="SQL">CREATE TABLE IF NOT EXISTS type_compte(
 	id INT PRIMARY KEY,
 	nom VARCHAR(25)
@@ -12,12 +21,6 @@ CREATE TABLE IF NOT EXISTS status_relation(
 
 INSERT OR REPLACE INTO type_compte VALUES (1, \'Publique\'), (2, \'Privé\'), (3, \'Amis seulement\'), (4, \'Anonyme\');
 INSERT OR REPLACE INTO status_relation VALUES (1, \'Ami\'), (2, \'Attente de demande d\'\'ami\'), (3, \'Refusé\'), (4, \'Bloqué\');
-
-CREATE TABLE IF NOT EXISTS grille(
-	id INT PRIMARY KEY,
-	url VARCHAR(100),
-	fichier_local VARCHAR(256) /*Si le fichier a été downloader sur android ou le path sur le serveur.*/
-);
 
 CREATE TABLE IF NOT EXISTS utilisateur(
 	id INT PRIMARY KEY,
@@ -39,15 +42,26 @@ CREATE TABLE IF NOT EXISTS relation(
 	CONSTRAINT PK_relation PRIMARY KEY (user_1, user_2)
 );
 
-CREATE TABLE IF NOT EXISTS defi(
+	CREATE TABLE IF NOT EXISTS defi(
 	id INT PRIMARY KEY,
 	nom VARCHAR(50),
 	nb_tours_max INT, 	/*0 = on s\'en sacre*/
 	score FLOAT,		/*Score donné par les utilisateur*/
 	difficulte FLOAT,	/*Score donné par les utilisateur*/
-	grille INT,
+	nombre_evaluations INT,
+	grille VARCHAR(384),	/*64 pieces * 6 char/piece. */
 	updated INT,		/*0 = pas updaté, 1 = updaté. Les rangées updatés doivent etre push sur le serveur*/
 	FOREIGN KEY (grille) REFERENCES grille(id)
+);
+
+CREATE TABLE IF NOT EXISTS defi_utilisateurs(
+	id INT PRIMARY KEY,
+	nb_tour INT,
+	reussi INT, /*SQLite supporte pas les bool, 1 = reussi 0 = pas réussi*/
+	utilisateur INT,
+	defi INT,
+	FOREIGN KEY (utilisateur) REFERENCES utilisateur(id),
+	FOREIGN KEY (defi) REFERENCES defi(id)
 );
 
 CREATE TABLE IF NOT EXISTS partie(

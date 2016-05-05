@@ -17,7 +17,9 @@ public class AI2 {
     Cheval cheval = new Cheval();
     Roi roi = new Roi();
     char couleur;
-    ArrayList<String> toRemove;                             //Les mouvement à enlever de l'array
+    ArrayList<String> toRemove;     //Les mouvement à enlever de l'array
+    ArrayList<String> nomPieceMeilleurMouv = new ArrayList<>();
+    ArrayList<Integer> scoreMeilleurMove = new ArrayList<>();
 
 
     public AI2(char couleurAI)
@@ -73,10 +75,12 @@ public class AI2 {
                 int pointPieceQuiBouge = 1;
                 String pieceMorte = "";
                 String newPieces[] = pieces;
-                List<String> list = new ArrayList<String>(Arrays.asList(pieces));
+
+                List<String> list = new ArrayList<String>(Arrays.asList(newPieces));
                 list.removeAll(Arrays.asList(s));
                 newPieces = list.toArray(new String[list.size()]);
-                newPieces = list.toArray(pieces);
+                newPieces = list.toArray(newPieces);
+
                 ArrayList<String> piecesCouleursEnnemi2 = new ArrayList<>();
                 for(String s3 : newPieces)
                 {
@@ -111,7 +115,7 @@ public class AI2 {
 
 
             pionEnMouvement.delete(0, pionEnMouvement.capacity());
-            mouvDispos.clear();
+            //mouvDispos.clear();
             i++;
 
             boolean mouvDispo = false;
@@ -133,7 +137,7 @@ public class AI2 {
                 if(pointsMouvVert.get(j) > meilleurScore)
                 {
                     meilleurScorePos = j;
-                    meilleurScore = pointsMouvCauseMort.get(j);
+                    meilleurScore = pointsMouvVert.get(j);
                     mouvDispo = true;
                 }
                 j++;
@@ -143,10 +147,13 @@ public class AI2 {
                 if(mouvDispo)
                 {
                     meillMouvChaquePiece.add(mouvDispos.get(meilleurScorePos));
+                    nomPieceMeilleurMouv.add(s);
+                    scoreMeilleurMove.add(meilleurScore);
                 }
                 else
                 {
                     meillMouvChaquePiece.add(mouvCauseMort.get(meilleurScorePos));
+                    nomPieceMeilleurMouv.add(s);
                 }
             }
             piecesCouleurs = new ArrayList<>();
@@ -155,8 +162,24 @@ public class AI2 {
             pointsMouvVert = new ArrayList<>();
         }
 
+        int o = 0;
+        int bestScore =-200;
+        int bestPos = -1;
+        String meilleurPiece = "";
+        for(String s :meillMouvChaquePiece)
+        {
+            if(scoreMeilleurMove.get(o) > bestScore)
+            {
+                bestPos = o;
+                bestScore = scoreMeilleurMove.get(o);
+                meilleurPiece = nomPieceMeilleurMouv.get(o);
+            }
+            o++;
+        }
+        pionEnMouvement.delete(0,pionEnMouvement.capacity());
+        pionEnMouvement.append(meilleurPiece);
 
-        return "test";
+        return meillMouvChaquePiece.get(bestPos);
     }
 
     public ArrayList<String> ajouterMouvDispo(final String s,final boolean pionNoir[],final boolean pionBlanc[],final ArrayList<String> mouvDispos) {

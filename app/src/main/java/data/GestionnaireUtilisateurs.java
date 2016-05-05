@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.annimon.stream.Stream;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -98,6 +100,7 @@ public class GestionnaireUtilisateurs {
      */
     private static Cursor selectUtilisateur(String username) {
         SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+
         //TODO devrais getter sur internet si possible
         if (db == null)
             throw new DbNonInitialiseeException();
@@ -194,7 +197,7 @@ public class GestionnaireUtilisateurs {
      * False si le username est déjà pris, true sinon
      * @throws DbNonInitialiseeException Lorsque le gestionnaire n'a pas été initialisé
      */
-    public static boolean ajouterUtilisateur(String username, String password){
+    public static boolean ajouter(String username, String password){
         if (!internetAjouterUtilisateur(username, password))
             return false;
 
@@ -235,13 +238,33 @@ public class GestionnaireUtilisateurs {
         return updateUtilisateur(u.getId(), cv);
     }
 
-    public static Utilisateur getUtilisateur(String login)
+    /**
+     * Obtiens l'utilisateur ayant le username donné
+     * @param login
+     * @return
+     */
+    public static Utilisateur get(String login)
     {
+        Utilisateur u = Stream.of(users).filter(usr -> usr.getUsername().equals(login)).findFirst().orElse(null);
+
+        if (u != null)
+            return u;
+
         Cursor c = selectUtilisateur(login);
-        return c.moveToFirst() ? new Utilisateur(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getInt(5)) : null;
+        if(c.moveToFirst())
+           u = new Utilisateur(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getInt(5));
+
+        users.add(u);
+        return u;
     }
 
-
+    /**
+     * Ajoute une relation a l'utilisateur
+     * @param u1
+     * @param u2
+     * @param r
+     * @return
+     */
     public static boolean ajouterRelation(Utilisateur u1, Utilisateur u2, Utilisateur.RELATION r) {
         if (r == Utilisateur.RELATION.Ami)
             return insertRelation(u1.getId(), u2.getId(), r.toInt()) && insertRelation(u2.getId(), u1.getId(), r.toInt());
@@ -262,9 +285,9 @@ public class GestionnaireUtilisateurs {
             while (c.moveToNext())
             {
                 if (c.getInt(0) == 2)
-                    rels.put(getUtilisateur(c.getString(1)), Utilisateur.RELATION.fromInt(c.getInt(0)));
+                    rels.put(get(c.getString(1)), Utilisateur.RELATION.fromInt(c.getInt(0)));
                 else
-                    rels.put(getUtilisateur(c.getString(2)), Utilisateur.RELATION.fromInt(c.getInt(0)));
+                    rels.put(get(c.getString(2)), Utilisateur.RELATION.fromInt(c.getInt(0)));
             }
         }
         finally {
@@ -281,5 +304,12 @@ public class GestionnaireUtilisateurs {
                             "WHERE r.user_1 = ? AND r.status_relation != 2 OR " +       //Tout sauf les demandes d'amis par l'utilisateur
                                   "r.user_2 = ? AND r.status_relation == 2",            //Demandes d'amis recu par l'utilisateur
                             new String[]{Integer.toString(id), Integer.toString(id)});
+    }
+
+    /**
+     * Efface les utilisateurs enregistrer dans l'arraylist. Utile pour les tests unitaire qui clear la bd, pas grand chose d'autre
+     */
+    static void effacerEnregistrer(){
+        users.clear();
     }
 }
