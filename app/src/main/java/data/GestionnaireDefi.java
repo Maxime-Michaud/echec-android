@@ -203,6 +203,7 @@ public class GestionnaireDefi {
      */
     static boolean ajouterResultat(Utilisateur u, ResultatDefi r)
     {
+
         return insertResultat(u.getId(), r.getDefi().getId(), r.getNbTour(), r.isReussi());
     }
 }

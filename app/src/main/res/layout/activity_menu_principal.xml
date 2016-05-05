@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Échec EXTREME"
+        android:text="@string/app_name"
         android:id="@+id/lblTitre"
         android:textAlignment="center"
         android:textSize="40sp"
@@ -25,7 +25,7 @@
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Jouer"
+        android:text="@string/b_jouer"
         android:id="@+id/btnJouer"
         android:layout_gravity="center_horizontal"
         android:textAlignment="center"
@@ -38,7 +38,7 @@
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Entrainement"
+        android:text="@string/b_defi"
         android:id="@+id/btnEntrainement"
         android:layout_gravity="center_horizontal"
         android:textAlignment="center"
@@ -51,7 +51,7 @@
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Option"
+        android:text="@string/b_option"
         android:id="@+id/btnOption"
         android:layout_gravity="center_horizontal"
         android:textAlignment="center"

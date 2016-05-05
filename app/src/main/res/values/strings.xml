@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">Echec</string>
-
+    <string name="b_retour">Retour</string>
+    <string name="b_jouer">Jouer</string>
+    <string name="b_defi">Défi</string>
+    <string name="b_option">Option</string>
+    <string name="o_opt1">Niveau de difficulté:</string>
+    <string name="d_type">Type de défi:</string>
+    <string name="d_choix">Choix du défi:</string>
+    <string name="d_reussi">Réussi:</string>
+    <string name="d_diff">Difficulté:</string>
     <string name="SQL">CREATE TABLE IF NOT EXISTS type_compte(
 	id INT PRIMARY KEY,
 	nom VARCHAR(25)

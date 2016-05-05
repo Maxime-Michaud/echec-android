@@ -301,7 +301,8 @@ public class Utilisateur{
      */
     public boolean ajouterResultat(Defi defi, int nbTours, boolean reussi)
     {
-        return GestionnaireDefi.ajouterResultat(this, new ResultatDefi(defi, nbTours, reussi));
+       // return GestionnaireDefi.ajouterResultat(this, new ResultatDefi(defi, nbTours, reussi));
+        return false;
     }
 
     /**
