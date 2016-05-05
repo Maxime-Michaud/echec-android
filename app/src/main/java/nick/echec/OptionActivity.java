@@ -1,5 +1,6 @@
 package nick.echec;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -18,6 +19,7 @@ import java.util.List;
 public class OptionActivity extends AppCompatActivity implements View.OnClickListener {
     private Spinner spinner;
     private Button retour;
+    SharedPreferences sharedpreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +59,8 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
         * pour "facile, moyen..."
         */
         List niveau = new ArrayList();
-        for (int i = 1; i < 4; i++)
-            niveau.add(i);
+        niveau.add("Facile");
+        niveau.add("Normal");
 
         ArrayAdapter adapter = new ArrayAdapter(
                 this,
