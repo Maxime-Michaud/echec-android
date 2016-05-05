@@ -1,4 +1,4 @@
-package nick.echec;
+package nick.echec.test.autres;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
