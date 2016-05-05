@@ -1,8 +1,15 @@
 package nick.echec;
 
+import android.graphics.Color;
+import android.support.v7.app.AppCompatActivity;
+
+
+import android.content.Intent;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,13 +21,12 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.ClipDrawable;
-import android.support.v7.app.AppCompatActivity;
+ android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -89,6 +95,138 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        lstMoveListener = new ArrayList<>();
+        setContentView(R.layout.activity_main);
+        layout = (RelativeLayout) findViewById(R.id.relative);
+        Intent intent = getIntent();
+        r = getResources();
+        mouvDispos = new ArrayList<>();
+        mouvCauseMort = new ArrayList<>();
+        for(int i = 0;i < 8;i++)
+        {
+            premierTourPionsBlancs[i] = true;
+            premierTourPionsNoirs[i] = true;
+        }
+        for (int j = 0; j < layout.getChildCount(); j++) {
+            View v = layout.getChildAt(j);
+            if (v instanceof Button) {
+                v.setBackgroundColor(Color.TRANSPARENT);
+                v.setOnClickListener(this);
+            }
+        }
+        pionsNoirs = new ArrayList<>();
+
+        //Les images des pions et leur tag pour les reconnaître dans d'autre fonction
+        PN1 = new ImageView(this);
+        PN1.setTag("PN1");
+        PN2 = new ImageView(this);
+        PN2.setTag("PN2");
+        PN3 = new ImageView(this);
+        PN3.setTag("PN3");
+        PN4 = new ImageView(this);
+        PN4.setTag("PN4");
+        PN5 = new ImageView(this);
+        PN5.setTag("PN5");
+        PN6 = new ImageView(this);
+        PN6.setTag("PN6");
+        PN7 = new ImageView(this);
+        PN7.setTag("PN7");
+        PN8 = new ImageView(this);
+        PN8.setTag("PN8");
+        pionsNoirs.add(PN1);
+        pionsNoirs.add(PN2);
+        pionsNoirs.add(PN3);
+        pionsNoirs.add(PN4);
+        pionsNoirs.add(PN5);
+        pionsNoirs.add(PN6);
+        pionsNoirs.add(PN7);
+        pionsNoirs.add(PN8);
+
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pawns);
+        for (int i = 0; i < 8; i++) {
+            setPawn(pionsNoirs.get(i),i,1,5,0);
+        }
+        pionsBlancs = new ArrayList<>();
+        PB1 = new ImageView(this);
+        PB1.setTag("PB1");
+        PB2 = new ImageView(this);
+        PB2.setTag("PB2");
+        PB3 = new ImageView(this);
+        PB3.setTag("PB3");
+        PB4 = new ImageView(this);
+        PB4.setTag("PB4");
+        PB5 = new ImageView(this);
+        PB5.setTag("PB5");
+        PB6 = new ImageView(this);
+        PB6.setTag("PB6");
+        PB7 = new ImageView(this);
+        PB7.setTag("PB7");
+        PB8 = new ImageView(this);
+        PB8.setTag("PB8");
+        pionsBlancs.add(PB1);
+        pionsBlancs.add(PB2);
+        pionsBlancs.add(PB3);
+        pionsBlancs.add(PB4);
+        pionsBlancs.add(PB5);
+        pionsBlancs.add(PB6);
+        pionsBlancs.add(PB7);
+        pionsBlancs.add(PB8);
+        for (int i = 0; i < 8; i++) {
+            setPawn(pionsBlancs.get(i),i,6,5,1);
+        }
+        TN1 = new ImageView(this);
+        setPawn(TN1, 0, 0, 2, 0);
+        TN1.setTag("TN1");
+        TN2 = new ImageView(this);
+        setPawn(TN2, 7, 0, 2, 0);
+        TN2.setTag("TN2");
+        FN1 = new ImageView(this);
+        setPawn(FN1, 2, 0, 3, 0);
+        FN1.setTag("FN1");
+        FN2 = new ImageView(this);
+        setPawn(FN2,5,0,3,0);
+        FN2.setTag("FN2");
+        CN1 = new ImageView(this);
+        setPawn(CN1, 1, 0, 4, 0);
+        CN1.setTag("CN1");
+        CN2 = new ImageView(this);
+        setPawn(CN2, 6, 0, 4, 0);
+        CN2.setTag("CN2");
+        KN1 = new ImageView(this);
+        setPawn(KN1,3,0,1,0);
+        KN1.setTag("KN1");
+        QN1 = new ImageView(this);
+        setPawn(QN1,4,0,0,0);
+        QN1.setTag("QN1");
+        
+        TB1 = new ImageView(this);
+        setPawn(TB1,0,7,2,1);
+        TB1.setTag("TB1");
+        TB2 = new ImageView(this);
+        setPawn(TB2,7,7,2,1);
+        TB2.setTag("TB2");
+        FB1 = new ImageView(this);
+        setPawn(FB1,2,7,3,1);
+        FB1.setTag("FB1");
+        FB2 = new ImageView(this);
+        setPawn(FB2,5,7,3,1);
+        FB2.setTag("FB2");
+        CB1 = new ImageView(this);
+        setPawn(CB1,1,7,4,1);
+        CB1.setTag("CB1");
+        CB2 = new ImageView(this);
+        setPawn(CB2,6,7,4,1);
+        CB2.setTag("CB2");
+        KB1 = new ImageView(this);
+        setPawn(KB1,3,7,1,1);
+        KB1.setTag("KB1");
+        QB1 = new ImageView(this);
+        setPawn(QB1,4,7,0,1);
+        QB1.setTag("QB1");
+
+
+
         //recommencer();
         initialiserUneGille(pieces);
     }
