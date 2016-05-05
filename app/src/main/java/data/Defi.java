@@ -117,6 +117,31 @@ public class Defi {
         this.grille = grille;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Defi)) return false;
+
+        Defi defi = (Defi) o;
+
+        if (getId() != defi.getId()) return false;
+        if (getToursMax() != defi.getToursMax()) return false;
+        if (getNbEvaluations() != defi.getNbEvaluations()) return false;
+        if (!getNom().equals(defi.getNom())) return false;
+        return getGrille().equals(defi.getGrille());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId();
+        result = 31 * result + getNom().hashCode();
+        result = 31 * result + getToursMax();
+        result = 31 * result + getGrille().hashCode();
+        result = 31 * result + getNbEvaluations();
+        return result;
+    }
+
     /**
      * Obtiens le nombre d'évaluations du défi
      * @return

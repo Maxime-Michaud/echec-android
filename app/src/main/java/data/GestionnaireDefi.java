@@ -76,6 +76,34 @@ public class GestionnaireDefi {
     }
 
     /**
+     * Obtiens l'id du dernier resultat de defi de la base de donnée
+     * @return
+     */
+    private static int idDernierResultat(){
+        SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+
+        //TODO devrais getter sur les interwebs. Si offline utiliser des ID négatif puis updater une fois connecter
+        Cursor c = db.rawQuery("select id from defi_utilisateurs order by id desc limit 1;", null);
+        try {
+            return c.moveToFirst() ? c.getInt(0) : 1;
+        }
+        finally {
+            c.close();
+        }
+    }
+
+    private static boolean insertResultat(int user, int defi, int nb_tour, boolean reussi){
+        ContentValues cv = new ContentValues();
+        cv.put("id", idDernierResultat() + 1);
+        cv.put("nb_tour", nb_tour);
+        cv.put("reussi", reussi ? 1 : 0);
+        cv.put("utilisateur", user);
+        cv.put("defi", defi);
+
+        return MoteurBD.getMoteurBD().getDb().insert("defi_utilisateurs", null, cv) != -1;
+    }
+
+    /**
      * Ajoute un defi a la bd.
      * @param nom nom du defi
      * @param nbTours nombre de tours max pour completer le defi. Si 0, infini. Si < 0, l'objectif est de survivre minimum nbTours tours
@@ -132,5 +160,22 @@ public class GestionnaireDefi {
                             "FROM defi d " +
                             "WHERE d.nom = ?;", new String[] {
                             nom});
+    }
+
+    /**
+     * Obtiens les résultats d'un utilisateur
+     * @param u utilisateur
+     * @return
+     */
+    static List<ResultatDefi> getResultats(Utilisateur u){
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Ajoute une tentative de défi a l'utilisateur
+     */
+    static boolean ajouterResultat(Utilisateur u, ResultatDefi r)
+    {
+        insertResultat
     }
 }

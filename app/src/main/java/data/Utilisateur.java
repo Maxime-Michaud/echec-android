@@ -294,6 +294,29 @@ public class Utilisateur{
     }
 
     /**
+     * Ajoute le résultat d'un défi a la bd
+     * @param defi défi effectué par l'utilisateur
+     * @param nbTours nombre de tours
+     * @param reussi si l'utilisateur a réussi
+     * @return
+     */
+    public boolean ajouterResultat(Defi defi, int nbTours, boolean reussi)
+    {
+        return GestionnaireDefi.ajouterResultat(this, new ResultatDefi(defi, nbTours, reussi));
+    }
+
+    /**
+     * Ajoute une relation a un utilisateur
+     * @param u Utilisateur avec lequel on ajoute une relation
+     * @param r type de relation a ajoutée a l'utilisateur
+     * @return
+     */
+    public boolean ajouterRelation(Utilisateur u, RELATION r)
+    {
+        return GestionnaireUtilisateurs.ajouterRelation(this, u, r);
+    }
+
+    /**
      * @param i
      * @return
      */

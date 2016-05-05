@@ -243,7 +243,7 @@ public class GestionnaireUtilisateurs {
      * @param login
      * @return
      */
-    public static Utilisateur getUtilisateur(String login)
+    public static Utilisateur get(String login)
     {
         Utilisateur u = Stream.of(users).filter(usr -> usr.getUsername().equals(login)).findFirst().orElse(null);
 
@@ -258,7 +258,13 @@ public class GestionnaireUtilisateurs {
         return u;
     }
 
-
+    /**
+     * Ajoute une relation a l'utilisateur
+     * @param u1
+     * @param u2
+     * @param r
+     * @return
+     */
     public static boolean ajouterRelation(Utilisateur u1, Utilisateur u2, Utilisateur.RELATION r) {
         if (r == Utilisateur.RELATION.Ami)
             return insertRelation(u1.getId(), u2.getId(), r.toInt()) && insertRelation(u2.getId(), u1.getId(), r.toInt());
@@ -279,9 +285,9 @@ public class GestionnaireUtilisateurs {
             while (c.moveToNext())
             {
                 if (c.getInt(0) == 2)
-                    rels.put(getUtilisateur(c.getString(1)), Utilisateur.RELATION.fromInt(c.getInt(0)));
+                    rels.put(get(c.getString(1)), Utilisateur.RELATION.fromInt(c.getInt(0)));
                 else
-                    rels.put(getUtilisateur(c.getString(2)), Utilisateur.RELATION.fromInt(c.getInt(0)));
+                    rels.put(get(c.getString(2)), Utilisateur.RELATION.fromInt(c.getInt(0)));
             }
         }
         finally {
