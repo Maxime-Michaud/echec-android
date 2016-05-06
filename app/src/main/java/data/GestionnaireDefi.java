@@ -176,6 +176,7 @@ public class GestionnaireDefi {
      */
     static boolean ajouterResultat(Utilisateur u, ResultatDefi r)
     {
-        insertResultat
+        //insertResultat
+        return false;
     }
 }

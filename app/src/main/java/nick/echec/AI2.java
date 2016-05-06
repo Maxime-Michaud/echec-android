@@ -17,7 +17,7 @@ public class AI2 {
     Cheval cheval = new Cheval();
     Roi roi = new Roi();
     char couleur;
-    ArrayList<String> toRemove;     //Les mouvement à enlever de l'array
+    ArrayList<String> toRemove = new ArrayList<>();     //Les mouvement à enlever de l'array
     ArrayList<String> nomPieceMeilleurMouv = new ArrayList<>();
     ArrayList<Integer> scoreMeilleurMove = new ArrayList<>();
 
@@ -29,8 +29,9 @@ public class AI2 {
 
     public String choisirPieceRandom(final String[] pieces,final boolean pionNoir[],final boolean pionBlanc[],final ArrayList<String> mouvDispos,final ArrayList<String> mouvCauseMort,final StringBuilder pionEnMouvement)
     {
-        boolean ok = false;
-        int nombreAleatoire = -1;
+        nomPieceMeilleurMouv.clear();
+        scoreMeilleurMove.clear();
+        toRemove.clear();
         ArrayList<String> piecesCouleurs = new ArrayList<>();
         ArrayList<String> piecesCouleursEnnemi = new ArrayList<>();
         for(String s : pieces)
@@ -44,32 +45,52 @@ public class AI2 {
                 piecesCouleursEnnemi.add(s);
             }
         }
+
         ArrayList<Integer> pointsMouvCauseMort = new ArrayList<>();
         ArrayList<Integer> pointsMouvVert = new ArrayList<>();
         int i = 0;
         ArrayList<String> meillMouvChaquePiece = new ArrayList<>();
+        //Pour chaque pièce de la couleur de L'AI WTF
+        if(piecesCouleursEnnemi.size() == 0)
+        {
+            pointsMouvCauseMort.add(-10000);
+        }
         for(String s : piecesCouleurs)
         {
+            if(piecesCouleursEnnemi.size() == 0)
+            {
+                pointsMouvCauseMort.add(-10000);
+            }
             pionEnMouvement.append(pieces[i]);
             ajouterMouvDispo(pionEnMouvement.toString(), pionNoir, pionBlanc, mouvDispos);
             validerLesCasesDispoPourMouvement(pieces, mouvDispos, mouvCauseMort, pionEnMouvement.toString());
-            for (String move:mouvCauseMort)
+            //Pour chaque mouvement qui cause la mort, attribut des point à ce mouvement
+
+            for (String move : mouvCauseMort)
             {
                 int pointPieceQuiBouge = getPointagePieceQuiBouge(s);
                 String pieceMorte = "";
+                if(piecesCouleursEnnemi.size() == 0)
+                {
+                    pointsMouvCauseMort.add(-10000);
+                }
                 for(String pionMort : piecesCouleursEnnemi)
                 {
                     if(pionMort.charAt(3) == move.charAt(0) && pionMort.charAt(4) == move.charAt(1))
                     {
-                        pieceMorte = pionMort;
-                        int pointPionMange = getPointagePieceQuiBouge(pieceMorte);
+                        int pointPionMange = getPointagePieceQuiBouge(pionMort);
                         pointsMouvCauseMort.add(pointPionMange*2 - pointPieceQuiBouge);
                         break;
+                    }
+                    if(pionMort.equals(piecesCouleursEnnemi.get(piecesCouleursEnnemi.size()-1)))
+                    {
+                        pointsMouvCauseMort.add(-20);
                     }
 
                 }
 
             }
+            //Pour chaque mouvement vert, attribut des point à ce mouvement
             for (String move:mouvDispos)
             {
                 int pointPieceQuiBouge = 1;
@@ -115,13 +136,14 @@ public class AI2 {
 
 
             pionEnMouvement.delete(0, pionEnMouvement.capacity());
-            //mouvDispos.clear();
             i++;
 
+            //regarde lequel move a eut le plus de point
             boolean mouvDispo = false;
             int meilleurScore = -1;
             int meilleurScorePos = -1;
             int j = 0;
+            //regarde les points des mouvements qui cause la mort d'une pièce
             for(String pieceTemp : mouvCauseMort)
             {
                 if(pointsMouvCauseMort.get(j) > meilleurScore)
@@ -132,6 +154,7 @@ public class AI2 {
                 j++;
             }
             j = 0;
+            //regarde les points des mouvements vert
             for(String pieceTemp : mouvDispos)
             {
                 if(pointsMouvVert.get(j) > meilleurScore)
@@ -156,9 +179,11 @@ public class AI2 {
                     nomPieceMeilleurMouv.add(s);
                 }
             }
+            mouvDispos.clear();
+            mouvCauseMort.clear();
             piecesCouleurs = new ArrayList<>();
-            piecesCouleursEnnemi = new ArrayList<>();
-            pointsMouvCauseMort = new ArrayList<>();
+            piecesCouleursEnnemi.clear();
+            pointsMouvCauseMort.clear();
             pointsMouvVert = new ArrayList<>();
         }
 
@@ -216,7 +241,7 @@ public class AI2 {
 
     public void validerLesCasesDispoPourMouvement(final String pieces[],final ArrayList<String> mouvDispos,final ArrayList<String> mouvCauseMort,final String pionEnMouvement)
     {
-        toRemove = new ArrayList<>();
+        toRemove.clear();
         Iterator<String> it = mouvDispos.iterator();
         while(it.hasNext())
         {
