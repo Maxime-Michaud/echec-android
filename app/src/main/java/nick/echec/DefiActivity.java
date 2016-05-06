@@ -3,6 +3,7 @@ package nick.echec;
 import android.os.Bundle;
 import data.Defi;
 import data.GestionnaireDefi;
+import data.GestionnaireUtilisateurs;
 import data.ResultatDefi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -130,6 +131,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
             b.append(',');
         }
         GestionnaireDefi.ajouter("defi", 10, b.toString());
+        //GestionnaireUtilisateurs.
         listDefi.add(GestionnaireDefi.get("defi"));
         return listDefi;
     }
