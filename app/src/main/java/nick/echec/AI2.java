@@ -20,8 +20,7 @@ public class AI2 {
     ArrayList<String> toRemove = new ArrayList<>();     //Les mouvement à enlever de l'array
     ArrayList<String> nomPieceMeilleurMouv = new ArrayList<>();
     ArrayList<Integer> scoreMeilleurMove = new ArrayList<>();
-
-
+    ArrayList<Boolean> mouvVert = new ArrayList<>();
     public AI2(char couleurAI)
     {
         couleur = couleurAI;
@@ -29,6 +28,8 @@ public class AI2 {
 
     public String choisirPieceRandom(final String[] pieces,final boolean pionNoir[],final boolean pionBlanc[],final ArrayList<String> mouvDispos,final ArrayList<String> mouvCauseMort,final StringBuilder pionEnMouvement)
     {
+
+        mouvVert.clear();
         nomPieceMeilleurMouv.clear();
         scoreMeilleurMove.clear();
         toRemove.clear();
@@ -51,16 +52,8 @@ public class AI2 {
         int i = 0;
         ArrayList<String> meillMouvChaquePiece = new ArrayList<>();
         //Pour chaque pièce de la couleur de L'AI WTF
-        if(piecesCouleursEnnemi.size() == 0)
-        {
-            pointsMouvCauseMort.add(-10000);
-        }
         for(String s : piecesCouleurs)
         {
-            if(piecesCouleursEnnemi.size() == 0)
-            {
-                pointsMouvCauseMort.add(-10000);
-            }
             pionEnMouvement.append(pieces[i]);
             ajouterMouvDispo(pionEnMouvement.toString(), pionNoir, pionBlanc, mouvDispos);
             validerLesCasesDispoPourMouvement(pieces, mouvDispos, mouvCauseMort, pionEnMouvement.toString());
@@ -70,23 +63,14 @@ public class AI2 {
             {
                 int pointPieceQuiBouge = getPointagePieceQuiBouge(s);
                 String pieceMorte = "";
-                if(piecesCouleursEnnemi.size() == 0)
-                {
-                    pointsMouvCauseMort.add(-10000);
-                }
                 for(String pionMort : piecesCouleursEnnemi)
                 {
                     if(pionMort.charAt(3) == move.charAt(0) && pionMort.charAt(4) == move.charAt(1))
                     {
                         int pointPionMange = getPointagePieceQuiBouge(pionMort);
-                        pointsMouvCauseMort.add(pointPionMange*2 - pointPieceQuiBouge);
+                        pointsMouvCauseMort.add(pointPionMange*10 - pointPieceQuiBouge);
                         break;
                     }
-                    if(pionMort.equals(piecesCouleursEnnemi.get(piecesCouleursEnnemi.size()-1)))
-                    {
-                        pointsMouvCauseMort.add(-20);
-                    }
-
                 }
 
             }
@@ -130,6 +114,7 @@ public class AI2 {
                     }
 
                 }
+                pointPieceQuiBouge -= getPointagePieceQuiBouge(pionEnMouvement.toString())/2;
                 pointsMouvVert.add(pointPieceQuiBouge);
             }
 
@@ -140,7 +125,7 @@ public class AI2 {
 
             //regarde lequel move a eut le plus de point
             boolean mouvDispo = false;
-            int meilleurScore = -1;
+            int meilleurScore = -999999999;
             int meilleurScorePos = -1;
             int j = 0;
             //regarde les points des mouvements qui cause la mort d'une pièce
@@ -172,21 +157,24 @@ public class AI2 {
                     meillMouvChaquePiece.add(mouvDispos.get(meilleurScorePos));
                     nomPieceMeilleurMouv.add(s);
                     scoreMeilleurMove.add(meilleurScore);
+                    mouvVert.add(true);
                 }
                 else
                 {
                     meillMouvChaquePiece.add(mouvCauseMort.get(meilleurScorePos));
                     nomPieceMeilleurMouv.add(s);
+                    scoreMeilleurMove.add(meilleurScore);
+                    mouvVert.add(false);
                 }
             }
             mouvDispos.clear();
             mouvCauseMort.clear();
-            piecesCouleurs = new ArrayList<>();
-            piecesCouleursEnnemi.clear();
+
             pointsMouvCauseMort.clear();
             pointsMouvVert = new ArrayList<>();
         }
-
+        piecesCouleurs = new ArrayList<>();
+        piecesCouleursEnnemi.clear();
         int o = 0;
         int bestScore =-200;
         int bestPos = -1;
@@ -201,8 +189,13 @@ public class AI2 {
             }
             o++;
         }
-        pionEnMouvement.delete(0,pionEnMouvement.capacity());
+        pionEnMouvement.delete(0, pionEnMouvement.capacity());
         pionEnMouvement.append(meilleurPiece);
+
+        if(mouvVert.get(bestPos))
+            mouvDispos.add(meillMouvChaquePiece.get(bestPos));
+        else
+            mouvCauseMort.add(meillMouvChaquePiece.get(bestPos));
 
         return meillMouvChaquePiece.get(bestPos);
     }

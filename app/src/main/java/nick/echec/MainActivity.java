@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -26,8 +28,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     int cliqueX, cliqueY;   //ou le joueur a cliqué
@@ -334,6 +339,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else
         {
             finaliserTour(false);
+            long startTime = System.currentTimeMillis(); //fetch starting time
+            while((System.currentTimeMillis() - startTime) < 1000)
+            {
+                System.out.println("");
+            }
             if((newAI.couleur == 'N' && !tourBlanc) || (newAI.couleur == 'B' && tourBlanc))
             {
 
@@ -344,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 cliqueY = Character.getNumericValue(newPos.charAt(0));
                 cliqueX = Character.getNumericValue(newPos.charAt(1));
                 finaliserTour(true);
+
             }
         }
 
@@ -439,6 +450,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tourBlanc= !tourBlanc;
 
         }
+        Toast.makeText(this, pionEnMouvement + " vers " + Integer.toString(cliqueY) + Integer.toString(cliqueX), Toast.LENGTH_LONG).show();
         estEnSelectionMouv = false;
         pionEnMouvement = "";
     }
@@ -480,8 +492,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for(int i = 0; i < layout.getChildCount();i++)
         {
             View v = layout.getChildAt(i);
-            if (v instanceof ImageView && v.getTag().equals(nomImgView))
-            {
+            if (v instanceof ImageView && v.getTag().equals(nomImgView)) {
                 v.animate().translationX(v.getTranslationX() + px).setDuration(1000);
                 v.animate().translationY(v.getTranslationY() + py).setDuration(1000);
                 break;
@@ -780,11 +791,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 v.setOnClickListener(this);
             }
         }
-        if(tourBlanc)
-            layout.setBackgroundColor(Color.BLACK);
-        else
-            layout.setBackgroundColor(Color.WHITE);
-        tourBlanc= !tourBlanc;
+        layout.setBackgroundColor(Color.WHITE);
+        tourBlanc= true;
         pionsNoirs = new ArrayList<>();
         String piecesTemp[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
                 "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
