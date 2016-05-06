@@ -79,4 +79,5 @@ public class Defi {
     public boolean getReussi() {
         return reussi;
     }
+
 }

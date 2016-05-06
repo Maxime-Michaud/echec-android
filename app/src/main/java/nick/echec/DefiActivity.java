@@ -1,6 +1,9 @@
 package nick.echec;
 
 import android.os.Bundle;
+import data.Defi;
+import data.GestionnaireDefi;
+import data.ResultatDefi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +31,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
     private ListView lv;
     private List niveau;
     private ArrayList<Defi> listDefi;
+    private ResultatDefi r;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,9 +122,15 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
      */
     public ArrayList<Defi> getListeDeDefi(String s) {
         ArrayList<Defi> listDefi = new ArrayList<Defi>();
-        for (int i=1; i<=5 ; i++) {
-            listDefi.add(new Defi(s + ' ' + i, i, false));
+        String pieces[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
+                "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
+        StringBuilder b = new StringBuilder();
+        for (String grille : pieces){
+            b.append(grille);
+            b.append(',');
         }
+        GestionnaireDefi.ajouter("defi", 10, b.toString());
+        listDefi.add(GestionnaireDefi.get("defi"));
         return listDefi;
     }
 
@@ -159,7 +169,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
             } else
                 wrapper = (DefiWrapper) convertView.getTag();
 
-            wrapper.setDefi(getItem(position));
+            wrapper.setDefi(getItem(position),r);
 
             return convertView;
         }
@@ -209,10 +219,10 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
          * Méthode qui sette les donnée dans les éléments du layout row.xml
          * @param d le Defi duquel vien les données
          */
-        public void setDefi(Defi d) {
+        public void setDefi(Defi d, ResultatDefi r) {
             getNom().setText(d.getNom());
-            getReussi().setChecked(d.getReussi());
-            getDiff().setRating(d.getNiveau());
+            getReussi().setChecked(r.isReussi());
+            getDiff().setRating(d.getDifficulte());
         }
     }
 }
