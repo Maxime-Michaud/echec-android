@@ -75,12 +75,11 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
          * Création d'une liste d'élément à mettre dans le Spinner
          */
         niveau = new ArrayList();
-        niveau.add("Pion");
-        niveau.add("Tour");
-        niveau.add("Fou");
-        niveau.add("Cavalier");
-        niveau.add("Reine");
-        niveau.add("Roi");
+        niveau.add(1);
+        niveau.add(2);
+        niveau.add(3);
+        niveau.add(4);
+        niveau.add(5);
 
         ArrayAdapter adapter = new ArrayAdapter(
                 this,
@@ -149,9 +148,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
      * méthode qui fait rien, mais doit être la pareil
      */
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        //Rien
-    }
+    public void onNothingSelected(AdapterView<?> parent) {}
 
     /**
      * Permet d'adapter l'arrayliste pour quelle contienne des journées

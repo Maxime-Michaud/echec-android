@@ -12,6 +12,7 @@ import android.widget.Button;
  * Created by Keven on 2016-05-02.
  */
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
+    private Button connection;
     private Button jouer;
     private Button defi;
     private Button option;
@@ -22,10 +23,12 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_principal);
 
+        connection = (Button) findViewById(R.id.btnConnection);
         jouer = (Button) findViewById(R.id.btnJouer);
         defi = (Button) findViewById(R.id.btnEntrainement);
         option = (Button) findViewById(R.id.btnOption);
 
+        connection.setOnClickListener(this);
         jouer.setOnClickListener(this);
         defi.setOnClickListener(this);
         option.setOnClickListener(this);
@@ -38,6 +41,10 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
 
         switch (v.getId()) {
+
+            case R.id.btnConnection:
+                connection();
+                break;
 
             case R.id.btnJouer:
                 demarerPartie();
@@ -54,6 +61,15 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    /**
+     * Méthode qui démarre "ConnectionActivity" qui est la classe pour se
+     * connecter à son compte
+     */
+    public void connection(){
+        Intent secondeActivite = new Intent(MenuActivity.this, ConnectionActivity.class);
+        startActivity(secondeActivite);
     }
 
     /**
