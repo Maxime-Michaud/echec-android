@@ -173,9 +173,10 @@ public class GestionnaireDefi {
 
     /**
      * Ajoute une tentative de défi a l'utilisateur
-     *//*
+     */
     static boolean ajouterResultat(Utilisateur u, ResultatDefi r)
     {
-        insertResultat
-    }*/
+        //insertResultat
+        return false;
+    }
 }
