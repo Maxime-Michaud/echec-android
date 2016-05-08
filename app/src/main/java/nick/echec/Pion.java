@@ -6,7 +6,6 @@ import java.util.ArrayList;
  * Created by Nick on 2016-04-29.
  */
 public class Pion {
-
     public void mouvement(int x, int y, boolean premierMove, char couleur, final ArrayList<String> arrayList)
     {
         if(couleur == 'B')
@@ -19,7 +18,6 @@ public class Pion {
                     {
                         arrayList.add(Integer.toString(y - (i + 1)) + Integer.toString(x) + "H");
                     }
-
                 }
             }
             else

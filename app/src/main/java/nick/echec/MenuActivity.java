@@ -1,8 +1,11 @@
 package nick.echec;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
@@ -43,7 +46,8 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
 
             case R.id.btnConnection:
-                connection();
+                //connection();
+                alert();
                 break;
 
             case R.id.btnJouer:
@@ -61,6 +65,69 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    public void alert(){
+        final char[] choix = new char[1];
+        ChangementAlerte ca = new ChangementAlerte();
+
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View alertDialogView = factory.inflate(R.layout.alerte_changement, null);
+
+        //Création de l'AlertDialog
+        AlertDialog alert = new AlertDialog.Builder(this).create();
+
+        //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
+        alert.setView(alertDialogView);
+
+        Button tour = (Button)alertDialogView.findViewById(R.id.btnTour);//ca.getTour();
+        Button cavalier = (Button)alertDialogView.findViewById(R.id.btnCheval);
+        Button fou = (Button)alertDialogView.findViewById(R.id.btnFou);
+        Button reine = (Button)alertDialogView.findViewById(R.id.btnReine);
+        Button ok = (Button)alertDialogView.findViewById(R.id.btnACok);
+
+        tour.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ca.setChoix('T');
+                ca.setConfirme(true);
+            }
+        });
+
+        cavalier.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ca.setChoix('C');
+                ca.setConfirme(true);
+            }
+        });
+
+        fou.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ca.setChoix('F');
+                ca.setConfirme(true);
+            }
+        });
+
+        reine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ca.setChoix('Q');
+                ca.setConfirme(true);
+        }
+        });
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ca.getConfirme()){
+                    choix[0] = ca.getChoix();
+                    alert.dismiss();
+                }
+            }
+        });
+
+        alert.show();
     }
 
     /**

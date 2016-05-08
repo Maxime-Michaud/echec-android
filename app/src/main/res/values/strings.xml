@@ -15,6 +15,8 @@
 	<string name="c_remember">Se souvenir de moi</string>
 	<string name="c_connecter">Se connecter</string>
 	<string name="c_insrire">S\'inscrire</string>
+	<string name="ac_changement">Échanger votre pion pour:</string>
+	<string name="ac_ok">Ok</string>
     <string name="SQL">CREATE TABLE IF NOT EXISTS type_compte(
 	id INT PRIMARY KEY,
 	nom VARCHAR(25)
