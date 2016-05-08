@@ -77,11 +77,11 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
         String txt = "User name == empty";
         int duration = Toast.LENGTH_SHORT;
 
-        if (!champvide(nomUti)){
+        if (champvide(nomUti)){
             Toast toast = Toast.makeText( getApplicationContext(), txt, duration);
             toast.show();
         }
-        else if (!champvide(mdp)){
+        else if (champvide(mdp)){
             txt = "Mot de passe vide Nigga!";
             Toast toast = Toast.makeText( getApplicationContext(), txt, duration);
             toast.show();
@@ -89,11 +89,11 @@ public class ConnectionActivity extends AppCompatActivity implements View.OnClic
     }
 
     /**
-     * Méthode qui renvois un
+     * Méthode qui retourne true si l'EditText est vide.
      * @param et
      * @return
      */
     public boolean champvide(EditText et){
-        return !et.getText().toString().isEmpty();
+        return et.getText().toString().isEmpty();
     }
 }
