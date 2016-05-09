@@ -2,6 +2,7 @@ package data;
 
 import android.support.annotation.Nullable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,11 +32,62 @@ public class Partie {
         if (blanc != null && blanc.equals(noir))
             throw new IllegalArgumentException();
 
+        if (blanc != gagnant && gagnant != noir)
+            throw new IllegalArgumentException();
 
         this.blanc = blanc;
         this.noir = noir;
         this.gagnant = gagnant;
         this.grille = grille;
         tours = new HashMap<>();
+    }
+
+    /**
+     * Obtiens le joueur blanc
+     *
+     * @return Joueur blanc
+     */
+    @Nullable
+    public Utilisateur getBlanc() {
+        return blanc;
+    }
+
+    /**
+     * Obtiens le joueur noir
+     *
+     * @return Joueur noir
+     */
+    @Nullable
+    public Utilisateur getNoir() {
+        return noir;
+    }
+
+    /**
+     * Obtiens la grille
+     *
+     * @return La grille de la partie.
+     */
+    @Nullable
+    public String getGrille() {
+        return grille;
+    }
+
+    /**
+     * Obtiens le gagnant
+     *
+     * @return Gagnant
+     */
+    @Nullable
+    public Utilisateur getGagnant() {
+        return gagnant;
+    }
+
+    /**
+     * Obtiens les tours
+     *
+     * @return les tours
+     */
+    public Map<Integer, String> getTours() {
+        return Collections.unmodifiableMap(tours);
     }
 }
