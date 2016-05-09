@@ -9,6 +9,8 @@
     <string name="d_choix">Choix du défi:</string>
     <string name="d_reussi">Réussi:</string>
     <string name="d_diff">Difficulté:</string>
+	<string name="ac_ok">Ok</string>
+	<string name="ac_message">Veuillez choisir une pièce:</string>
     <string name="SQL">CREATE TABLE IF NOT EXISTS type_compte(
 	id INT PRIMARY KEY,
 	nom VARCHAR(25)

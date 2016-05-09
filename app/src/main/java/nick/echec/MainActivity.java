@@ -15,10 +15,12 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.ClipDrawable;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -36,6 +38,7 @@ import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    ChangementAlerte ca = new ChangementAlerte(); //classe gère le changement de pièces (kev)
     int cliqueX, cliqueY;   //ou le joueur a cliqué
     RelativeLayout layout;
     ArrayList<MoveListener> lstMoveListener;
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Cheval cheval = new Cheval();
     Roi roi = new Roi();
 
+    String pionRenduAuBoutte;                                //Le pion qui est rendu au bout
     String pionEnMouvement;                                 //Le pion qui est sélection pour un mouvement
     int nbPionBlancMort = 0;
     int nbPionNoirMort = 0;
@@ -231,8 +235,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         //recommencer();
-        String piecesTemp[] = {"PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
-                "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867"};
+        String piecesTemp[] = {"PN126", "PN227", "PN325", "PN413", "PN514", "PN615", "PN716","PN817",
+                "PB120", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867"};
         initialiserUneGille(piecesTemp);
     }
 
@@ -461,10 +465,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'B' && nouvelPos.charAt(0) == '0')
                     {
                         //TODO MENU CHOIX
+                        pionRenduAuBoutte = pionEnMouvement;
+                        choixPiece(pieces[k]);
                     }
                     if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'N' && nouvelPos.charAt(0) == '7')
                     {
+                        pionRenduAuBoutte = pionEnMouvement;
                         //TODO MENU CHOIX
+                        choixPiece(pieces[k]);
                     }
                     break;
 
@@ -947,4 +955,85 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         start_time = start_tour = System.currentTimeMillis();
         suggestion = new Suggestion('B');
     }
+
+    public void choixPiece(String pion){
+        pionRenduAuBoutte = pion;
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View alertDialogView = factory.inflate(R.layout.alerte_changement, null);
+
+        //Création de l'AlertDialog
+        AlertDialog alert = new AlertDialog.Builder(this).create();
+
+        //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
+        alert.setView(alertDialogView);
+
+        ImageView tour = (ImageView)alertDialogView.findViewById(R.id.btnTour);
+        ImageView cavalier = (ImageView)alertDialogView.findViewById(R.id.btnCheval);
+        ImageView fou = (ImageView)alertDialogView.findViewById(R.id.btnFou);
+        ImageView reine = (ImageView)alertDialogView.findViewById(R.id.btnReine);
+        Button ok = (Button)alertDialogView.findViewById(R.id.btnACok);
+
+        tour.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ca.setChoix('T');
+                ca.setConfirme(true);
+            }
+        });
+
+        cavalier.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ca.setChoix('C');
+                ca.setConfirme(true);
+            }
+        });
+
+        fou.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ca.setChoix('F');
+                ca.setConfirme(true);
+            }
+        });
+
+        reine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ca.setChoix('Q');
+                ca.setConfirme(true);
+            }
+        });
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ca.getConfirme()){
+                    char[] choix= new char[7];
+                    choix = pionRenduAuBoutte.toCharArray();
+                    choix[0] = ca.getChoix();
+                    int i = 0;
+                    for (String s: pieces){
+                        if (pionRenduAuBoutte.equals(s)){
+                            String temp = choix[0]+Character.toString(s.charAt(1))+Character.toString(s.charAt(2))+Character.toString(s.charAt(3))+Character.toString(s.charAt(4));
+                            pieces[i] = temp;
+                            String tag = Character.toString(pionRenduAuBoutte.charAt(0))+Character.toString(pionRenduAuBoutte.charAt(1))+Character.toString(pionRenduAuBoutte.charAt(2));
+                            for(int j=0;j<layout.getChildCount();j++){
+                                View vw = layout.getChildAt(j);
+                                if (vw instanceof ImageView && layout.getChildAt(j).getTag().equals(tag)){
+                                    String tagtemp = Character.toString(choix[0])+ Character.toString(tag.charAt(1))+ Character.toString(tag.charAt(2));
+                                    layout.getChildAt(j).setTag(tagtemp);
+                                    setPawn((ImageView)vw,1,0,Character.getNumericValue(temp.charAt(4)),Character.getNumericValue(temp.charAt(3)));
+                                }
+                            }
+                            break;
+                        }
+                        i++;
+                    }
+                    alert.dismiss();
+                }
+            }
+        });
+        alert.show();
+    }
+
 }
