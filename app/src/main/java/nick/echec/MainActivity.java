@@ -258,7 +258,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         img.setImageBitmap(bitmapTemp);
         params.leftMargin = px;
         params.topMargin = py;
-        layout.addView(img, params);
+        if(layout.indexOfChild(img) == -1)
+            layout.addView(img, params);
     }
 
     /**
@@ -956,12 +957,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         suggestion = new Suggestion('B');
     }
 
-    public void choixPiece(String pion){
+    public void choixPiece(String pion) {
         pionRenduAuBoutte = pion;
+        if (!tourBlanc)
+        {
+            char choix[] = new char[2];
+            choix[0] = 'Q';
+            int i = 0;
+            for (String s : pieces)
+            {
+                if (pionRenduAuBoutte.equals(s))
+                {
+                    String temp = choix[0] + Character.toString(s.charAt(1)) + Character.toString(s.charAt(2)) + Character.toString(s.charAt(3)) + Character.toString(s.charAt(4));
+                    pieces[i] = temp;
+                    String tag = Character.toString(pionRenduAuBoutte.charAt(0)) + Character.toString(pionRenduAuBoutte.charAt(1)) + Character.toString(pionRenduAuBoutte.charAt(2));
+
+                    for (int j = 0; j < layout.getChildCount(); j++) {
+                        View vw = layout.getChildAt(j);
+                        if (vw instanceof ImageView && layout.getChildAt(j).getTag().equals(tag)) {
+                            String tagtemp = Character.toString(choix[0]) + Character.toString(tag.charAt(1)) + Character.toString(tag.charAt(2));
+                            layout.getChildAt(j).setTag(tagtemp);
+                            setPawn((ImageView) vw, Character.getNumericValue(temp.charAt(4)), Character.getNumericValue(temp.charAt(3)), 0, (tourBlanc ? 1 : 0));
+                        }
+                    }
+                }
+
+                i++;
+            }
+            return;
+        }
         LayoutInflater factory = LayoutInflater.from(this);
         final View alertDialogView = factory.inflate(R.layout.alerte_changement, null);
 
         //Création de l'AlertDialog
+
         AlertDialog alert = new AlertDialog.Builder(this).create();
 
         //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
@@ -1012,17 +1041,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     choix = pionRenduAuBoutte.toCharArray();
                     choix[0] = ca.getChoix();
                     int i = 0;
+
                     for (String s: pieces){
                         if (pionRenduAuBoutte.equals(s)){
                             String temp = choix[0]+Character.toString(s.charAt(1))+Character.toString(s.charAt(2))+Character.toString(s.charAt(3))+Character.toString(s.charAt(4));
                             pieces[i] = temp;
                             String tag = Character.toString(pionRenduAuBoutte.charAt(0))+Character.toString(pionRenduAuBoutte.charAt(1))+Character.toString(pionRenduAuBoutte.charAt(2));
-                            for(int j=0;j<layout.getChildCount();j++){
+
+                            for(int j=0;j<layout.getChildCount();j++)
+                            {
                                 View vw = layout.getChildAt(j);
-                                if (vw instanceof ImageView && layout.getChildAt(j).getTag().equals(tag)){
+                                if (vw instanceof ImageView && layout.getChildAt(j).getTag().equals(tag))
+                                {
                                     String tagtemp = Character.toString(choix[0])+ Character.toString(tag.charAt(1))+ Character.toString(tag.charAt(2));
                                     layout.getChildAt(j).setTag(tagtemp);
-                                    setPawn((ImageView)vw,1,0,Character.getNumericValue(temp.charAt(4)),Character.getNumericValue(temp.charAt(3)));
+                                    setPawn((ImageView)vw,Character.getNumericValue(temp.charAt(4)),Character.getNumericValue(temp.charAt(3)),(choix[0] == 'Q'?0:(choix[0] == 'T'?2:choix[0] == 'F'?3:4)),(tourBlanc?1:0));
                                 }
                             }
                             break;

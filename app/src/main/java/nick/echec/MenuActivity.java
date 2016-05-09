@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import data.MoteurBD;
+
 /**
  * Le menu principale du jeu. Il permet d'accèder aux autres éléments de l'application: le jeu,
  * les défis et les options
@@ -22,6 +24,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_principal);
 
+        MoteurBD.init(this);
         jouer = (Button) findViewById(R.id.btnJouer);
         defi = (Button) findViewById(R.id.btnEntrainement);
         option = (Button) findViewById(R.id.btnOption);

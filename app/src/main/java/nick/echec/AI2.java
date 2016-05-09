@@ -47,6 +47,8 @@ public class AI2 {
             }
         }
 
+        if(piecesCouleurs.isEmpty())
+            return "AUCUNEPIECE";
         ArrayList<Integer> pointsMouvCauseMort = new ArrayList<>();
         ArrayList<Integer> pointsMouvVert = new ArrayList<>();
         int i = 0;
