@@ -120,9 +120,6 @@ public class TestsDBDefis {
     /**
      * Teste que les defis pas ajoutés a l'utilisateur n'est pas ajouter a l'utilisateur
      */
-    /**
-     * Teste que les défis ajouter a l'utilisateur sont ajoutés a l'utilisateur
-     */
     @Test
     public void defisNonCompletes()
     {
