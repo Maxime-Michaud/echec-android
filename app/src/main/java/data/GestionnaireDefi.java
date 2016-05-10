@@ -159,7 +159,8 @@ public class GestionnaireDefi {
 
         try {
             defi = c.moveToFirst() ? new Defi(c.getInt(0), c.getString(1), c.getInt(2), c.getFloat(3), c.getFloat(4), c.getString(5), c.getInt(6))
-                    :null;
+                    : null;
+
             if (defi != null)
                 defis.add(defi);
 
