@@ -27,29 +27,44 @@ public class AI {
     {
         boolean ok = false;
         int nombreAleatoire = -1;
-        String pionEnMouvementTemp;
         while(!ok)
         {
             StringBuilder zText = new StringBuilder ();
-            Random rand = new Random();
-            nombreAleatoire = rand.nextInt((pieces.length - 1) - 0 + 1);
-            pionEnMouvement.append (pieces[nombreAleatoire]);
-            verifierSiMouvDispo(pionEnMouvement.toString(), pionNoir, pionBlanc, mouvDispos);
-            validerLesCasesDispoPourMouvement(pieces, mouvCauseMort,mouvDispos,pionEnMouvement.toString());
-            if (mouvDispos.size() > 0)
+            do
+            {
+                pionEnMouvement.delete(0, pionEnMouvement.capacity());
+                Random rand = new Random();
+                nombreAleatoire = rand.nextInt((pieces.length - 1) - 0 + 1);
+                pionEnMouvement.append(pieces[nombreAleatoire]);
+            }while(pionEnMouvement.toString().charAt(1) != couleur);
+
+            ajouterMouvDispo(pionEnMouvement.toString(), pionNoir, pionBlanc, mouvDispos);
+            validerLesCasesDispoPourMouvement(pieces, mouvDispos,mouvCauseMort, pionEnMouvement.toString());
+            if (mouvDispos.size() > 0 && pionEnMouvement.toString().charAt(1) == couleur)
                 ok = true;
+            else
+            {
+                pionEnMouvement.delete(0, pionEnMouvement.capacity());
+                mouvDispos.clear();
+            }
+
         }
         Random rand = new Random();
-        nombreAleatoire = rand.nextInt((mouvDispos.size() - 1) - 0 + 1);
-        return mouvDispos.get(nombreAleatoire);
+        //Priorise un mouvement qui cause la mort d'une pièce
+        if(!mouvCauseMort.isEmpty())
+        {
+            nombreAleatoire = rand.nextInt((mouvCauseMort.size() - 1) - 0 + 1);
+            return mouvCauseMort.get(nombreAleatoire);
+        }
+        else
+        {
+            nombreAleatoire = rand.nextInt((mouvDispos.size() - 1) - 0 + 1);
+            return mouvDispos.get(nombreAleatoire);
+        }
+
     }
 
-    void fillString(StringBuilder zText, final String[] pieces)
-    {
-
-    }
-
-    public ArrayList<String> verifierSiMouvDispo(final String s,final boolean pionNoir[],final boolean pionBlanc[],final ArrayList<String> mouvDispos) {
+    public ArrayList<String> ajouterMouvDispo(final String s,final boolean pionNoir[],final boolean pionBlanc[],final ArrayList<String> mouvDispos) {
         switch (s.charAt(0)) {
             case 'T':
                 tour.mouvement(Character.getNumericValue(s.charAt(4)), Character.getNumericValue(s.charAt(3)), mouvDispos);
