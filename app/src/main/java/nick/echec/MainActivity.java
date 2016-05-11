@@ -235,9 +235,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         //recommencer();
-        String piecesTemp[] = {"PN126", "PN227", "PN325", "PN413", "PN514", "PN615", "PN716","PN817",
-                "PB120", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867"};
-        initialiserUneGille(piecesTemp);
+        /*String piecesTemp[] = {"PN126", "PN227", "PN325", "PN413", "PN514", "PN615", "PN716","PN817",
+                "PB120", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867"};*/
+        initialiserUneGille(pieces);
     }
 
     /**
@@ -461,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         premierTourPionsNoirs[Character.getNumericValue(pionEnMouvement.charAt(2) -1)] = false;
                     }
-                    suggestion.prendreTempsPasseTour(System.currentTimeMillis() - start_tour);
+                    suggestion.prendreTempsPasseTour(System.currentTimeMillis() - start_tour,(tourBlanc?'B':'N'));
                     start_tour = System.currentTimeMillis();
                     if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'B' && nouvelPos.charAt(0) == '0')
                     {
