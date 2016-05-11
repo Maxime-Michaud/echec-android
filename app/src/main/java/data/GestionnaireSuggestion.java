@@ -1,7 +1,7 @@
 package data;
 
 /**
- * TODO
+ * Gère l'ajout des suggestions a la bd
  * Created by Maxime on 5/10/2016.
  */
 public class GestionnaireSuggestion {
@@ -13,7 +13,7 @@ public class GestionnaireSuggestion {
      * @param diff niveau de difficulté
      * @return si la suggestion a été ajoutée
      */
-    public boolean ajouter(Utilisateur u, Type_Defi type, float diff) {
+    public static boolean ajouter(Utilisateur u, Type_Defi type, float diff) {
         //TODO
         throw new UnsupportedOperationException("lol fuck you");
     }
