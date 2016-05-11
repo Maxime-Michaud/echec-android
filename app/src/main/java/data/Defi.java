@@ -59,6 +59,7 @@ public class Defi {
 
     /**
      * Obtiens le nombre de tours maximum pour le defi
+     *
      * @return
      */
     public int getToursMax() {
@@ -87,6 +88,11 @@ public class Defi {
      */
     public float getDifficulte() {
         return difficulte;
+    }
+
+    public void setDifficulte(float difficulte) {
+        nbEvaluations = 1;
+        this.difficulte = difficulte;
     }
 
     /**
