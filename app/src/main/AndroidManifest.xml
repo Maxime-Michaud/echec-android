@@ -18,6 +18,7 @@
         <activity android:name=".MainActivity"/>
         <activity android:name=".OptionActivity"/>
         <activity android:name=".DefiActivity"/>
+        <activity android:name=".ConnexionActivity"/>
     </application>
 
 </manifest>

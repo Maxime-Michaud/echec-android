@@ -14,6 +14,7 @@ import data.MoteurBD;
  * Created by Keven on 2016-05-02.
  */
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
+    private Button connexion;
     private Button jouer;
     private Button defi;
     private Button option;
@@ -25,10 +26,12 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_menu_principal);
 
         MoteurBD.init(this);
+        connexion = (Button) findViewById(R.id.btnConnexion);
         jouer = (Button) findViewById(R.id.btnJouer);
         defi = (Button) findViewById(R.id.btnEntrainement);
         option = (Button) findViewById(R.id.btnOption);
 
+        connexion.setOnClickListener(this);
         jouer.setOnClickListener(this);
         defi.setOnClickListener(this);
         option.setOnClickListener(this);
@@ -41,6 +44,10 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
 
         switch (v.getId()) {
+
+            case R.id.btnConnexion:
+                connexion();
+                break;
 
             case R.id.btnJouer:
                 demarerPartie();
@@ -57,6 +64,11 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    public void connexion(){
+        Intent secondeActivite = new Intent(MenuActivity.this, ConnexionActivity.class);
+        startActivity(secondeActivite);
     }
 
     /**

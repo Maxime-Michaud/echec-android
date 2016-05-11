@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-
+//Todo cleaner et finir defi
 /**
  * Classe qui permet à l'utilisateur de choisir le défi qu'il veux faire.
  * Affiche les catégories de défi ainsi que les défis de chaques catégories
@@ -26,12 +26,12 @@ import java.util.List;
  * Created by Keven on 2016-05-04.
  */
 public class DefiActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
-    private Button retour;
-    private Spinner spinD;
-    private ListView lv;
-    private List niveau;
+    private Button          retour;
+    private Spinner         spinD;
+    private ListView        lv;
+    private List            niveau;
     private ArrayList<Defi> listDefi;
-    private ResultatDefi r;
+    private ResultatDefi    r;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

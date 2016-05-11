@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Cheval cheval = new Cheval();
     Roi roi = new Roi();
 
-    String pionRenduAuBoutte;                                //Le pion qui est rendu au bout
+    String pionRenduAuBoutte;                               //Le pion qui est rendu au bout
     String pionEnMouvement;                                 //Le pion qui est sélection pour un mouvement
     int nbPionBlancMort = 0;
     int nbPionNoirMort = 0;
@@ -957,6 +957,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         suggestion = new Suggestion('B');
     }
 
+    /**
+     * Méthode qui affiche un alertDialog qui permet au joueur de choisir la pièce qui va
+     * remplacer le pion, quand celui-çi à atteind l'auttre bout du plateau.
+     * @param pion string qui représente le pion a changer.
+     */
     public void choixPiece(String pion) {
         pionRenduAuBoutte = pion;
         if (!tourBlanc)
@@ -981,7 +986,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
-
                 i++;
             }
             return;
@@ -990,7 +994,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final View alertDialogView = factory.inflate(R.layout.alerte_changement, null);
 
         //Création de l'AlertDialog
-
         AlertDialog alert = new AlertDialog.Builder(this).create();
 
         //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
@@ -1006,6 +1009,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 ca.setChoix('T');
                 ca.setConfirme(true);
+                tour.setBackgroundResource(R.drawable.tour_select);
+                cavalier.setBackgroundResource(R.drawable.cheval);
+                fou.setBackgroundResource(R.drawable.fou);
+                reine.setBackgroundResource(R.drawable.reine);
             }
         });
 
@@ -1014,6 +1021,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 ca.setChoix('C');
                 ca.setConfirme(true);
+                tour.setBackgroundResource(R.drawable.tour);
+                cavalier.setBackgroundResource(R.drawable.cheval_select);
+                fou.setBackgroundResource(R.drawable.fou);
+                reine.setBackgroundResource(R.drawable.reine);
             }
         });
 
@@ -1022,6 +1033,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 ca.setChoix('F');
                 ca.setConfirme(true);
+                tour.setBackgroundResource(R.drawable.tour);
+                cavalier.setBackgroundResource(R.drawable.cheval);
+                fou.setBackgroundResource(R.drawable.fou_select);
+                reine.setBackgroundResource(R.drawable.reine);
             }
         });
 
@@ -1030,6 +1045,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 ca.setChoix('Q');
                 ca.setConfirme(true);
+                tour.setBackgroundResource(R.drawable.tour);
+                cavalier.setBackgroundResource(R.drawable.cheval);
+                fou.setBackgroundResource(R.drawable.fou);
+                reine.setBackgroundResource(R.drawable.reine_select);
             }
         });
 
@@ -1042,6 +1061,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     choix[0] = ca.getChoix();
                     int i = 0;
 
+                    //Recherche le tag du pion actuelle pour changer son tag et lui attribuer l'image
+                    //correspondant au nouveau tag. Exemple: TB5 = Cinquième tour blanche.
                     for (String s: pieces){
                         if (pionRenduAuBoutte.equals(s)){
                             String temp = choix[0]+Character.toString(s.charAt(1))+Character.toString(s.charAt(2))+Character.toString(s.charAt(3))+Character.toString(s.charAt(4));
@@ -1062,11 +1083,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         i++;
                     }
+                    tour.setBackgroundResource(R.drawable.tour);
+                    cavalier.setBackgroundResource(R.drawable.cheval);
+                    fou.setBackgroundResource(R.drawable.fou);
+                    reine.setBackgroundResource(R.drawable.reine);
                     alert.dismiss();
                 }
             }
         });
         alert.show();
     }
-
 }

@@ -11,13 +11,14 @@
         android:text="@string/b_defi"
         android:id="@+id/lblDefi"
         android:layout_gravity="center_horizontal"
-        android:textSize="40sp" />
+        android:textSize="40sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
