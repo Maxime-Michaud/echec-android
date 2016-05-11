@@ -1,5 +1,6 @@
 package nick.echec;
 
+import android.animation.Animator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,10 +9,21 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.ClipDrawable;
+import android.media.Image;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -19,10 +31,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    ChangementAlerte ca = new ChangementAlerte(); //classe gère le changement de pièces (kev)
     int cliqueX, cliqueY;   //ou le joueur a cliqué
     RelativeLayout layout;
     ArrayList<MoveListener> lstMoveListener;
@@ -43,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Toutes les pièces et leur position; la lettre du nom de la pièce (Pion, Tour, Fou, Roi, (Q)Reine, (K)Roi), le no de la pièce, sa position Y, sa position X (c inversé mais jmen caliss je continue sur mon brainfart)
     String pieces[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
             "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
-    AI newAI = new AI('N');
+    AI2 newAI = new AI2('N');
     //Les controlleurs de pièces
     Pion pion = new Pion();
     Fou fou = new Fou();
@@ -52,10 +68,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Cheval cheval = new Cheval();
     Roi roi = new Roi();
 
+    String pionRenduAuBoutte;                                //Le pion qui est rendu au bout
     String pionEnMouvement;                                 //Le pion qui est sélection pour un mouvement
     int nbPionBlancMort = 0;
     int nbPionNoirMort = 0;
     ArrayList<String> toRemove;                             //Les mouvement à enlever de l'array
+    boolean attendreAnimation;
+    long start_tour = System.currentTimeMillis();           //Le tempps au début d'un tour
+    long start_time = System.currentTimeMillis();           //Le tempps au début de la partie
+    Suggestion suggestion;
 
     /**
      *
@@ -210,10 +231,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         QB1 = new ImageView(this);
         setPawn(QB1,4,7,0,1);
         QB1.setTag("QB1");
-
+        start_time = System.currentTimeMillis();
 
 
         //recommencer();
+        /*String piecesTemp[] = {"PN126", "PN227", "PN325", "PN413", "PN514", "PN615", "PN716","PN817",
+                "PB120", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867"};*/
         initialiserUneGille(pieces);
     }
 
@@ -235,11 +258,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         img.setImageBitmap(bitmapTemp);
         params.leftMargin = px;
         params.topMargin = py;
-        layout.addView(img, params);
+        if(layout.indexOfChild(img) == -1)
+            layout.addView(img, params);
     }
 
     /**
-     * Sur le clique de n'importe quel case
+     * Sur le clique de n'importe quel case, va détecter quel type de pièce est sur la case et donner les mouvement possible
      * @param v
      */
     @Override
@@ -329,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             finaliserTour(false);
             if((newAI.couleur == 'N' && !tourBlanc) || (newAI.couleur == 'B' && tourBlanc))
             {
-
                 String newPos;
                 StringBuilder temp = new StringBuilder();
                 newPos = newAI.choisirPieceRandom(pieces, premierTourPionsNoirs, premierTourPionsBlancs, mouvDispos, mouvCauseMort, temp);
@@ -337,6 +360,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 cliqueY = Character.getNumericValue(newPos.charAt(0));
                 cliqueX = Character.getNumericValue(newPos.charAt(1));
                 finaliserTour(true);
+
             }
         }
 
@@ -384,9 +408,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String posTemp = Character.toString(s.charAt(1)) + Character.toString(s.charAt(3)) + Character.toString(s.charAt(4));
                     if(posTemp.equals(nomPionMort))
                     {
+                        suggestion.prendreStatPionMort(System.currentTimeMillis(), s);
                         if(s.charAt(0) == 'K')
                             partieTerminer(s, this);
-                        bougerPiece(s,Character.toString(nomPionMort.charAt(0)), false);
+                        final String npm = Character.toString(nomPionMort.charAt(0));
+                        Thread t1 = new Thread(new Runnable() {
+                            public void run() {
+                                bougerPiece(s,npm, false);
+                            }
+                        });
+                        t1.start();
+                        while(t1.isAlive());
+
                         List<String> list = new ArrayList<String>(Arrays.asList(pieces));
                         list.removeAll(Arrays.asList(s));
                         pieces = list.toArray(new String[list.size()]);
@@ -410,6 +443,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 {
                     String nouvelPos = Integer.toString(cliqueY) + Integer.toString(cliqueX);
                     String nomPiece = Character.toString(string.charAt(0)) + Character.toString(string.charAt(1)) + Character.toString(string.charAt(2));
+                    final String npm = nouvelPos;
+                    Thread t2 = new Thread(new Runnable() {
+                        public void run() {
+                            bougerPiece(string,npm, false);
+                        }
+                    });
+                    t2.start();
+                    while(t2.isAlive());
                     bougerPiece(string, nouvelPos, false);
                     pieces[k] = nomPiece +nouvelPos;
                     if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'B')
@@ -420,16 +461,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         premierTourPionsNoirs[Character.getNumericValue(pionEnMouvement.charAt(2) -1)] = false;
                     }
+                    suggestion.prendreTempsPasseTour(System.currentTimeMillis() - start_tour,(tourBlanc?'B':'N'));
+                    start_tour = System.currentTimeMillis();
+                    if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'B' && nouvelPos.charAt(0) == '0')
+                    {
+                        //TODO MENU CHOIX
+                        pionRenduAuBoutte = pionEnMouvement;
+                        choixPiece(pieces[k]);
+                    }
+                    if(pionEnMouvement.charAt(0) == 'P' && pionEnMouvement.charAt(1) == 'N' && nouvelPos.charAt(0) == '7')
+                    {
+                        pionRenduAuBoutte = pionEnMouvement;
+                        //TODO MENU CHOIX
+                        choixPiece(pieces[k]);
+                    }
                     break;
 
                 }
                 k++;
             }
+
             if(tourBlanc)
                 layout.setBackgroundColor(Color.BLACK);
             else
                 layout.setBackgroundColor(Color.WHITE);
             tourBlanc= !tourBlanc;
+            //Toast.makeText(this, pionEnMouvement + " vers " + Integer.toString(cliqueY) + Integer.toString(cliqueX), Toast.LENGTH_LONG).show();
 
         }
         estEnSelectionMouv = false;
@@ -438,6 +495,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void bougerPiece(String nomPiece, String nouvelPos, boolean initialisation)
     {
         //TODO mettre sa dans un thread quon peut faire un while pour attendre que les pièces aient finis de bouger pour la fct recommencer()
+
         int anciennePosX, anciennePosY;
         if(!initialisation)
             anciennePosX = Character.getNumericValue(nomPiece.charAt(4));
@@ -473,10 +531,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for(int i = 0; i < layout.getChildCount();i++)
         {
             View v = layout.getChildAt(i);
-            if (v instanceof ImageView && v.getTag().equals(nomImgView))
-            {
+            attendreAnimation = true;
+            if (v instanceof ImageView && v.getTag().equals(nomImgView)) {
                 v.animate().translationX(v.getTranslationX() + px).setDuration(1000);
                 v.animate().translationY(v.getTranslationY() + py).setDuration(1000);
+                /*long start_time = System.currentTimeMillis();
+                long wait_time = 1000;
+                long end_time = start_time + wait_time;
+
+                while (System.currentTimeMillis() < end_time) {
+                    //..
+                }*/
                 break;
             }
         }
@@ -693,7 +758,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pawns);
         pieces = tousPieces;
-
+        suggestion= new Suggestion('B');
         for(int i = 0;i < 8;i++)
         {
             premierTourPionsBlancs[i] = true;
@@ -773,14 +838,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 v.setOnClickListener(this);
             }
         }
-        if(tourBlanc)
-            layout.setBackgroundColor(Color.BLACK);
-        else
-            layout.setBackgroundColor(Color.WHITE);
-        tourBlanc= !tourBlanc;
+        layout.setBackgroundColor(Color.WHITE);
+        tourBlanc= true;
         pionsNoirs = new ArrayList<>();
         String piecesTemp[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
-                "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
+            "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
+        /*String piecesTemp[] = {"PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
+                "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867"};*/
         pieces = piecesTemp;
         //Les images des pions et leur tag pour les reconnaître dans d'autre fonction
         PN1 = new ImageView(this);
@@ -850,7 +914,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setPawn(FN1, 2, 0, 3, 0);
         FN1.setTag("FN1");
         FN2 = new ImageView(this);
-        setPawn(FN2,5,0,3,0);
+        setPawn(FN2, 5, 0, 3, 0);
         FN2.setTag("FN2");
         CN1 = new ImageView(this);
         setPawn(CN1, 1, 0, 4, 0);
@@ -859,35 +923,150 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setPawn(CN2, 6, 0, 4, 0);
         CN2.setTag("CN2");
         KN1 = new ImageView(this);
-        setPawn(KN1,3,0,1,0);
+        setPawn(KN1, 3, 0, 1, 0);
         KN1.setTag("KN1");
         QN1 = new ImageView(this);
-        setPawn(QN1,4,0,0,0);
+        setPawn(QN1, 4, 0, 0, 0);
         QN1.setTag("QN1");
 
         TB1 = new ImageView(this);
-        setPawn(TB1,0,7,2,1);
+        setPawn(TB1, 0, 7, 2, 1);
         TB1.setTag("TB1");
         TB2 = new ImageView(this);
-        setPawn(TB2,7,7,2,1);
+        setPawn(TB2, 7, 7, 2, 1);
         TB2.setTag("TB2");
         FB1 = new ImageView(this);
-        setPawn(FB1,2,7,3,1);
+        setPawn(FB1, 2, 7, 3, 1);
         FB1.setTag("FB1");
         FB2 = new ImageView(this);
-        setPawn(FB2,5,7,3,1);
+        setPawn(FB2, 5, 7, 3, 1);
         FB2.setTag("FB2");
         CB1 = new ImageView(this);
-        setPawn(CB1,1,7,4,1);
+        setPawn(CB1, 1, 7, 4, 1);
         CB1.setTag("CB1");
         CB2 = new ImageView(this);
-        setPawn(CB2,6,7,4,1);
+        setPawn(CB2, 6, 7, 4, 1);
         CB2.setTag("CB2");
         KB1 = new ImageView(this);
-        setPawn(KB1,3,7,1,1);
+        setPawn(KB1, 3, 7, 1, 1);
         KB1.setTag("KB1");
         QB1 = new ImageView(this);
-        setPawn(QB1,4,7,0,1);
+        setPawn(QB1, 4, 7, 0, 1);
         QB1.setTag("QB1");
+        start_time = start_tour = System.currentTimeMillis();
+        suggestion = new Suggestion('B');
     }
+
+    public void choixPiece(String pion) {
+        pionRenduAuBoutte = pion;
+        if (!tourBlanc)
+        {
+            char choix[] = new char[2];
+            choix[0] = 'Q';
+            int i = 0;
+            for (String s : pieces)
+            {
+                if (pionRenduAuBoutte.equals(s))
+                {
+                    String temp = choix[0] + Character.toString(s.charAt(1)) + Character.toString(s.charAt(2)) + Character.toString(s.charAt(3)) + Character.toString(s.charAt(4));
+                    pieces[i] = temp;
+                    String tag = Character.toString(pionRenduAuBoutte.charAt(0)) + Character.toString(pionRenduAuBoutte.charAt(1)) + Character.toString(pionRenduAuBoutte.charAt(2));
+
+                    for (int j = 0; j < layout.getChildCount(); j++) {
+                        View vw = layout.getChildAt(j);
+                        if (vw instanceof ImageView && layout.getChildAt(j).getTag().equals(tag)) {
+                            String tagtemp = Character.toString(choix[0]) + Character.toString(tag.charAt(1)) + Character.toString(tag.charAt(2));
+                            layout.getChildAt(j).setTag(tagtemp);
+                            setPawn((ImageView) vw, Character.getNumericValue(temp.charAt(4)), Character.getNumericValue(temp.charAt(3)), 0, (tourBlanc ? 1 : 0));
+                        }
+                    }
+                }
+
+                i++;
+            }
+            return;
+        }
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View alertDialogView = factory.inflate(R.layout.alerte_changement, null);
+
+        //Création de l'AlertDialog
+
+        AlertDialog alert = new AlertDialog.Builder(this).create();
+
+        //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
+        alert.setView(alertDialogView);
+
+        ImageView tour = (ImageView)alertDialogView.findViewById(R.id.btnTour);
+        ImageView cavalier = (ImageView)alertDialogView.findViewById(R.id.btnCheval);
+        ImageView fou = (ImageView)alertDialogView.findViewById(R.id.btnFou);
+        ImageView reine = (ImageView)alertDialogView.findViewById(R.id.btnReine);
+        Button ok = (Button)alertDialogView.findViewById(R.id.btnACok);
+
+        tour.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ca.setChoix('T');
+                ca.setConfirme(true);
+            }
+        });
+
+        cavalier.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ca.setChoix('C');
+                ca.setConfirme(true);
+            }
+        });
+
+        fou.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ca.setChoix('F');
+                ca.setConfirme(true);
+            }
+        });
+
+        reine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ca.setChoix('Q');
+                ca.setConfirme(true);
+            }
+        });
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ca.getConfirme()){
+                    char[] choix= new char[7];
+                    choix = pionRenduAuBoutte.toCharArray();
+                    choix[0] = ca.getChoix();
+                    int i = 0;
+
+                    for (String s: pieces){
+                        if (pionRenduAuBoutte.equals(s)){
+                            String temp = choix[0]+Character.toString(s.charAt(1))+Character.toString(s.charAt(2))+Character.toString(s.charAt(3))+Character.toString(s.charAt(4));
+                            pieces[i] = temp;
+                            String tag = Character.toString(pionRenduAuBoutte.charAt(0))+Character.toString(pionRenduAuBoutte.charAt(1))+Character.toString(pionRenduAuBoutte.charAt(2));
+
+                            for(int j=0;j<layout.getChildCount();j++)
+                            {
+                                View vw = layout.getChildAt(j);
+                                if (vw instanceof ImageView && layout.getChildAt(j).getTag().equals(tag))
+                                {
+                                    String tagtemp = Character.toString(choix[0])+ Character.toString(tag.charAt(1))+ Character.toString(tag.charAt(2));
+                                    layout.getChildAt(j).setTag(tagtemp);
+                                    setPawn((ImageView)vw,Character.getNumericValue(temp.charAt(4)),Character.getNumericValue(temp.charAt(3)),(choix[0] == 'Q'?0:(choix[0] == 'T'?2:choix[0] == 'F'?3:4)),(tourBlanc?1:0));
+                                }
+                            }
+                            break;
+                        }
+                        i++;
+                    }
+                    alert.dismiss();
+                }
+            }
+        });
+        alert.show();
+    }
+
 }

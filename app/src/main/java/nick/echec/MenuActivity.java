@@ -6,7 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import data.MoteurBD;
+
 /**
+ * Le menu principale du jeu. Il permet d'accèder aux autres éléments de l'application: le jeu,
+ * les défis et les options
  * Created by Keven on 2016-05-02.
  */
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
@@ -20,6 +24,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_principal);
 
+        MoteurBD.init(this);
         jouer = (Button) findViewById(R.id.btnJouer);
         defi = (Button) findViewById(R.id.btnEntrainement);
         option = (Button) findViewById(R.id.btnOption);
@@ -30,8 +35,8 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Méthode qui gère les évènements "onClick" du projet
-     * @param v est l'object qui est cliquer / appele la méthode. Exemple: un Button
+     * Méthode qui gère les évènements "onClick" du projet.
+     * @param v est l'object qui est cliquer / appele la méthode. Exemple: un Button.
      */
     public void onClick(View v) {
 
@@ -54,18 +59,30 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Méthode qui démarre "MainActivity" qui est la classe pour jouer la
+     * partie d'échec.
+     */
     public void demarerPartie(){
             Intent secondeActivite = new Intent(MenuActivity.this, MainActivity.class);
             startActivity(secondeActivite);
     }
 
+    /**
+     * Méthodes qui démarre "DefiActivity" qui est la classe qui gère les défis.
+     */
+    public void ouvrireDefi(){
+        Intent secondeActivite = new Intent(MenuActivity.this, DefiActivity.class);
+        startActivity(secondeActivite);
+    }
+
+    /**
+     * Méthode qui démarre "OptionActivity" qui est la classe qui gère
+     * les options du jeu.
+     */
     public void ouvrireOption(){
         Intent secondeActivite = new Intent(MenuActivity.this, OptionActivity.class);
         startActivity(secondeActivite);
     }
 
-    public void ouvrireDefi(){
-        Intent secondeActivite = new Intent(MenuActivity.this, MainActivity.class);
-        startActivity(secondeActivite);
-    }
 }
