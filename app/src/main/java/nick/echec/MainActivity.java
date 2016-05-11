@@ -37,6 +37,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
+import data.GestionnaireUtilisateurs;
+import data.Utilisateur;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     ChangementAlerte ca = new ChangementAlerte(); //classe gère le changement de pièces (kev)
     int cliqueX, cliqueY;   //ou le joueur a cliqué
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Toutes les pièces et leur position; la lettre du nom de la pièce (Pion, Tour, Fou, Roi, (Q)Reine, (K)Roi), le no de la pièce, sa position Y, sa position X (c inversé mais jmen caliss je continue sur mon brainfart)
     String pieces[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
             "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
-    AI2 newAI = new AI2('N');
+    AI newAI;
     //Les controlleurs de pièces
     Pion pion = new Pion();
     Fou fou = new Fou();
@@ -76,7 +79,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     boolean attendreAnimation;
     long start_tour = System.currentTimeMillis();           //Le tempps au début d'un tour
     long start_time = System.currentTimeMillis();           //Le tempps au début de la partie
+    Utilisateur utilisateur;
     Suggestion suggestion;
+
 
     /**
      *
@@ -100,9 +105,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        GestionnaireUtilisateurs.ajouter("Bob", "test");
+        utilisateur = GestionnaireUtilisateurs.get("Bob");
+        demarrer(savedInstanceState,utilisateur, 1, null);
 
+    }
+    protected void demarrer(Bundle savedInstanceState, Utilisateur utilisateur, int niveauAI, String pieceDepart[]) {
+
+        if(!utilisateur.getUsername().equals("Bob"))
+            super.onCreate(savedInstanceState);
+        this.utilisateur = utilisateur;
+        suggestion = new Suggestion((tourBlanc?'B':'N'));
+        if(niveauAI == 0)
+            newAI = new AI('N');
+        else
+            newAI = new AI2('N');
         lstMoveListener = new ArrayList<>();
         setContentView(R.layout.activity_main);
         layout = (RelativeLayout) findViewById(R.id.relative);
@@ -237,7 +255,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //recommencer();
         /*String piecesTemp[] = {"PN126", "PN227", "PN325", "PN413", "PN514", "PN615", "PN716","PN817",
                 "PB120", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867"};*/
-        initialiserUneGille(pieces);
+        if(pieceDepart == null)
+            initialiserUneGille(pieces);
+        else
+            initialiserUneGille(pieceDepart);
     }
 
     /**
@@ -533,8 +554,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             View v = layout.getChildAt(i);
             attendreAnimation = true;
             if (v instanceof ImageView && v.getTag().equals(nomImgView)) {
-                v.animate().translationX(v.getTranslationX() + px).setDuration(1000);
-                v.animate().translationY(v.getTranslationY() + py).setDuration(1000);
+                v.animate().translationX(v.getTranslationX() + px).setDuration(500);
+                v.animate().translationY(v.getTranslationY() + py).setDuration(500);
                 /*long start_time = System.currentTimeMillis();
                 long wait_time = 1000;
                 long end_time = start_time + wait_time;
@@ -752,6 +773,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+        ArrayList<String> suggestions = suggestion.genererEnvoyerSuggestions(utilisateur);
     }
 
     public void initialiserUneGille(String tousPieces[])
