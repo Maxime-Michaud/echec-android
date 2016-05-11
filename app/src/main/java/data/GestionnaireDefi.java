@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.annimon.stream.Stream;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
  * Created by Maxime on 5/4/2016.
  */
 public class GestionnaireDefi {
+    private static List<Defi> defis = new ArrayList<>();
 
     /**
      * Valide une grille
@@ -28,6 +30,19 @@ public class GestionnaireDefi {
                 Stream.of(grille)
                         .filter(s -> s.length() > 0)
                         .allMatch(s -> Pattern.matches("[PTFCQK][NB].[0-7][0-7]", s));
+    }
+
+
+    /**
+     * Sélectionne tous les résultats des défis d'un utilisateur
+     * @param u Utilisateur duquel on cherche les résultats
+     * @return Curseur contenant les résultats
+     */
+    private static Cursor selectResultat(Utilisateur u) {
+        SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+        return db.rawQuery("SELECT du.id, du.nb_tour, du.reussi, d.nom " +
+                            "FROM defi_utilisateurs du INNER JOIN defi d ON d.id = du.defi " +
+                            "WHERE du.utilisateur = ?", new String[]{Integer.toString(u.getId())});
     }
 
     /**
@@ -47,7 +62,7 @@ public class GestionnaireDefi {
         cv.put("grille", grille);
 
         return insertDefiInternet(nom, nbTours, grille) &&
-                db.insert("defi", null, cv) != -1;
+                db.insertOrThrow("defi", null, cv) != -1;
     }
 
     private static int getDernierID() {
@@ -133,11 +148,23 @@ public class GestionnaireDefi {
      * @param nom nom du défi
      */
     public static Defi get(String nom) {
+        Defi defi = Stream.of(defis)
+                .filter(d -> nom.equals(d.getNom()))
+                .findFirst().orElse(null);
+
+        if (defi != null)
+            return defi;
+
         Cursor c = selectDefi(nom);
 
         try {
-            return c.moveToFirst() ? new Defi(c.getInt(0), c.getString(1), c.getInt(2), c.getFloat(3), c.getFloat(4), c.getString(5), c.getInt(6))
-                    :null;
+            defi = c.moveToFirst() ? new Defi(c.getInt(0), c.getString(1), c.getInt(2), c.getFloat(3), c.getFloat(4), c.getString(5), c.getInt(6))
+                    : null;
+
+            if (defi != null)
+                defis.add(defi);
+
+            return defi;
         }
         finally {
             c.close();
@@ -167,8 +194,21 @@ public class GestionnaireDefi {
      * @param u utilisateur
      * @return
      */
-    static List<ResultatDefi> getResultats(Utilisateur u){
-        throw new UnsupportedOperationException();
+    static List<ResultatDefi> getResultats(Utilisateur u) {
+        Cursor c = selectResultat(u);
+
+        ArrayList<ResultatDefi> resultats = new ArrayList<>();
+
+        try{
+            while (c.moveToNext())
+            {
+                resultats.add(new ResultatDefi(get(c.getString(3)), c.getInt(1), c.getInt(2) == 1));
+            }
+        }
+        finally {
+            c.close();
+        }
+        return resultats;
     }
 
     /**
@@ -176,7 +216,6 @@ public class GestionnaireDefi {
      */
     static boolean ajouterResultat(Utilisateur u, ResultatDefi r)
     {
-        //insertResultat
-        return false;
+        return insertResultat(u.getId(), r.getDefi().getId(), r.getNbTour(), r.isReussi());
     }
 }

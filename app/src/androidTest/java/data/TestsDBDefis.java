@@ -104,7 +104,7 @@ public class TestsDBDefis {
     {
         Utilisateur u = GestionnaireUtilisateurs.get(username);
 
-        String nom = "creationDefi";
+        String nom = "defisCompletes";
         int nbTours = 0;
         String grille = "PB777,PN000";
         Assert.assertTrue(GestionnaireDefi.ajouter(nom, nbTours, grille));
@@ -120,15 +120,12 @@ public class TestsDBDefis {
     /**
      * Teste que les defis pas ajoutés a l'utilisateur n'est pas ajouter a l'utilisateur
      */
-    /**
-     * Teste que les défis ajouter a l'utilisateur sont ajoutés a l'utilisateur
-     */
     @Test
     public void defisNonCompletes()
     {
         Utilisateur u = GestionnaireUtilisateurs.get(username);
 
-        String nom = "creationDefi";
+        String nom = "defisNonCompletes";
         int nbTours = 0;
         String grille = "PB777,PN000";
         Assert.assertTrue(GestionnaireDefi.ajouter(nom, nbTours, grille));
