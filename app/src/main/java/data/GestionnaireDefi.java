@@ -32,6 +32,19 @@ public class GestionnaireDefi {
                         .allMatch(s -> Pattern.matches("[PTFCQK][NB].[0-7][0-7]", s));
     }
 
+
+    /**
+     * Sélectionne tous les résultats des défis d'un utilisateur
+     * @param u Utilisateur duquel on cherche les résultats
+     * @return Curseur contenant les résultats
+     */
+    private static Cursor selectResultat(Utilisateur u) {
+        SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+        return db.rawQuery("SELECT du.id, du.nb_tour, du.reussi, d.nom " +
+                            "FROM defi_utilisateurs du INNER JOIN defi d ON d.id = du.defi " +
+                            "WHERE du.utilisateur = ?", new String[]{Integer.toString(u.getId())});
+    }
+
     /**
      * Insere la grille dans la bd
      * @param nom
@@ -49,7 +62,7 @@ public class GestionnaireDefi {
         cv.put("grille", grille);
 
         return insertDefiInternet(nom, nbTours, grille) &&
-                db.insert("defi", null, cv) != -1;
+                db.insertOrThrow("defi", null, cv) != -1;
     }
 
     private static int getDernierID() {
@@ -159,6 +172,14 @@ public class GestionnaireDefi {
     }
 
     /**
+     * @param diff
+     * @return
+     */
+    public static List<Defi> get(int diff) {
+        return null;//TODO
+    }
+
+    /**
      * Sélectionne le défi dans la bd
      * @param nom
      * @return
@@ -181,10 +202,6 @@ public class GestionnaireDefi {
      * @param u utilisateur
      * @return
      */
-//<<<<<<< HEAD
-    static List<ResultatDefi> getResultats(Utilisateur u){
-        throw new UnsupportedOperationException();
-/*=======
     static List<ResultatDefi> getResultats(Utilisateur u) {
         Cursor c = selectResultat(u);
 
@@ -200,7 +217,6 @@ public class GestionnaireDefi {
             c.close();
         }
         return resultats;
->>>>>>> nickASDF*/
     }
 
     /**
@@ -208,11 +224,6 @@ public class GestionnaireDefi {
      */
     static boolean ajouterResultat(Utilisateur u, ResultatDefi r)
     {
-/*<<<<<<< HEAD
-        //insertResultat
-        return false;
-=======*/
         return insertResultat(u.getId(), r.getDefi().getId(), r.getNbTour(), r.isReussi());
-//>>>>>>> nickASDF
     }
 }
