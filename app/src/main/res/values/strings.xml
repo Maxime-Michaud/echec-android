@@ -23,8 +23,10 @@
 	<string name="c_user_existant">Erreur! Nom d\'utilisateur déjà existant.</string>
 	<string name="c_connexion_ok">Authentification réussie</string>
 	<string name="c_inscription_ok">Inscription réussie</string>
+
 	<string name="PREF_FILE">APP_PREF_FILE</string>
 	<string name="NIVEAU_DIFFICULTER">APP_NIVEAU_DIFFICULTER</string>
+
     <string name="SQL">CREATE TABLE IF NOT EXISTS type_compte(
 	id INT PRIMARY KEY,
 	nom VARCHAR(25)
