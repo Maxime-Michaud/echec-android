@@ -25,7 +25,7 @@ public class ConnexionActivity extends AppCompatActivity implements View.OnClick
     private String      erreur;
     SharedPreferences   pref;
     private String      prefNom;
-    JeSuisLache         j;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +34,6 @@ public class ConnexionActivity extends AppCompatActivity implements View.OnClick
 
         pref = ConnexionActivity.this.getSharedPreferences(getString(R.string.PREF_FILE),MODE_PRIVATE);
         prefNom = pref.getString(getString(R.string.UTILISATEUR),"");
-        //Todo Enlever j
-        j = new JeSuisLache();
 
         connexion = (Button) findViewById(R.id.btn_log);
         inscrire = (Button) findViewById(R.id.btn_ins);

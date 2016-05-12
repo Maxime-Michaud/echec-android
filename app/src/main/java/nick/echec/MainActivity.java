@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,6 +43,7 @@ import data.Utilisateur;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     ChangementAlerte ca = new ChangementAlerte(); //classe gère le changement de pièces (kev)
+    SharedPreferences pref; //Variable pour les préferences (kev)
     int cliqueX, cliqueY;   //ou le joueur a cliqué
     RelativeLayout layout;
     ArrayList<MoveListener> lstMoveListener;

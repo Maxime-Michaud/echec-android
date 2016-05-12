@@ -18,6 +18,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     private Button jouer;
     private Button defi;
     private Button option;
+    JeSuisLache    j;
 
 
     @Override
@@ -26,6 +27,8 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_menu_principal);
 
         MoteurBD.init(this);
+        j = new JeSuisLache();
+
         connexion = (Button) findViewById(R.id.btnConnexion);
         jouer = (Button) findViewById(R.id.btnJouer);
         defi = (Button) findViewById(R.id.btnEntrainement);
