@@ -129,7 +129,7 @@ public class GestionnaireUtilisateurs {
      * @return Hash md5 du string
      * Code extrait de http://stackoverflow.com/questions/4846484/md5-hashing-in-android#4846511
      */
-    public static String md5(final String s) {
+    private static String md5(final String s) {
         final String MD5 = "MD5";
         try {
             // Create MD5 Hash

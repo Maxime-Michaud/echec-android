@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/c_titre"
+        android:id="@+id/lbl_Titre"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="40sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/c_user"
+        android:id="@+id/lbl_user"
+        android:layout_gravity="center_horizontal" />
+
+    <EditText
+        android:layout_width="225dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_user"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:maxLines="1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/c_mdp"
+        android:id="@+id/lbl_mdp"
+        android:layout_gravity="center_horizontal" />
+
+    <EditText
+        android:layout_width="225dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/et_mdp"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:maxLines="1" />
+
+    <Button
+        android:layout_width="225dp"
+        android:layout_height="wrap_content"
+        android:text="@string/c_connexion"
+        android:id="@+id/btn_log"
+        android:layout_gravity="center_horizontal"
+        android:textSize="15sp" />
+
+    <Button
+        android:layout_width="225dp"
+        android:layout_height="wrap_content"
+        android:text="@string/c_inscription"
+        android:id="@+id/btn_ins"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="225dp"
+        android:layout_height="wrap_content"
+        android:text="@string/b_retour"
+        android:id="@+id/btn_cRetour"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>

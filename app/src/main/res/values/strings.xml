@@ -1,22 +1,30 @@
 <resources>
     <string name="app_name">Echec</string>
     <string name="b_retour">Retour</string>
-	<string name="b_connection">Connection</string>
     <string name="b_jouer">Jouer</string>
     <string name="b_defi">Défi</string>
     <string name="b_option">Option</string>
-    <string name="o_opt1">Niveau de difficulté :</string>
+    <string name="o_opt1">Niveau de difficulté:</string>
     <string name="d_type">Type de défi:</string>
     <string name="d_choix">Choix du défi:</string>
-    <string name="d_reussi">Réussi :</string>
-    <string name="d_diff">Difficulté :</string>
-	<string name="c_username">Nom d\'utilisateur :</string>
-	<string name="c_mdp">Mot de passe :</string>
-	<string name="c_remember">Se souvenir de moi</string>
-	<string name="c_connecter">Se connecter</string>
-	<string name="c_insrire">S\'inscrire</string>
-	<string name="ac_changement">Échanger votre pion pour:</string>
+    <string name="d_reussi">Réussi:</string>
+    <string name="d_diff">Difficulté:</string>
 	<string name="ac_ok">Ok</string>
+	<string name="ac_message">Veuillez choisir une pièce:</string>
+	<string name="c_titre">Connection</string>
+	<string name="c_user">Nom d\'utilisateur:</string>
+	<string name="c_mdp">Mot de passe:</string>
+	<string name="c_connexion">S\'authentifier</string>
+	<string name="c_inscription">S\'inscrire</string>
+	<string name="c_mDeux">Les champs nom d\'utilisateur et mod de passe sont vide. Veuillez remplir les champs.</string>
+	<string name="c_mUser">Le champ nom d\'utilisateur est vide. Veuillez remplir le champ</string>
+	<string name="c_mMdp">Le champ mot de passe est vide. Veuillez remplir le champ</string>
+	<string name="c_erreur_log">Erreur! Mauvais nom d\'utilisateur ou mauvais mot de passe.</string>
+	<string name="c_user_existant">Erreur! Nom d\'utilisateur déjà existant.</string>
+	<string name="c_connexion_ok">Authentification réussie</string>
+	<string name="c_inscription_ok">Inscription réussie</string>
+	<string name="PREF_FILE">APP_PREF_FILE</string>
+	<string name="NIVEAU_DIFFICULTER">APP_NIVEAU_DIFFICULTER</string>
     <string name="SQL">CREATE TABLE IF NOT EXISTS type_compte(
 	id INT PRIMARY KEY,
 	nom VARCHAR(25)

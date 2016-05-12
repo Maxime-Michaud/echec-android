@@ -104,7 +104,7 @@ public class TestsDBDefis {
     {
         Utilisateur u = GestionnaireUtilisateurs.get(username);
 
-        String nom = "defisCompletes";
+        String nom = "creationDefi";
         int nbTours = 0;
         String grille = "PB777,PN000";
         Assert.assertTrue(GestionnaireDefi.ajouter(nom, nbTours, grille));
@@ -128,7 +128,7 @@ public class TestsDBDefis {
     {
         Utilisateur u = GestionnaireUtilisateurs.get(username);
 
-        String nom = "defisNonCompletes";
+        String nom = "creationDefi";
         int nbTours = 0;
         String grille = "PB777,PN000";
         Assert.assertTrue(GestionnaireDefi.ajouter(nom, nbTours, grille));

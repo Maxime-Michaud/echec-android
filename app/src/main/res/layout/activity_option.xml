@@ -21,7 +21,8 @@
         android:layout_column="0"
         android:layout_columnSpan="2"
         android:layout_marginTop="20dp"
-        android:textSize="40sp" />
+        android:textSize="40sp"
+        android:layout_marginBottom="20dp" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -35,19 +36,17 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/o_opt1"
             android:id="@+id/lblOpt1"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp" />
+            android:layout_marginBottom="20dp" />
 
         <Spinner
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:id="@+id/choixia"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp" />
+            android:layout_marginBottom="20dp" />
     </LinearLayout>
 
     <Button
-        android:layout_width="170dp"
+        android:layout_width="225dp"
         android:layout_height="wrap_content"
         android:text="@string/b_retour"
         android:id="@+id/btnRetour"

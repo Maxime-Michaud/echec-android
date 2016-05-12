@@ -8,24 +8,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/ac_changement"
-        android:id="@+id/textView" />
+        android:text="@string/ac_message"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <Button
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnTour" />
+            android:id="@+id/btnTour"
+            android:src="@drawable/tour" />
 
-        <Button
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnCheval" />
-
+            android:id="@+id/btnCheval"
+            android:src="@drawable/cheval" />
     </LinearLayout>
 
     <LinearLayout
@@ -33,23 +35,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <Button
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnFou" />
+            android:id="@+id/btnFou"
+            android:src="@drawable/fou" />
 
-        <Button
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnReine" />
+            android:id="@+id/btnReine"
+            android:src="@drawable/reine" />
     </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ac_ok"
-        android:id="@+id/btnACok"
-        android:layout_gravity="center_horizontal"
-        android:clickable="true" />
-
+        android:id="@+id/btnACok" />
 </LinearLayout>

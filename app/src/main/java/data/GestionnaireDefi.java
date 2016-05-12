@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.annimon.stream.Stream;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -31,19 +30,6 @@ public class GestionnaireDefi {
                         .allMatch(s -> Pattern.matches("[PTFCQK][NB].[0-7][0-7]", s));
     }
 
-
-    /**
-     * Sélectionne tous les résultats des défis d'un utilisateur
-     * @param u Utilisateur duquel on cherche les résultats
-     * @return Curseur contenant les résultats
-     */
-    private static Cursor selectResultat(Utilisateur u) {
-        SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
-        return db.rawQuery("SELECT du.id, du.nb_tour, du.reussi, d.nom " +
-                            "FROM defi_utilisateurs du INNER JOIN defi d ON d.id = du.defi " +
-                            "WHERE du.utilisateur = ?", new String[]{Integer.toString(u.getId())});
-    }
-
     /**
      * Insere la grille dans la bd
      * @param nom
@@ -61,7 +47,7 @@ public class GestionnaireDefi {
         cv.put("grille", grille);
 
         return insertDefiInternet(nom, nbTours, grille) &&
-                db.insertOrThrow("defi", null, cv) != -1;
+                db.insert("defi", null, cv) != -1;
     }
 
     private static int getDernierID() {
@@ -182,20 +168,7 @@ public class GestionnaireDefi {
      * @return
      */
     static List<ResultatDefi> getResultats(Utilisateur u){
-        Cursor c = selectResultat(u);
-
-        ArrayList<ResultatDefi> resultats = new ArrayList<>();
-
-        try{
-            while (c.moveToNext())
-            {
-                resultats.add(new ResultatDefi(get(c.getString(3)), c.getInt(1), c.getInt(2) == 1));
-            }
-        }
-        finally {
-            c.close();
-        }
-        return resultats;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -203,7 +176,7 @@ public class GestionnaireDefi {
      */
     static boolean ajouterResultat(Utilisateur u, ResultatDefi r)
     {
-
-        return insertResultat(u.getId(), r.getDefi().getId(), r.getNbTour(), r.isReussi());
+        //insertResultat
+        return false;
     }
 }

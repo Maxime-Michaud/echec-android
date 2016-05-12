@@ -3,7 +3,6 @@ package nick.echec;
 import android.os.Bundle;
 import data.Defi;
 import data.GestionnaireDefi;
-import data.GestionnaireUtilisateurs;
 import data.ResultatDefi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -19,7 +18,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-
+//Todo cleaner et finir defi
 /**
  * Classe qui permet à l'utilisateur de choisir le défi qu'il veux faire.
  * Affiche les catégories de défi ainsi que les défis de chaques catégories
@@ -27,12 +26,12 @@ import java.util.List;
  * Created by Keven on 2016-05-04.
  */
 public class DefiActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
-    private Button retour;
-    private Spinner spinD;
-    private ListView lv;
-    private List niveau;
+    private Button          retour;
+    private Spinner         spinD;
+    private ListView        lv;
+    private List            niveau;
     private ArrayList<Defi> listDefi;
-    private ResultatDefi r;
+    private ResultatDefi    r;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +74,12 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
          * Création d'une liste d'élément à mettre dans le Spinner
          */
         niveau = new ArrayList();
-        niveau.add(1);
-        niveau.add(2);
-        niveau.add(3);
-        niveau.add(4);
-        niveau.add(5);
+        niveau.add("Pion");
+        niveau.add("Tour");
+        niveau.add("Fou");
+        niveau.add("Cavalier");
+        niveau.add("Reine");
+        niveau.add("Roi");
 
         ArrayAdapter adapter = new ArrayAdapter(
                 this,
@@ -130,7 +130,6 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
             b.append(',');
         }
         GestionnaireDefi.ajouter("defi", 10, b.toString());
-        //GestionnaireUtilisateurs.
         listDefi.add(GestionnaireDefi.get("defi"));
         return listDefi;
     }
@@ -148,7 +147,9 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
      * méthode qui fait rien, mais doit être la pareil
      */
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {}
+    public void onNothingSelected(AdapterView<?> parent) {
+        //Rien
+    }
 
     /**
      * Permet d'adapter l'arrayliste pour quelle contienne des journées
