@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.annimon.stream.Stream;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
  * Created by Maxime on 5/4/2016.
  */
 public class GestionnaireDefi {
+    private static List<Defi> defis = new ArrayList<>();
 
     /**
      * Valide une grille
@@ -133,11 +135,23 @@ public class GestionnaireDefi {
      * @param nom nom du défi
      */
     public static Defi get(String nom) {
+        Defi defi = Stream.of(defis)
+                .filter(d -> nom.equals(d.getNom()))
+                .findFirst().orElse(null);
+
+        if (defi != null)
+            return defi;
+
         Cursor c = selectDefi(nom);
 
         try {
-            return c.moveToFirst() ? new Defi(c.getInt(0), c.getString(1), c.getInt(2), c.getFloat(3), c.getFloat(4), c.getString(5), c.getInt(6))
-                    :null;
+            defi = c.moveToFirst() ? new Defi(c.getInt(0), c.getString(1), c.getInt(2), c.getFloat(3), c.getFloat(4), c.getString(5), c.getInt(6))
+                    : null;
+
+            if (defi != null)
+                defis.add(defi);
+
+            return defi;
         }
         finally {
             c.close();
@@ -167,8 +181,26 @@ public class GestionnaireDefi {
      * @param u utilisateur
      * @return
      */
+//<<<<<<< HEAD
     static List<ResultatDefi> getResultats(Utilisateur u){
         throw new UnsupportedOperationException();
+/*=======
+    static List<ResultatDefi> getResultats(Utilisateur u) {
+        Cursor c = selectResultat(u);
+
+        ArrayList<ResultatDefi> resultats = new ArrayList<>();
+
+        try{
+            while (c.moveToNext())
+            {
+                resultats.add(new ResultatDefi(get(c.getString(3)), c.getInt(1), c.getInt(2) == 1));
+            }
+        }
+        finally {
+            c.close();
+        }
+        return resultats;
+>>>>>>> nickASDF*/
     }
 
     /**
@@ -176,7 +208,11 @@ public class GestionnaireDefi {
      */
     static boolean ajouterResultat(Utilisateur u, ResultatDefi r)
     {
+/*<<<<<<< HEAD
         //insertResultat
         return false;
+=======*/
+        return insertResultat(u.getId(), r.getDefi().getId(), r.getNbTour(), r.isReussi());
+//>>>>>>> nickASDF
     }
 }

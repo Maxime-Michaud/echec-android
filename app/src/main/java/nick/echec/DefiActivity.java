@@ -39,7 +39,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_defi);
         listDefi = getListeDeDefi("Pion");
         setSpinner();
-        setListView(); //a changer
+        setListView(); //todo a changer
         retour = (Button)findViewById(R.id.btnDretour);
         retour.setOnClickListener(this);
 
@@ -74,12 +74,11 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
          * Création d'une liste d'élément à mettre dans le Spinner
          */
         niveau = new ArrayList();
-        niveau.add("Pion");
-        niveau.add("Tour");
-        niveau.add("Fou");
-        niveau.add("Cavalier");
-        niveau.add("Reine");
-        niveau.add("Roi");
+        niveau.add("1");
+        niveau.add("2");
+        niveau.add("3");
+        niveau.add("4");
+        niveau.add("5");
 
         ArrayAdapter adapter = new ArrayAdapter(
                 this,
@@ -121,15 +120,6 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
      * @return la liste de défi
      */
     public ArrayList<Defi> getListeDeDefi(String s) {
-        ArrayList<Defi> listDefi = new ArrayList<Defi>();
-        String pieces[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
-                "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
-        StringBuilder b = new StringBuilder();
-        for (String grille : pieces){
-            b.append(grille);
-            b.append(',');
-        }
-        GestionnaireDefi.ajouter("defi", 10, b.toString());
         listDefi.add(GestionnaireDefi.get("defi"));
         return listDefi;
     }

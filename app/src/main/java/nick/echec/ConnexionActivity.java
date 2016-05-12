@@ -1,6 +1,7 @@
 package nick.echec;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 import data.GestionnaireUtilisateurs;
 
 /**
+ * Classe qui permet à l'utilisateur de se créer un compte ou de se connecter à un compte existant,
+ * en utilisant les informations dans la bd.
  * Created by Keven on 2016-05-11.
  */
 public class ConnexionActivity extends AppCompatActivity implements View.OnClickListener {
@@ -20,14 +23,16 @@ public class ConnexionActivity extends AppCompatActivity implements View.OnClick
     private EditText    etNom;
     private EditText    etMDP;
     private String      erreur;
-    JeSuisLache         j;
+    SharedPreferences   pref;
+    private String      prefNom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
 
-        j = new JeSuisLache();
+        pref = ConnexionActivity.this.getSharedPreferences(getString(R.string.PREF_FILE),MODE_PRIVATE);
+        prefNom = pref.getString(getString(R.string.UTILISATEUR),"");
 
         connexion = (Button) findViewById(R.id.btn_log);
         inscrire = (Button) findViewById(R.id.btn_ins);
@@ -75,6 +80,13 @@ public class ConnexionActivity extends AppCompatActivity implements View.OnClick
         if (!champVide()){
             if (!champInexistant()) {
                 //todo adder utilisateur au preference
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(getString(R.string.UTILISATEUR), nom);
+                editor.commit();
+
+                //Todo: L'enlever le toast XD
+                Toast k = Toast.makeText(getApplicationContext(), pref.getString(getString(R.string.UTILISATEUR),null),Toast.LENGTH_LONG);
+                k.show();
                 erreur = getString(R.string.c_connexion_ok).toString();
             }
         }

@@ -14,91 +14,26 @@ import java.util.Map;
  * Created by Maxime on 4/30/2016.
  */
 public class Utilisateur{
-    enum TYPE_COMPTE{
-        Publique,
-        Privé,
-        Amis_seulement,
-        Anonyme;
-
-        public int toInt()
-        {
-            switch (this)
-            {
-                case Publique:
-                    return 1;
-                case Privé:
-                    return 2;
-                case Amis_seulement:
-                    return 3;
-                case Anonyme:
-                    return 4;
-                default:
-                    return 0;
-            }
-        }
-    }
-    enum RELATION{
-        Ami,
-        Attente_de_demande_dami,
-        Refusé,
-        Bloqué;
-
-        public int toInt()
-        {
-            switch (this)
-            {
-
-                case Ami:
-                    return 1;
-                case Attente_de_demande_dami:
-                    return 2;
-                case Refusé:
-                    return 3;
-                case Bloqué:
-                    return 4;
-            }
-            return 0;
-        }
-
-        public static RELATION fromInt(int anInt) {
-            switch (anInt)
-            {
-            case 1:
-            return Ami;
-            case 2:
-            return Attente_de_demande_dami;
-            case 3:
-            return Refusé;
-            case 4:
-            return Bloqué;
-            default:
-                return Bloqué;
-        }
-        }
-    }
-
     private int id;
     private String username;
     private String nom;
     private String prenom;
     private String email;
     private TYPE_COMPTE type;
-
-    private List<Parties> parties;
-    private List<Parties> nouvellesParties;
-
+    private List<Partie> parties;
+    private List<Partie> nouvellesParties;
     private Map<Utilisateur, RELATION> relations;
-
     private List<ResultatDefi> defis;
 
     /**
      * Initialise un utilisateur
-     * @param id
-     * @param username
-     * @param nom
-     * @param prenom
-     * @param email
-     * @param type
+     *
+     * @param id       id de l'utilisateur
+     * @param username username de l'utilisateur
+     * @param nom      nom de l'utilisateur
+     * @param prenom   prenom de l'utilisateur
+     * @param email    email de l'utilisateur
+     * @param type     type de compte
      */
     Utilisateur(int id, String username, String nom, String prenom, String email, int type) {
         this.id = id;
@@ -114,8 +49,27 @@ public class Utilisateur{
     }
 
     /**
+     * @param i int a convertir
+     * @return le type correstpondant
+     */
+    static TYPE_COMPTE intToType(int i) {
+        switch (i) {
+            case 1:
+                return TYPE_COMPTE.Publique;
+            case 2:
+                return TYPE_COMPTE.Privé;
+            case 3:
+                return TYPE_COMPTE.Amis_seulement;
+            case 4:
+                return TYPE_COMPTE.Anonyme;
+            default:
+                throw new IllegalArgumentException("Le type est invalide");
+        }
+    }
+
+    /**
      * Obtiens l'id de l'utilisateur
-     * @return
+     * @return id de l'utilisateur
      */
     public int getId() {
         return id;
@@ -123,7 +77,7 @@ public class Utilisateur{
 
     /**
      * Obtiens le username de l'utilisateur
-     * @return
+     * @return username de l'utilisateur
      */
     public String getUsername() {
         return username;
@@ -131,7 +85,7 @@ public class Utilisateur{
 
     /**
      * Obtiens le nom de l'utilisateur
-     * @return
+     * @return nom de l'utilisateur
      */
     @Nullable
     public String getNom() {
@@ -139,8 +93,16 @@ public class Utilisateur{
     }
 
     /**
+     * Assigne le nom de l'utilisateur
+     * @param nom nom de l'utilisateur
+     */
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    /**
      * Obtiens le prenom de l'utilisateur
-     * @return
+     * @return prenom de l'utilisateur
      */
     @Nullable
     public String getPrenom() {
@@ -148,8 +110,17 @@ public class Utilisateur{
     }
 
     /**
+     * Assigne le prénom de l'utilisateur
+     *
+     * @param prenom prénom de l'utilisateur
+     */
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    /**
      * Obtiens l'adresse email de l'utilisateur
-     * @return
+     * @return adresse email de l'utilisateur
      */
     @Nullable
     public String getEmail() {
@@ -157,18 +128,34 @@ public class Utilisateur{
     }
 
     /**
+     * Assigne le email de l'utilisateur
+     * @param email email de l'utilisateur
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
      * Obtiens le type de compte de l'utilisateur
-     * @return
+     * @return type de compte de l'utilisateur
      */
     public TYPE_COMPTE getType() {
         return type;
     }
 
     /**
-     * Obtiens la liste des parties jouées par l'utilisateur
-     * @return
+     * Assigne le type du compte utilisateur
+     * @param type type du compte utilisateur
      */
-    public List<Parties> getParties() {
+    public void setType(TYPE_COMPTE type) {
+        this.type = type;
+    }
+
+    /**
+     * Obtiens la liste des parties jouées par l'utilisateur
+     * @return liste des parties jouées par l'utilisateur
+     */
+    public List<Partie> getParties() {
         //TODO
         throw new UnsupportedOperationException("");
     }
@@ -180,94 +167,56 @@ public class Utilisateur{
         relations = GestionnaireUtilisateurs.getRelations(id);
     }
 
-    private List<Utilisateur> getUtilisateursPourRelation(RELATION rel)
-    {
+    private List<Utilisateur> getUtilisateursPourRelation(RELATION rel) {
         if (relations == null)
             loadRelations();
 
-        return  Stream.of(relations)
-                        .filter(e -> e.getValue() == rel)
-                        .map(Map.Entry::getKey)
-                        .collect(Collectors.toList());
+        return Stream.of(relations)
+                .filter(e -> e.getValue() == rel)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     /**
      * Obtiens la liste d'amis de l'utilisateur
-     * @return
+     * @return liste d'amis de l'utilisateur
      */
-    public List<Utilisateur> getAmis(){
+    public List<Utilisateur> getAmis() {
         return Collections.unmodifiableList(getUtilisateursPourRelation(RELATION.Ami));
     }
 
     /**
      * Obtiens la liste des demandes d'amis en cours pour l'utilisateur
-     * @return
+     * @return liste des demandes d'amis en cours pour l'utilisateur
      */
-    public List<Utilisateur> getDemandesAmis()
-    {
+    public List<Utilisateur> getDemandesAmis() {
         return Collections.unmodifiableList(getUtilisateursPourRelation(RELATION.Attente_de_demande_dami));
     }
 
     /**
      * Obtiens la liste des demandes d'amis refusées par l'utilisateur
-     * @return
+     * @return liste des demandes d'amis refusées par l'utilisateur
      */
-    public List<Utilisateur> getDemandesRefuse()
-    {
+    public List<Utilisateur> getDemandesRefuse() {
         return Collections.unmodifiableList(getUtilisateursPourRelation(RELATION.Refusé));
     }
 
     /**
      * Obtiens la liste des utilisateurs bloqués par l'utilisateur
-     * @return
+     * @return liste des utilisateurs bloqués par l'utilisateur
      */
-    public List<Utilisateur> getBloques()
-    {
+    public List<Utilisateur> getBloques() {
         return Collections.unmodifiableList(getUtilisateursPourRelation(RELATION.Bloqué));
     }
 
     /**
      * Obtiens la liste des défis essayés par l'utilisateur
-     * @return
+     * @return liste des défis essayés par l'utilisateur
      */
     public List<ResultatDefi> getDefisEssaye() {
         //TODO
         throw new UnsupportedOperationException("");
     }
-
-    /**
-     * Assigne le nom de l'utilisateur
-     * @param nom
-     */
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    /**
-     * Assigne le prénom de l'utilisateur
-     * @param prenom
-     */
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
-    /**
-     * Assigne le email de l'utilisateur
-     * @param email
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * Assigne le type du compte utilisateur
-     * @param type
-     */
-    public void setType(TYPE_COMPTE type) {
-        this.type = type;
-    }
-
-
 
     @Override
     public boolean equals(Object o) {
@@ -276,15 +225,12 @@ public class Utilisateur{
 
         Utilisateur that = (Utilisateur) o;
 
-        if (getId() != that.getId()) return false;
-        if (!getUsername().equals(that.getUsername())) return false;
-        if (getNom() != null ? !getNom().equals(that.getNom()) : that.getNom() != null)
-            return false;
-        if (getPrenom() != null ? !getPrenom().equals(that.getPrenom()) : that.getPrenom() != null)
-            return false;
-        if (getEmail() != null ? !getEmail().equals(that.getEmail()) : that.getEmail() != null)
-            return false;
-        return getType() == that.getType();
+        return getId() == that.getId()
+                && getUsername().equals(that.getUsername())
+                && !(getNom() != null ? !getNom().equals(that.getNom()) : that.getNom() != null)
+                && !(getPrenom() != null ? !getPrenom().equals(that.getPrenom()) : that.getPrenom() != null)
+                && ((!(getEmail() != null ? !getEmail().equals(that.getEmail()) : that.getEmail() != null))
+                && getType() == that.getType());
 
     }
 
@@ -295,45 +241,83 @@ public class Utilisateur{
 
     /**
      * Ajoute le résultat d'un défi a la bd
-     * @param defi défi effectué par l'utilisateur
+     *
+     * @param defi    défi effectué par l'utilisateur
      * @param nbTours nombre de tours
-     * @param reussi si l'utilisateur a réussi
-     * @return
+     * @param reussi  si l'utilisateur a réussi
+     * @return Si le résultat a été bien ajouté
      */
-    public boolean ajouterResultat(Defi defi, int nbTours, boolean reussi)
-    {
-       // return GestionnaireDefi.ajouterResultat(this, new ResultatDefi(defi, nbTours, reussi));
-        return false;
+    public boolean ajouterResultat(Defi defi, int nbTours, boolean reussi) {
+        return GestionnaireDefi.ajouterResultat(this, new ResultatDefi(defi, nbTours, reussi));
     }
 
     /**
      * Ajoute une relation a un utilisateur
      * @param u Utilisateur avec lequel on ajoute une relation
      * @param r type de relation a ajoutée a l'utilisateur
-     * @return
+     * @return si la relation a été ajoutée
      */
     public boolean ajouterRelation(Utilisateur u, RELATION r)
     {
         return GestionnaireUtilisateurs.ajouterRelation(this, u, r);
     }
 
-    /**
-     * @param i
-     * @return
-     */
-    static TYPE_COMPTE intToType(int i)
-    {
-        switch (i){
+    enum TYPE_COMPTE {
+        Publique,
+        Privé,
+        Amis_seulement,
+        Anonyme;
+
+        public int toInt() {
+            switch (this) {
+                case Publique:
+                    return 1;
+                case Privé:
+                    return 2;
+                case Amis_seulement:
+                    return 3;
+                case Anonyme:
+                    return 4;
+                default:
+                    return 0;
+            }
+        }
+    }
+
+    enum RELATION {
+        Ami,
+        Attente_de_demande_dami,
+        Refusé,
+        Bloqué;
+
+        public static RELATION fromInt(int anInt) {
+            switch (anInt) {
             case 1:
-                return TYPE_COMPTE.Publique;
-            case 2:
-                return TYPE_COMPTE.Privé;
-            case 3:
-                return TYPE_COMPTE.Amis_seulement;
-            case 4:
-                return TYPE_COMPTE.Anonyme;
-            default:
-                throw new IllegalArgumentException("Le type est invalide");
+                return Ami;
+                case 2:
+                    return Attente_de_demande_dami;
+                case 3:
+                    return Refusé;
+                case 4:
+                    return Bloqué;
+                default:
+                    return Bloqué;
+            }
+        }
+
+        public int toInt() {
+            switch (this) {
+
+                case Ami:
+                    return 1;
+                case Attente_de_demande_dami:
+                    return 2;
+                case Refusé:
+                    return 3;
+                case Bloqué:
+                    return 4;
+            }
+            return 0;
         }
     }
 }

@@ -18,6 +18,7 @@ public class AI {
     ArrayList<String> toRemove;                             //Les mouvement à enlever de l'array
 
 
+    public  AI(){couleur = 'N';}
     public AI(char couleurAI)
     {
         couleur = couleurAI;

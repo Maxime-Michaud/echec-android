@@ -9,7 +9,8 @@ import java.util.Random;
 /**
  * Created by Nick on 2016-05-03.
  */
-public class AI2 {
+
+public class AI2 extends  AI{
     Pion pion = new Pion();
     Fou fou = new Fou();
     Tour tour = new Tour();
@@ -26,6 +27,7 @@ public class AI2 {
         couleur = couleurAI;
     }
 
+    @Override
     public String choisirPieceRandom(final String[] pieces,final boolean pionNoir[],final boolean pionBlanc[],final ArrayList<String> mouvDispos,final ArrayList<String> mouvCauseMort,final StringBuilder pionEnMouvement)
     {
 

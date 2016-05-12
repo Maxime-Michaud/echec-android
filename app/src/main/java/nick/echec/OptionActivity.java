@@ -63,7 +63,8 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
         //Récupération du Spinner déclaré dans le fichier activity_option.xml
         spinner = (Spinner) findViewById(R.id.choixia);
 
-        /*Création d'une liste d'élément à mettre dans le Spinner
+        /**
+        * Création d'une liste d'élément à mettre dans le Spinner
         * Le niveau de difficulté est représenter par un nombre, mais pourrait être changé
         * pour "facile, normal..."
         */
