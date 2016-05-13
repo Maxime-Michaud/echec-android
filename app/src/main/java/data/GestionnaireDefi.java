@@ -149,7 +149,7 @@ public class GestionnaireDefi {
      */
     public static Defi get(String nom) {
         Defi defi = Stream.of(defis)
-                .filter(d -> nom.equals(d.getNom())) //todo bog ici
+                .filter(d -> nom.equals(d.getNom()))
                 .findFirst().orElse(null);
 
         if (defi != null)
