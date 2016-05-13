@@ -69,6 +69,10 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Méthode qui démarre "ConnexionActivity" qui est la classe qui permet à l'utilisateur
+     * de se connecter.
+     */
     public void connexion(){
         Intent secondeActivite = new Intent(MenuActivity.this, ConnexionActivity.class);
         startActivity(secondeActivite);

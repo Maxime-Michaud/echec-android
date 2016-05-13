@@ -1,6 +1,7 @@
 package nick.echec;
 
 
+import data.Defi;
 import data.GestionnaireDefi;
 import data.GestionnaireUtilisateurs;
 
@@ -17,6 +18,8 @@ public class JeSuisLache {
         GestionnaireUtilisateurs.ajouter("Real", "creal");
 
         GestionnaireDefi.ajouter("Defi trop facile", 1, buildTonString(pieces1));
+        Defi bob = GestionnaireDefi.get("Defi trop facile");
+        //bob.se  //todo y manque des set???
         GestionnaireDefi.ajouter("Defi moins facile", 25, buildTonString(pieces2));
     }
 

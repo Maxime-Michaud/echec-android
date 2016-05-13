@@ -23,8 +23,8 @@ public class ConnexionActivity extends AppCompatActivity implements View.OnClick
     private EditText    etNom;
     private EditText    etMDP;
     private String      erreur;
-    SharedPreferences   pref;
     private String      prefNom;
+    SharedPreferences   pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

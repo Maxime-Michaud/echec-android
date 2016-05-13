@@ -36,6 +36,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
+
+import data.Defi;
+import data.GestionnaireDefi;
 import data.GestionnaireUtilisateurs;
 import data.Utilisateur;
 
@@ -105,15 +108,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        GestionnaireUtilisateurs.ajouter("Bob", "test");
-        utilisateur = GestionnaireUtilisateurs.get("Bob");
-        demarrer(savedInstanceState,utilisateur, 1, null);
+        GestionnaireUtilisateurs.ajouter("BobLeHobo", "test");
+
+        //add par kev
+        pref = this.getSharedPreferences(getString(R.string.PREF_FILE),MODE_PRIVATE);
+        utilisateur = GestionnaireUtilisateurs.get(pref.getString(getString(R.string.UTILISATEUR),"BobLeHobo"));
+        Intent monIntent = getIntent();
+        String nomDefi = monIntent.getStringExtra("defi");
+        //Defi defi = GestionnaireDefi.get(nomDefi);
+        //String pieceDepart[] = defi.getGrille().split(",");
+        int niveau = pref.getInt("APP_INT_NIVEAU_DIFF",1);
+
+        demarrer(savedInstanceState,utilisateur, niveau, null);
+
 
     }
     protected void demarrer(Bundle savedInstanceState, Utilisateur utilisateur, int niveauAI, String pieceDepart[]) {
 
-        if(!utilisateur.getUsername().equals("Bob"))
-            super.onCreate(savedInstanceState);
+        /*if(!utilisateur.getUsername().equals("BobLeHobo"))
+            //super.onCreate(savedInstanceState);*/
         this.utilisateur = utilisateur;
         suggestion = new Suggestion((tourBlanc?'B':'N'));
         if(niveauAI == 0)

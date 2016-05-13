@@ -1,5 +1,7 @@
 package nick.echec;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import data.Defi;
 import data.GestionnaireDefi;
@@ -27,21 +29,33 @@ import java.util.List;
  */
 public class DefiActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     private Button          retour;
+    private Button          jouer;
     private Spinner         spinD;
     private ListView        lv;
     private List            niveau;
-    private ArrayList<Defi> listDefi;
+    private List<Defi>      listDefi;
+    private String          nomDefi;
+    private int             ndif;     //niveau de difficulté des défis
     private ResultatDefi    r;
+    SharedPreferences       pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_defi);
-        listDefi = getListeDeDefi("Pion");
+
+        pref = this.getSharedPreferences(getString(R.string.PREF_FILE),MODE_PRIVATE);
+        ndif = pref.getInt(getString(R.string.NIVEAU_DEFI),1);
+
+        listDefi = GestionnaireDefi.get(ndif);
         setSpinner();
         setListView(); //todo a changer
+
         retour = (Button)findViewById(R.id.btnDretour);
+        jouer = (Button) findViewById(R.id.btnd_jouer);
+
         retour.setOnClickListener(this);
+        jouer.setOnClickListener(this);
 
         spinD.setOnItemSelectedListener(this);
     }
@@ -58,9 +72,22 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
                 break;
 
+            case R.id.btnd_jouer:
+                jouer();
+                break;
+
             default:
                 break;
         }
+    }
+
+    /**
+     * Méthode qui démarre une partie selon défi selectionner;
+     */
+    public void jouer(){
+        Intent secondeActivite = new Intent(DefiActivity.this, MainActivity.class);
+        secondeActivite.putExtra("defi",nomDefi);
+        startActivity(secondeActivite);
     }
 
     /**
@@ -119,7 +146,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
      * @param s est la catégorie
      * @return la liste de défi
      */
-    public ArrayList<Defi> getListeDeDefi(String s) {
+    public List<Defi> getListeDeDefi(String s) {
         listDefi.add(GestionnaireDefi.get("defi"));
         return listDefi;
     }
@@ -129,7 +156,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        listDefi = getListeDeDefi(spinD.getSelectedItem().toString());
+        listDefi = GestionnaireDefi.get((int)spinD.getSelectedItem());
         setListView();
     }
 
@@ -142,7 +169,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Permet d'adapter l'arrayliste pour quelle contienne des journées
+     * Permet d'adapter l'arrayliste pour quelle contienne des défis
      */
     class DefiAdapter extends ArrayAdapter<Defi> {
         DefiAdapter() {
@@ -166,7 +193,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Permet d'afficher le contenu de chaque journée dans une row
+     * Permet d'afficher le contenu de chaque défi dans une row
      */
     class DefiWrapper {
         private TextView nom = null;
