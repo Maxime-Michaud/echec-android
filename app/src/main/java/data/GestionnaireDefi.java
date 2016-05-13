@@ -172,14 +172,6 @@ public class GestionnaireDefi {
     }
 
     /**
-     * @param diff
-     * @return
-     */
-    public static List<Defi> get(int diff) {
-        return null;//TODO
-    }
-
-    /**
      * Sélectionne le défi dans la bd
      * @param nom
      * @return

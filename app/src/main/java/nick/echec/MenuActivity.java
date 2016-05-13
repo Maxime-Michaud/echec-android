@@ -26,7 +26,10 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_principal);
 
-        MoteurBD.init(this);
+        if (MoteurBD.getMoteurBD().getDb() == null) {
+            MoteurBD.init(this);
+        }
+
         j = new JeSuisLache();
 
         connexion = (Button) findViewById(R.id.btnConnexion);
