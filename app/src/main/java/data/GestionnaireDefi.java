@@ -8,6 +8,7 @@ import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -172,11 +173,41 @@ public class GestionnaireDefi {
     }
 
     /**
-     * @param diff
-     * @return
+     * @param diff Difficulté du défi, sur une échelle de 0 a 5
+     * @return Une liste des défis ayant une difficulté similaire a celle demandée
      */
     public static List<Defi> get(int diff) {
-        return null;//TODO
+        double diffMin = diff - .5,
+                diffMax = diff + .5;
+
+        Cursor c = selectDefi(diffMin, diffMax);
+        List<Defi> d = new ArrayList<>(c.getCount());
+
+        while (c.moveToNext())
+            d.add(new Defi(c.getInt(0), c.getString(1), c.getInt(2), c.getFloat(3), c.getFloat(4), c.getString(5), c.getInt(6)));
+
+        c.close();
+        return Collections.unmodifiableList(d);
+    }
+
+    /**
+     * Sélectionne tous les défis ayant une difficultée entre le minimum et le maximum donné
+     *
+     * @param diffMin difficulté minimum
+     * @param diffMax difficulté maximum
+     * @return Curseur représentant le select
+     */
+    private static Cursor selectDefi(double diffMin, double diffMax) {
+        SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+
+        //TODO devrais getter sur internet si possible
+        if (db == null)
+            throw new DbNonInitialiseeException();
+
+        return db.rawQuery("SELECT d.id, d.nom, d.nb_tours_max, d.score, d.difficulte, d.grille, d.nombre_evaluations " +
+                "FROM defi d " +
+                "WHERE d.difficulte > ? AND d.difficulte < ?;", new String[] {
+                Double.toString(diffMin), Double.toString(diffMax)});
     }
 
     /**
