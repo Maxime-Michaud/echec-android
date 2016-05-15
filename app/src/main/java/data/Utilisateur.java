@@ -151,15 +151,6 @@ public class Utilisateur{
         this.type = type;
     }
 
-    /**
-     * Obtiens la liste des parties jouées par l'utilisateur
-     * @return liste des parties jouées par l'utilisateur
-     */
-    public List<Partie> getParties() {
-        //TODO
-        throw new UnsupportedOperationException("");
-    }
-
     public List<Defi> getSuggestions() {
         return GestionnaireSuggestion.get(this);
     }
