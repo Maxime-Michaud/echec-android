@@ -160,6 +160,10 @@ public class Utilisateur{
         throw new UnsupportedOperationException("");
     }
 
+    public List<Defi> getSuggestions() {
+        return GestionnaireSuggestion.get(this);
+    }
+
     /**
      * Charge les relations de la base de données en mémoire
      */
