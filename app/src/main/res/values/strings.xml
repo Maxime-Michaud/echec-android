@@ -112,5 +112,14 @@ CREATE TABLE IF NOT EXISTS tours(
 	description VARCHAR(10),
 	CONSTRAINT PK_tour PRIMARY KEY (partie, tour),
 	FOREIGN KEY (partie) REFERENCES partie(id)
-);</string>
+);
+
+CREATE TABLE IF NOT EXISTS suggestions(
+	utilisateur INT,
+	defi INT,
+	CONSTRAINT PK_sugg PRIMARY KEY (utilisateur, defi),
+	FOREIGN KEY (utilisateur) REFERENCES utilisateur(id),
+    FOREIGN KEY (defi) REFERENCES defi(id)
+);
+</string>
 </resources>
