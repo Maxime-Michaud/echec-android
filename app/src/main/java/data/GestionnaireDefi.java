@@ -257,4 +257,23 @@ public class GestionnaireDefi {
     {
         return insertResultat(u.getId(), r.getDefi().getId(), r.getNbTour(), r.isReussi());
     }
+
+    static void update(Defi defi) {
+        SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+
+        if (db == null)
+            throw new DbNonInitialiseeException();
+
+        ContentValues cv = new ContentValues();
+
+        cv.put("nom", defi.getNom());
+        cv.put("nb_tours_max", defi.getToursMax());
+        cv.put("score", defi.getScore());
+        cv.put("difficulte", defi.getDifficulte());
+        cv.put("nombre_evaluations", defi.getNbEvaluations());
+        cv.put("grille", defi.getGrille());
+        cv.put("updated", 1);
+
+        db.update("defi", cv, "id = ?", new String[] {Integer.toString(defi.getId())});
+    }
 }

@@ -55,6 +55,7 @@ public class Defi {
      */
     public void setNom(String nom) {
         this.nom = nom;
+        GestionnaireDefi.update(this);
     }
 
     /**
@@ -72,6 +73,7 @@ public class Defi {
      */
     public void setToursMax(int toursMax) {
         this.toursMax = toursMax;
+        GestionnaireDefi.update(this);
     }
 
     /**
@@ -93,6 +95,7 @@ public class Defi {
     public void setDifficulte(float difficulte) {
         nbEvaluations = 1;
         this.difficulte = difficulte;
+        GestionnaireDefi.update(this);
     }
 
     /**
@@ -105,6 +108,7 @@ public class Defi {
         ++nbEvaluations;
         this.score = (this.score * (nbEvaluations - 1) + score) / nbEvaluations;
         this.difficulte = (this.difficulte * (nbEvaluations - 1) + difficulte) / nbEvaluations;
+        GestionnaireDefi.update(this);
     }
 
     /**
@@ -121,6 +125,7 @@ public class Defi {
      */
     public void setGrille(String grille) {
         this.grille = grille;
+        GestionnaireDefi.update(this);
     }
 
     @Override
