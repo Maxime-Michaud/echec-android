@@ -156,7 +156,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        listDefi = GestionnaireDefi.get((int)spinD.getSelectedItem());
+        listDefi = GestionnaireDefi.get(spinD.getSelectedItemPosition());
         setListView();
     }
 

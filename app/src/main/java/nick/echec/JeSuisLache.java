@@ -19,8 +19,10 @@ public class JeSuisLache {
 
         GestionnaireDefi.ajouter("Defi trop facile", 1, buildTonString(pieces1));
         Defi bob = GestionnaireDefi.get("Defi trop facile");
-        //bob.se  //todo y manque des set???
+        bob.setDifficulte(1);
         GestionnaireDefi.ajouter("Defi moins facile", 25, buildTonString(pieces2));
+        bob = GestionnaireDefi.get("Defi moins facile");
+        bob.setDifficulte(1);
     }
 
     public String buildTonString(String s[]){

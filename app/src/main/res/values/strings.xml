@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS partie(
 	FOREIGN KEY (grille) REFERENCES grille(id),
 	FOREIGN KEY (gagnant) REFERENCES utilisateur(id),
 	FOREIGN KEY (noir) REFERENCES utilisateur(id),
-	FOREIGN KEY (blanc) REFERENCES utilisateur(id) 
+	FOREIGN KEY (blanc) REFERENCES utilisateur(id)
 );
 
 CREATE TABLE IF NOT EXISTS tours(
