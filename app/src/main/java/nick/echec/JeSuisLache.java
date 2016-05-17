@@ -4,6 +4,7 @@ package nick.echec;
 import data.Defi;
 import data.GestionnaireDefi;
 import data.GestionnaireUtilisateurs;
+import data.Utilisateur;
 
 /**
  * Created by Keven on 2016-05-09.
@@ -16,13 +17,19 @@ public class JeSuisLache {
     JeSuisLache(){
         GestionnaireUtilisateurs.ajouter("Bob", "abc123");
         GestionnaireUtilisateurs.ajouter("Real", "creal");
+        GestionnaireUtilisateurs.ajouter("BobLeHobo", "test");
 
-        GestionnaireDefi.ajouter("Defi trop facile", 1, buildTonString(pieces1));
-        Defi bob = GestionnaireDefi.get("Defi trop facile");
+        GestionnaireDefi.ajouter("Defi1", 25, buildTonString(pieces1));
+        Defi bob = GestionnaireDefi.get("Defi1");
         bob.setDifficulte(1);
-        GestionnaireDefi.ajouter("Defi moins facile", 25, buildTonString(pieces2));
-        bob = GestionnaireDefi.get("Defi moins facile");
+
+        GestionnaireDefi.ajouter("Defi2", 1, buildTonString(pieces2));
+        bob = GestionnaireDefi.get("Defi2");
         bob.setDifficulte(1);
+
+        Utilisateur him = GestionnaireUtilisateurs.get("Bob");
+        him = GestionnaireUtilisateurs.get("Bob");
+        him.ajouterResultat(GestionnaireDefi.get("Defi1"),2,true);
     }
 
     public String buildTonString(String s[]){

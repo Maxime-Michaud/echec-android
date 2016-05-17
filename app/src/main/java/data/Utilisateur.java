@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -151,13 +153,8 @@ public class Utilisateur{
         this.type = type;
     }
 
-    /**
-     * Obtiens la liste des parties jouées par l'utilisateur
-     * @return liste des parties jouées par l'utilisateur
-     */
-    public List<Partie> getParties() {
-        //TODO
-        throw new UnsupportedOperationException("");
+    public List<Defi> getSuggestions() {
+        return GestionnaireSuggestion.get(this);
     }
 
     /**
@@ -214,8 +211,7 @@ public class Utilisateur{
      * @return liste des défis essayés par l'utilisateur
      */
     public List<ResultatDefi> getDefisEssaye() {
-        //TODO
-        throw new UnsupportedOperationException("");
+        return Collections.unmodifiableList(GestionnaireDefi.getResultats(this));
     }
 
     @Override
@@ -249,6 +245,27 @@ public class Utilisateur{
      */
     public boolean ajouterResultat(Defi defi, int nbTours, boolean reussi) {
         return GestionnaireDefi.ajouterResultat(this, new ResultatDefi(defi, nbTours, reussi));
+    }
+
+    /**
+     * Obtiens les résultats d'une collection de défi pour l'utilisateur
+     *
+     * @param defis Les défis a vérifier
+     */
+    public List<ResultatDefi> getResultats(Collection<Defi> defis) {
+        ArrayList<ResultatDefi> resultats = new ArrayList<>();
+        List<ResultatDefi> resultatsUtilisateur = getDefisEssaye();
+
+        for (Defi d : defis) {
+            resultats.add(
+                    Stream.of(resultatsUtilisateur)
+                            .filter(r -> r.getDefi().equals(d))
+                            .filter(ResultatDefi::isReussi)
+                            .sortBy(ResultatDefi::getNbTour)
+                            .findFirst().orElse(new ResultatDefi(d, 0, false)));
+        }
+
+        return Collections.unmodifiableList(resultats);
     }
 
     /**
@@ -292,8 +309,8 @@ public class Utilisateur{
 
         public static RELATION fromInt(int anInt) {
             switch (anInt) {
-            case 1:
-                return Ami;
+                case 1:
+                    return Ami;
                 case 2:
                     return Attente_de_demande_dami;
                 case 3:

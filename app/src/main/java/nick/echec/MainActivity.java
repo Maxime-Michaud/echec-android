@@ -45,6 +45,7 @@ import data.Utilisateur;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     ChangementAlerte ca = new ChangementAlerte(); //classe gère le changement de pièces (kev)
     SharedPreferences pref; //Variable pour les préferences (kev)
+    String nomDefi;
     int cliqueX, cliqueY;   //ou le joueur a cliqué
     RelativeLayout layout;
     ArrayList<MoveListener> lstMoveListener;
@@ -108,19 +109,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        GestionnaireUtilisateurs.ajouter("BobLeHobo", "test");
+
 
         //add par kev
         pref = this.getSharedPreferences(getString(R.string.PREF_FILE),MODE_PRIVATE);
         utilisateur = GestionnaireUtilisateurs.get(pref.getString(getString(R.string.UTILISATEUR),"BobLeHobo"));
         Intent monIntent = getIntent();
-        String nomDefi = monIntent.getStringExtra("defi");
-        //Defi defi = GestionnaireDefi.get(nomDefi);
-        //String pieceDepart[] = defi.getGrille().split(",");
+        nomDefi = monIntent.getStringExtra("defi");
         int niveau = pref.getInt("APP_INT_NIVEAU_DIFF",1);
-
-        demarrer(savedInstanceState,utilisateur, niveau, null);
-
+        if (nomDefi == null){
+            nomDefi = "patate";
+            demarrer(savedInstanceState,utilisateur, niveau, pieces);
+        }else {
+            Defi defi = GestionnaireDefi.get(nomDefi);
+            String pieceDepart[] = defi.getGrille().split(",");
+            demarrer(savedInstanceState, utilisateur, niveau, pieceDepart);
+        }
 
     }
     protected void demarrer(Bundle savedInstanceState, Utilisateur utilisateur, int niveauAI, String pieceDepart[]) {
@@ -769,23 +773,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void partieTerminer(String s, final Context c)
     {
-        Toast.makeText(this, "La partie est terminé, le roi mort est " + s, Toast.LENGTH_LONG).show();
-        new AlertDialog.Builder(this)
-                .setTitle("Partie terminé")
-                .setMessage("Voulez-vous recommencer?")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        recommencer();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(c,"Vous pouvez recommencer en cliquant sur l'option dans le menu", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
         ArrayList<String> suggestions = suggestion.genererEnvoyerSuggestions(utilisateur);
+        Intent secondeActivite = new Intent(MainActivity.this, SuggestionActivity.class);
+        secondeActivite.putExtra("defi",nomDefi);
+        secondeActivite.putStringArrayListExtra("suggestion", suggestions);
+        startActivity(secondeActivite);
     }
 
     public void initialiserUneGille(String tousPieces[])
@@ -850,145 +842,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             v.onMove();
         }
-    }
-
-    public void recommencer()
-    {
-        lstMoveListener = new ArrayList<>();
-        setContentView(R.layout.activity_main);
-        layout = (RelativeLayout) findViewById(R.id.relative);
-        r = getResources();
-        mouvDispos = new ArrayList<>();
-        mouvCauseMort = new ArrayList<>();
-        for(int i = 0;i < 8;i++)
-        {
-            premierTourPionsBlancs[i] = true;
-            premierTourPionsNoirs[i] = true;
-        }
-        for (int j = 0; j < layout.getChildCount(); j++) {
-            View v = layout.getChildAt(j);
-            if (v instanceof Button) {
-                v.setBackgroundColor(Color.TRANSPARENT);
-                v.setOnClickListener(this);
-            }
-        }
-        layout.setBackgroundColor(Color.WHITE);
-        tourBlanc= true;
-        pionsNoirs = new ArrayList<>();
-        String piecesTemp[] = {"TN100", "CN101", "FN102", "KN103", "QN104", "FN205", "CN206", "TN207", "PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
-            "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867", "TB170", "CB171", "FB172", "KB173", "QB174", "FB275", "CB276", "TB277"};
-        /*String piecesTemp[] = {"PN110", "PN211", "PN312", "PN413", "PN514", "PN615", "PN716","PN817",
-                "PB160", "PB261", "PB362", "PB463", "PB564", "PB665", "PB766","PB867"};*/
-        pieces = piecesTemp;
-        //Les images des pions et leur tag pour les reconnaître dans d'autre fonction
-        PN1 = new ImageView(this);
-        PN1.setTag("PN1");
-        PN2 = new ImageView(this);
-        PN2.setTag("PN2");
-        PN3 = new ImageView(this);
-        PN3.setTag("PN3");
-        PN4 = new ImageView(this);
-        PN4.setTag("PN4");
-        PN5 = new ImageView(this);
-        PN5.setTag("PN5");
-        PN6 = new ImageView(this);
-        PN6.setTag("PN6");
-        PN7 = new ImageView(this);
-        PN7.setTag("PN7");
-        PN8 = new ImageView(this);
-        PN8.setTag("PN8");
-        pionsNoirs.add(PN1);
-        pionsNoirs.add(PN2);
-        pionsNoirs.add(PN3);
-        pionsNoirs.add(PN4);
-        pionsNoirs.add(PN5);
-        pionsNoirs.add(PN6);
-        pionsNoirs.add(PN7);
-        pionsNoirs.add(PN8);
-
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pawns);
-        for (int i = 0; i < 8; i++) {
-            setPawn(pionsNoirs.get(i),i,1,5,0);
-        }
-        pionsBlancs = new ArrayList<>();
-        PB1 = new ImageView(this);
-        PB1.setTag("PB1");
-        PB2 = new ImageView(this);
-        PB2.setTag("PB2");
-        PB3 = new ImageView(this);
-        PB3.setTag("PB3");
-        PB4 = new ImageView(this);
-        PB4.setTag("PB4");
-        PB5 = new ImageView(this);
-        PB5.setTag("PB5");
-        PB6 = new ImageView(this);
-        PB6.setTag("PB6");
-        PB7 = new ImageView(this);
-        PB7.setTag("PB7");
-        PB8 = new ImageView(this);
-        PB8.setTag("PB8");
-        pionsBlancs.add(PB1);
-        pionsBlancs.add(PB2);
-        pionsBlancs.add(PB3);
-        pionsBlancs.add(PB4);
-        pionsBlancs.add(PB5);
-        pionsBlancs.add(PB6);
-        pionsBlancs.add(PB7);
-        pionsBlancs.add(PB8);
-        for (int i = 0; i < 8; i++) {
-            setPawn(pionsBlancs.get(i),i,6,5,1);
-        }
-        TN1 = new ImageView(this);
-        setPawn(TN1, 0, 0, 2, 0);
-        TN1.setTag("TN1");
-        TN2 = new ImageView(this);
-        setPawn(TN2, 7, 0, 2, 0);
-        TN2.setTag("TN2");
-        FN1 = new ImageView(this);
-        setPawn(FN1, 2, 0, 3, 0);
-        FN1.setTag("FN1");
-        FN2 = new ImageView(this);
-        setPawn(FN2, 5, 0, 3, 0);
-        FN2.setTag("FN2");
-        CN1 = new ImageView(this);
-        setPawn(CN1, 1, 0, 4, 0);
-        CN1.setTag("CN1");
-        CN2 = new ImageView(this);
-        setPawn(CN2, 6, 0, 4, 0);
-        CN2.setTag("CN2");
-        KN1 = new ImageView(this);
-        setPawn(KN1, 3, 0, 1, 0);
-        KN1.setTag("KN1");
-        QN1 = new ImageView(this);
-        setPawn(QN1, 4, 0, 0, 0);
-        QN1.setTag("QN1");
-
-        TB1 = new ImageView(this);
-        setPawn(TB1, 0, 7, 2, 1);
-        TB1.setTag("TB1");
-        TB2 = new ImageView(this);
-        setPawn(TB2, 7, 7, 2, 1);
-        TB2.setTag("TB2");
-        FB1 = new ImageView(this);
-        setPawn(FB1, 2, 7, 3, 1);
-        FB1.setTag("FB1");
-        FB2 = new ImageView(this);
-        setPawn(FB2, 5, 7, 3, 1);
-        FB2.setTag("FB2");
-        CB1 = new ImageView(this);
-        setPawn(CB1, 1, 7, 4, 1);
-        CB1.setTag("CB1");
-        CB2 = new ImageView(this);
-        setPawn(CB2, 6, 7, 4, 1);
-        CB2.setTag("CB2");
-        KB1 = new ImageView(this);
-        setPawn(KB1, 3, 7, 1, 1);
-        KB1.setTag("KB1");
-        QB1 = new ImageView(this);
-        setPawn(QB1, 4, 7, 0, 1);
-        QB1.setTag("QB1");
-        start_time = start_tour = System.currentTimeMillis();
-        suggestion = new Suggestion('B');
     }
 
     /**

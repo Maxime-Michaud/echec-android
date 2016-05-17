@@ -19,6 +19,7 @@
         <activity android:name=".OptionActivity"/>
         <activity android:name=".DefiActivity"/>
         <activity android:name=".ConnexionActivity"/>
+        <activity android:name=".SuggestionActivity"/>
     </application>
 
 </manifest>

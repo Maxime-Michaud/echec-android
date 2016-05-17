@@ -35,7 +35,7 @@ public class MoteurBD {
         if (context == null)
             throw new IllegalArgumentException("Le contexte ne peut pas etre null");
         if (m.context != null || m.db != null)
-            throw new IllegalStateException("Le dbmanager ne doit pas etre réinitialisé");
+            return ;
 
         m.context = context.getApplicationContext();
         m.db = m.context.openOrCreateDatabase(dbName, 0, null);

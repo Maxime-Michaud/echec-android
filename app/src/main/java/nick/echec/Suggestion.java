@@ -77,8 +77,10 @@ public class Suggestion {
                 nombreTourNoir++;
             }
         }
-        tempsMoyenBlanc = tempsTotalBlanc/nombreTourBlanc;
-        tempsMoyenNoir = tempsTotalNoir/nombreTourNoir;
+        if (nombreTourBlanc != 0)
+            tempsMoyenBlanc = tempsTotalBlanc/nombreTourBlanc;
+        if (nombreTourNoir != 0)
+            tempsMoyenNoir = tempsTotalNoir/nombreTourNoir;
         suggestions += (couleur == 'B'?Long.toString(tempsTotalBlanc / 60000): Long.toString(tempsTotalNoir / 60000));
         suggestions += " minutes. Et en moyenne, vous prennez ";
         suggestions += (couleur == 'B'?Long.toString(tempsMoyenBlanc): Long.toString(tempsMoyenNoir /1000));
@@ -129,10 +131,10 @@ public class Suggestion {
      */
     public void genererSuggestionDefiPiece(Utilisateur utilisateur)
     {
-        for(int i = 0;i < 6;i++)
+        for(int i = 0;i < 5;i++)
         {
-            String suggestion = "Pour les " + (i ==5?"pions, ":(i==4?"chevaux, ":i==3?"fous, ":i==2?"tours, ":"reines"));
-            int niveau = defenirNivDiffPiece((i ==5?'P':(i==4?'C':i==3?'F':i==2?'T':'Q')),utilisateur);
+            String suggestion = "Pour les " + (i ==4?"pions, ":(i==3?"chevaux, ":i==2?"fous, ":i==1?"tours, ":"reines"));
+            int niveau = defenirNivDiffPiece((i ==4?'P':(i==3?'C':i==2?'F':i==1?'T':'Q')),utilisateur);
             switch (niveau)
             {
                 case 0:
@@ -223,7 +225,6 @@ public class Suggestion {
                 GestionnaireSuggestion.ajouter(utilisateur,(piece=='T'?GestionnaireSuggestion.Type_Defi.TOUR:piece=='F'?GestionnaireSuggestion.Type_Defi.FOU:GestionnaireSuggestion.Type_Defi.CAVALIER),niveau);
                 break;
             case 'Q':
-            case 'K':
                 for(Pair<Character,Long> pair:pionMort)
                 {
                     if(pair.first == piece)
