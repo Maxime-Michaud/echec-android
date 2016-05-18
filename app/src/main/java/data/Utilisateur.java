@@ -22,8 +22,6 @@ public class Utilisateur{
     private String prenom;
     private String email;
     private TYPE_COMPTE type;
-    private List<Partie> parties;
-    private List<Partie> nouvellesParties;
     private Map<Utilisateur, RELATION> relations;
     private List<ResultatDefi> defis;
 
@@ -45,7 +43,6 @@ public class Utilisateur{
         this.email = email;
         this.type = intToType(type);
 
-        parties = null;
         defis = null;
         relations = null;
     }
@@ -245,6 +242,10 @@ public class Utilisateur{
      */
     public boolean ajouterResultat(Defi defi, int nbTours, boolean reussi) {
         return GestionnaireDefi.ajouterResultat(this, new ResultatDefi(defi, nbTours, reussi));
+    }
+
+    public List<Partie> getParties() {
+        return Collections.unmodifiableList(GestionnairePartie.get(this));
     }
 
     /**
