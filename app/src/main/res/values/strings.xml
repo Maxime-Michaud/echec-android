@@ -67,16 +67,10 @@ CREATE TABLE IF NOT EXISTS defi_utilisateurs(
 
 CREATE TABLE IF NOT EXISTS partie(
 	id INT PRIMARY KEY,
-	elo_blanc INT, /*Au debut de la partie*/
-	elo_noir INT,
-	gain_blanc INT,
-	gain_noir INT,
-	grille INT,
 	gagnant INT,
 	noir INT,
 	blanc INT,
 	nouvelle INT,		/*0 = pas nouvelle, 1 = nouvelle. Les rangées nouvelle doivent etre push sur le serveur*/
-	FOREIGN KEY (grille) REFERENCES grille(id),
 	FOREIGN KEY (gagnant) REFERENCES utilisateur(id),
 	FOREIGN KEY (noir) REFERENCES utilisateur(id),
 	FOREIGN KEY (blanc) REFERENCES utilisateur(id) 
