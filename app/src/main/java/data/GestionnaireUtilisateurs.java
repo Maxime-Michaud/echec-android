@@ -258,6 +258,34 @@ public class GestionnaireUtilisateurs {
         return u;
     }
 
+    static Utilisateur get(int id) {
+        Utilisateur u = Stream.of(users).filter(usr -> usr.getId() == id).findFirst().orElse(null);
+
+        if (u != null)
+            return u;
+
+        Cursor c = selectUtilisateur(id);
+        if (c.moveToFirst())
+            u = new Utilisateur(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4), c.getInt(5));
+
+        users.add(u);
+        return u;
+
+    }
+
+    private static Cursor selectUtilisateur(int id) {
+        SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
+
+        //TODO devrais getter sur internet si possible
+        if (db == null)
+            throw new DbNonInitialiseeException();
+
+        return db.rawQuery("SELECT u.id, u.login, u.nom, u.prenom, u.email, u.type_compte " +
+                "FROM utilisateur u " +
+                "WHERE u.id = ?;", new String[] {
+                Integer.toString(id)});
+    }
+
     /**
      * Ajoute une relation a l'utilisateur
      * @param u1

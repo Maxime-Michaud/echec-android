@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +22,6 @@ public class Utilisateur{
     private String prenom;
     private String email;
     private TYPE_COMPTE type;
-    private List<Partie> parties;
-    private List<Partie> nouvellesParties;
     private Map<Utilisateur, RELATION> relations;
     private List<ResultatDefi> defis;
 
@@ -43,7 +43,6 @@ public class Utilisateur{
         this.email = email;
         this.type = intToType(type);
 
-        parties = null;
         defis = null;
         relations = null;
     }
@@ -151,13 +150,8 @@ public class Utilisateur{
         this.type = type;
     }
 
-    /**
-     * Obtiens la liste des parties jouées par l'utilisateur
-     * @return liste des parties jouées par l'utilisateur
-     */
-    public List<Partie> getParties() {
-        //TODO
-        throw new UnsupportedOperationException("");
+    public List<Defi> getSuggestions() {
+        return GestionnaireSuggestion.get(this);
     }
 
     /**
@@ -248,6 +242,31 @@ public class Utilisateur{
      */
     public boolean ajouterResultat(Defi defi, int nbTours, boolean reussi) {
         return GestionnaireDefi.ajouterResultat(this, new ResultatDefi(defi, nbTours, reussi));
+    }
+
+    public List<Partie> getParties() {
+        return Collections.unmodifiableList(GestionnairePartie.get(this));
+    }
+
+    /**
+     * Obtiens les résultats d'une collection de défi pour l'utilisateur
+     *
+     * @param defis Les défis a vérifier
+     */
+    public List<ResultatDefi> getResultats(Collection<Defi> defis) {
+        ArrayList<ResultatDefi> resultats = new ArrayList<>();
+        List<ResultatDefi> resultatsUtilisateur = getDefisEssaye();
+
+        for (Defi d : defis) {
+            resultats.add(
+                    Stream.of(resultatsUtilisateur)
+                            .filter(r -> r.getDefi().equals(d))
+                            .filter(ResultatDefi::isReussi)
+                            .sortBy(ResultatDefi::getNbTour)
+                            .findFirst().orElse(new ResultatDefi(d, 0, false)));
+        }
+
+        return Collections.unmodifiableList(resultats);
     }
 
     /**
