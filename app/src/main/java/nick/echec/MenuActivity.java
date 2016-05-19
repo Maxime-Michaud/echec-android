@@ -27,6 +27,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_menu_principal);
 
         MoteurBD.init(this);
+
         j = new JeSuisLache();
 
         connexion = (Button) findViewById(R.id.btnConnexion);
@@ -69,6 +70,10 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Méthode qui démarre "ConnexionActivity" qui est la classe qui permet à l'utilisateur
+     * de se connecter.
+     */
     public void connexion(){
         Intent secondeActivite = new Intent(MenuActivity.this, ConnexionActivity.class);
         startActivity(secondeActivite);

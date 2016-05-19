@@ -25,14 +25,16 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/d_type"
-            android:id="@+id/lblType" />
+            android:id="@+id/lblType"
+            android:layout_marginLeft="5dp" />
 
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/spinType"
             android:spinnerMode="dropdown"
-            android:layout_marginLeft="20dp" />
+            android:layout_marginLeft="20dp"
+            android:focusable="false"/>
     </LinearLayout>
 
     <TextView
@@ -42,22 +44,42 @@
         android:text="@string/d_choix"
         android:id="@+id/lblChoix"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="5dp" />
 
     <ListView
         android:layout_width="285dp"
         android:layout_height="285dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:id="@+id/lvDefi"
         android:choiceMode="singleChoice"
         android:layout_gravity="center_horizontal"
+        android:listSelector="#87CEEB"
         android:layout_weight="0.32" />
 
-    <Button
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/b_retour"
-        android:id="@+id/btnDretour"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp" />
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/d_jouer"
+            android:id="@+id/btnd_jouer"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/b_retour"
+            android:id="@+id/btnDretour"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
 
 </LinearLayout>

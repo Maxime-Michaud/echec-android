@@ -270,6 +270,27 @@ public class Utilisateur{
     }
 
     /**
+     * Obtiens les résultats d'une collection de défi pour l'utilisateur
+     *
+     * @param defis Les défis a vérifier
+     */
+    public List<ResultatDefi> getResultats(Collection<Defi> defis) {
+        ArrayList<ResultatDefi> resultats = new ArrayList<>();
+        List<ResultatDefi> resultatsUtilisateur = getDefisEssaye();
+
+        for (Defi d : defis) {
+            resultats.add(
+                    Stream.of(resultatsUtilisateur)
+                            .filter(r -> r.getDefi().equals(d))
+                            .filter(ResultatDefi::isReussi)
+                            .sortBy(ResultatDefi::getNbTour)
+                            .findFirst().orElse(new ResultatDefi(d, 0, false)));
+        }
+
+        return Collections.unmodifiableList(resultats);
+    }
+
+    /**
      * Ajoute une relation a un utilisateur
      * @param u Utilisateur avec lequel on ajoute une relation
      * @param r type de relation a ajoutée a l'utilisateur
@@ -310,8 +331,8 @@ public class Utilisateur{
 
         public static RELATION fromInt(int anInt) {
             switch (anInt) {
-            case 1:
-                return Ami;
+                case 1:
+                    return Ami;
                 case 2:
                     return Attente_de_demande_dami;
                 case 3:

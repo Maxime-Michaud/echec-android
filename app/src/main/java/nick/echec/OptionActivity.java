@@ -23,6 +23,7 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
     private Button      retour;
     SharedPreferences   pref;
     private String      dif;
+    private int         idif;
 
 
     @Override
@@ -32,6 +33,7 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
 
         pref = OptionActivity.this.getSharedPreferences(getString(R.string.PREF_FILE),MODE_PRIVATE);
         dif = pref.getString(getString(R.string.NIVEAU_DIFFICULTER),"Facile");
+        idif = pref.getInt("APP_INT_NIVEAU_DIFF", 0);
 
         setSpinner();
         retour = (Button)findViewById(R.id.btnRetour);
@@ -98,6 +100,7 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
     public void sauvegarder(){
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(getString(R.string.NIVEAU_DIFFICULTER), spinner.getSelectedItem().toString());
+        editor.putInt("APP_INT_NIVEAU_DIFF",spinner.getSelectedItemPosition());
         editor.commit();
 
         //Todo: L'enlever le toast XD

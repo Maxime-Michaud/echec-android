@@ -9,6 +9,7 @@ import java.util.Random;
 /**
  * Created by Nick on 2016-05-03.
  */
+
 public class AI2 extends  AI{
     Pion pion = new Pion();
     Fou fou = new Fou();

@@ -9,6 +9,7 @@
     <string name="d_choix">Choix du défi:</string>
     <string name="d_reussi">Réussi:</string>
     <string name="d_diff">Difficulté:</string>
+	<string name="d_jouer">Jouer</string>
 	<string name="ac_ok">Ok</string>
 	<string name="ac_message">Veuillez choisir une pièce:</string>
 	<string name="c_titre">Connection</string>
@@ -29,7 +30,9 @@
 
 	<string name="PREF_FILE">APP_PREF_FILE</string>
 	<string name="NIVEAU_DIFFICULTER">APP_NIVEAU_DIFFICULTER</string>
+	<string name="INT_NIVEAU_DIFF">APP_INT_NIVEAU_DIFF</string>
 	<string name="UTILISATEUR">APP_UTILISATEUR</string>
+	<string name="NIVEAU_DEFI">APP_NIVEAU_DEFI</string>
 
     <string name="SQL">CREATE TABLE IF NOT EXISTS type_compte(
 	id INT PRIMARY KEY,
@@ -92,7 +95,7 @@ CREATE TABLE IF NOT EXISTS partie(
 	blanc INT,
 	FOREIGN KEY (gagnant) REFERENCES utilisateur(id),
 	FOREIGN KEY (noir) REFERENCES utilisateur(id),
-	FOREIGN KEY (blanc) REFERENCES utilisateur(id) 
+	FOREIGN KEY (blanc) REFERENCES utilisateur(id)
 );
 
 CREATE TABLE IF NOT EXISTS tours(

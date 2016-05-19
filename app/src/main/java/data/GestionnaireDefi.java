@@ -42,8 +42,8 @@ public class GestionnaireDefi {
     private static Cursor selectResultat(Utilisateur u) {
         SQLiteDatabase db = MoteurBD.getMoteurBD().getDb();
         return db.rawQuery("SELECT du.id, du.nb_tour, du.reussi, d.nom " +
-                            "FROM defi_utilisateurs du INNER JOIN defi d ON d.id = du.defi " +
-                            "WHERE du.utilisateur = ?", new String[]{Integer.toString(u.getId())});
+                "FROM defi_utilisateurs du INNER JOIN defi d ON d.id = du.defi " +
+                "WHERE du.utilisateur = ?", new String[]{Integer.toString(u.getId())});
     }
 
     /**
@@ -223,9 +223,9 @@ public class GestionnaireDefi {
             throw new DbNonInitialiseeException();
 
         return db.rawQuery( "SELECT d.id, d.nom, d.nb_tours_max, d.score, d.difficulte, d.grille, d.nombre_evaluations " +
-                            "FROM defi d " +
-                            "WHERE d.nom = ?;", new String[] {
-                            nom});
+                "FROM defi d " +
+                "WHERE d.nom = ?;", new String[] {
+                nom});
     }
 
     /**

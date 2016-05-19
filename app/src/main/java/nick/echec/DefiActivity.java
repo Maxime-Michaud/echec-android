@@ -1,9 +1,14 @@
 package nick.echec;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import data.Defi;
 import data.GestionnaireDefi;
+import data.GestionnaireUtilisateurs;
 import data.ResultatDefi;
+import data.Utilisateur;
+
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +20,7 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,23 +33,38 @@ import java.util.List;
  */
 public class DefiActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     private Button          retour;
+    private Button          jouer;
     private Spinner         spinD;
     private ListView        lv;
     private List            niveau;
-    private ArrayList<Defi> listDefi;
+    private List<Defi>      listDefi;
+    private String          nomDefi;
+    private int             ndif;     //niveau de difficulté des défis
+    private Utilisateur     utilisateur;
     private ResultatDefi    r;
+    SharedPreferences       pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_defi);
-        listDefi = getListeDeDefi("Pion");
+
+        pref = this.getSharedPreferences(getString(R.string.PREF_FILE),MODE_PRIVATE);
+        utilisateur = GestionnaireUtilisateurs.get(pref.getString(getString(R.string.UTILISATEUR),"BobLeHobo"));
+        ndif = pref.getInt(getString(R.string.NIVEAU_DEFI),1);
+
+        listDefi = GestionnaireDefi.get(ndif);
         setSpinner();
-        setListView(); //todo a changer
+        setListView();
+
         retour = (Button)findViewById(R.id.btnDretour);
+        jouer = (Button) findViewById(R.id.btnd_jouer);
+
         retour.setOnClickListener(this);
+        jouer.setOnClickListener(this);
 
         spinD.setOnItemSelectedListener(this);
+
     }
 
     /**
@@ -58,9 +79,22 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
                 break;
 
+            case R.id.btnd_jouer:
+                jouer();
+                break;
+
             default:
                 break;
         }
+    }
+
+    /**
+     * Méthode qui démarre une partie selon défi selectionner;
+     */
+    public void jouer(){
+        Intent secondeActivite = new Intent(DefiActivity.this, MainActivity.class);
+        secondeActivite.putExtra("defi",nomDefi);
+        startActivity(secondeActivite);
     }
 
     /**
@@ -86,7 +120,6 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
                 niveau
         );
 
-
         //On definit une présentation du spinner quand il est déroulé
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinD.setAdapter(adapter);
@@ -96,32 +129,23 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
      * set la ListView
      */
     public void setListView(){
-        //Création de l'adapter
+
+        //ArrayAdapter<Defi> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDefi);
         ArrayAdapter<Defi> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDefi);
 
-        //Récupération du ListView
-        ListView list = (ListView)findViewById(R.id.lvDefi);
+        //Récupération du Spinner déclaré dans le fichier activity_defi.xml
+        lv = (ListView) findViewById(R.id.lvDefi);
 
-        //On passe nos données au composant ListView
-        list.setAdapter(new DefiAdapter());
+        //On definit une présentation du spinner quand il est déroulé
+        lv.setAdapter(new DefiAdapter());
 
-        //TODO ouvrire la partie avec la bonne map et +
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                Defi d = listDefi.get(position);
+                nomDefi = d.getNom().toString();
             }
         });
-    }
-
-    /**
-     * Crée la liste de défi //TODO c'est temporaire et devrait être changer pour le chercher dans la bd
-     * @param s est la catégorie
-     * @return la liste de défi
-     */
-    public ArrayList<Defi> getListeDeDefi(String s) {
-        listDefi.add(GestionnaireDefi.get("defi"));
-        return listDefi;
     }
 
     /**
@@ -129,8 +153,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        listDefi = getListeDeDefi(spinD.getSelectedItem().toString());
-        setListView();
+        listDefi = GestionnaireDefi.get(Integer.parseInt(spinD.getSelectedItem().toString()));
     }
 
     /**
@@ -142,31 +165,30 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Permet d'adapter l'arrayliste pour quelle contienne des journées
+     * Permet d'adapter l'arrayliste pour quelle contienne des défis
      */
     class DefiAdapter extends ArrayAdapter<Defi> {
         DefiAdapter() {
-            super(DefiActivity.this, R.layout.row, R.id.lblnom, listDefi);
+            super(DefiActivity.this, R.layout.row_defi, R.id.lblnomDefi, listDefi);
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
             DefiWrapper wrapper;
 
             if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.row, null);
+                convertView = getLayoutInflater().inflate(R.layout.row_defi, null);
                 wrapper = new DefiWrapper(convertView);
                 convertView.setTag(wrapper);
-            } else
+            } else {
                 wrapper = (DefiWrapper) convertView.getTag();
-
-            wrapper.setDefi(getItem(position),r);
-
+            }
+            wrapper.setDefi(listDefi.get(position), position);
             return convertView;
         }
     }
 
     /**
-     * Permet d'afficher le contenu de chaque journée dans une row
+     * Permet d'afficher le contenu de chaque défi dans une row
      */
     class DefiWrapper {
         private TextView nom = null;
@@ -183,7 +205,8 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
          * @return le TextView en question
          */
         public TextView getNom() {
-            if (nom == null)  nom = (TextView) row.findViewById(R.id.lblnom);
+            //if (nom == null)  nom = (TextView) row.findViewById(R.id.lblnom);
+            if (nom == null)  nom = (TextView) row.findViewById(R.id.lblnomDefi);
             return nom;
         }
 
@@ -192,7 +215,8 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
          * @return le CheckBox en question
          */
         public CheckBox getReussi() {
-            if (reussi == null)  reussi = (CheckBox) row.findViewById(R.id.cb_reussi);
+            //if (reussi == null)  reussi = (CheckBox) row.findViewById(R.id.cb_reussi);
+            if (reussi == null)  reussi = (CheckBox) row.findViewById(R.id.cb_defi_reussi);
             return reussi;
         }
 
@@ -201,18 +225,29 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
          * @return le RatingBar en question
          */
         public RatingBar getDiff(){
-            if (diff == null) diff = (RatingBar) row.findViewById(R.id.rb_dif);
+            //if (diff == null) diff = (RatingBar) row.findViewById(R.id.rb_dif);
+            //if (diff == null) diff = (RatingBar) row.findViewById(R.id.rb_patate);
             return diff;
         }
 
         /**
-         * Méthode qui sette les donnée dans les éléments du layout row.xml
+         * Méthode qui sette les donnée dans les éléments du layout row_defi.xml
          * @param d le Defi duquel vien les données
          */
-        public void setDefi(Defi d, ResultatDefi r) {
+        public void setDefi(Defi d, int p) {
             getNom().setText(d.getNom());
-            getReussi().setChecked(r.isReussi());
-            getDiff().setRating(d.getDifficulte());
+            getReussi().setChecked(trouverResultat(p));
+            //getDiff().setRating(d.getDifficulte());
+        }
+
+        /**
+         * Méthode
+         */
+        public boolean trouverResultat(int i){
+            List<ResultatDefi> resultatDefi = utilisateur.getResultats(listDefi);
+            //listDefi.get(i);
+            return resultatDefi.get(i).isReussi();
+            //setDefi(listDefi.get(i),resultatDefi.get(i).isReussi());
         }
     }
 }
