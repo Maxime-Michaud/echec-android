@@ -277,3 +277,4 @@ public class GestionnaireDefi {
         db.update("defi", cv, "id = ?", new String[] {Integer.toString(defi.getId())});
     }
 }
+
