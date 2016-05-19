@@ -27,6 +27,16 @@ public class AI2 extends  AI{
         couleur = couleurAI;
     }
 
+    /**
+     * Choisi un pion a jouer en fonction de la meilleur piece à tuer ou sinon un piece au hasard
+     * @param pieces    tous les pièces du jeux
+     * @param pionNoir  les premiers tours des pion noir
+     * @param pionBlanc les premiers tours des pion blancs
+     * @param mouvDispos les mouvement disponible(vert)
+     * @param mouvCauseMort     les mouvement qui cause la mort (en rouge)
+     * @param pionEnMouvement   le pion en mouvement
+     * @return
+     */
     @Override
     public String choisirPieceRandom(final String[] pieces,final boolean pionNoir[],final boolean pionBlanc[],final ArrayList<String> mouvDispos,final ArrayList<String> mouvCauseMort,final StringBuilder pionEnMouvement)
     {
@@ -204,6 +214,15 @@ public class AI2 extends  AI{
         return meillMouvChaquePiece.get(bestPos);
     }
 
+    /**
+     * Ajoute les mouvements disponibles
+     * @param s             //le pions en mouvement
+     * passage par valeur pour pouvoir affecter les variables
+     * @param pionNoir
+     * @param pionBlanc
+     * @param mouvDispos
+     * @return un arraylist de mouvement disponibles
+     */
     public ArrayList<String> ajouterMouvDispo(final String s,final boolean pionNoir[],final boolean pionBlanc[],final ArrayList<String> mouvDispos) {
         switch (s.charAt(0)) {
             case 'T':
@@ -236,6 +255,14 @@ public class AI2 extends  AI{
         return mouvDispos;
     }
 
+    /**
+     * Valide les case disponible pour le mouvement
+     * @param pieces        tous les pièces
+     * passage par valeur pour pouvoir affecter les variables
+     * @param mouvDispos
+     * @param mouvCauseMort
+     * @param pionEnMouvement
+     */
     public void validerLesCasesDispoPourMouvement(final String pieces[],final ArrayList<String> mouvDispos,final ArrayList<String> mouvCauseMort,final String pionEnMouvement)
     {
         toRemove.clear();
@@ -300,6 +327,13 @@ public class AI2 extends  AI{
         }
     }
 
+    /**
+     * Enlève les mouvement non légaux
+     * @param mouv //La case et la direction du mouvement
+     * @param caseActuel si le mouvement part de la case acutuel ou non
+     *passage par valeur pour pouvoir affecter les variables
+     * @param mouvDispos
+     */
     public void enleverMouvApres(String mouv, boolean caseActuel, ArrayList<String> mouvDispos)
     {
         int posDepartX = Character.getNumericValue(mouv.charAt(1));

@@ -127,6 +127,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+
+    /**
+     * La fonction qui va initialiser la grille et le jeu
+     * @param savedInstanceState
+     * @param utilisateur   L'utilisateur connecté
+     * @param niveauAI      Le niveau de l'AI (1 et 2 seulement)
+     * @param pieceDepart   les pièces positionnées dans la grille
+     */
     protected void demarrer(Bundle savedInstanceState, Utilisateur utilisateur, int niveauAI, String pieceDepart[]) {
 
         /*if(!utilisateur.getUsername().equals("BobLeHobo"))
@@ -144,11 +152,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         r = getResources();
         mouvDispos = new ArrayList<>();
         mouvCauseMort = new ArrayList<>();
+        //Initialisation des premiers tours des pions
         for(int i = 0;i < 8;i++)
         {
             premierTourPionsBlancs[i] = true;
             premierTourPionsNoirs[i] = true;
         }
+        //Set tous les boutons à transparent et les lient à la fonction onClick
         for (int j = 0; j < layout.getChildCount(); j++) {
             View v = layout.getChildAt(j);
             if (v instanceof Button) {
@@ -184,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pionsNoirs.add(PN7);
         pionsNoirs.add(PN8);
 
+        //set les images des pions noirs
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pawns);
         for (int i = 0; i < 8; i++) {
             setPawn(pionsNoirs.get(i),i,1,5,0);
@@ -213,9 +224,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pionsBlancs.add(PB6);
         pionsBlancs.add(PB7);
         pionsBlancs.add(PB8);
+        //set les images des pions blancs
         for (int i = 0; i < 8; i++) {
             setPawn(pionsBlancs.get(i),i,6,5,1);
         }
+        //Set les images des autres pièces
         TN1 = new ImageView(this);
         setPawn(TN1, 0, 0, 2, 0);
         TN1.setTag("TN1");
@@ -388,6 +401,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else
         {
             finaliserTour(false);
+            //Si un AI noir est setter, va jouer le tour de l'AI
             if((newAI.couleur == 'N' && !tourBlanc) || (newAI.couleur == 'B' && tourBlanc))
             {
                 String newPos;
@@ -403,6 +417,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /**
+     * Change la string pour les pions qui ont bougé ou sont mort
+     * Set les premiers tours des pions si un pion a bougé
+     * Ajoute les stats dans suggestion
+     * Change le tour (couleur du joueur actuel)
+     * TODO ajouter les mouvement dans un vecteur
+     * @param tourAi
+     */
     public void finaliserTour(boolean tourAi)
     {
         boolean mouvValide = false;
@@ -447,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         suggestion.prendreStatPionMort(System.currentTimeMillis(), s);
                         if(s.charAt(0) == 'K')
-                            partieTerminer(s, this);
+                            partieTerminer();
                         final String npm = Character.toString(nomPionMort.charAt(0));
                         Thread t1 = new Thread(new Runnable() {
                             public void run() {
@@ -529,6 +551,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         estEnSelectionMouv = false;
         pionEnMouvement = "";
     }
+
+    /**
+     * S'occupe de tout ce qui a rapport avec le mouvement d'un pion
+     * Calcul le mouvement à faire puis anime ce mouvement
+      * @param nomPiece
+     * @param nouvelPos
+     * @param initialisation
+     */
     public void bougerPiece(String nomPiece, String nouvelPos, boolean initialisation)
     {
         //TODO mettre sa dans un thread quon peut faire un while pour attendre que les pièces aient finis de bouger pour la fct recommencer()
@@ -660,6 +690,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Enlève les mouvements non valide après avoir rencontré un pion dans un direction X
+     * @param mouv  la direction du mouvement
+     * @param caseActuel la case de départ du mouvement
+     */
     public void enleverMouvApres(String mouv, boolean caseActuel)
     {
         int posDepartX = Character.getNumericValue(mouv.charAt(1));
@@ -740,6 +775,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Dessine tous les cases qui sont soit des mouvements disponibles (en vert) ou des mouvements causant
+     * la mort d'un pion (en rouge)
+     */
     public void dessinerMouvDispo()
     {
         Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), R.drawable.square);
@@ -771,7 +810,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void partieTerminer(String s, final Context c)
+    /**
+     * Quand la partie se termine
+     */
+    public void partieTerminer()
     {
         ArrayList<String> suggestions = suggestion.genererEnvoyerSuggestions(utilisateur);
         Intent secondeActivite = new Intent(MainActivity.this, SuggestionActivity.class);
@@ -780,6 +822,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(secondeActivite);
     }
 
+    /**
+     *Initialise une grille selon les pièces données
+     * @param tousPieces la string contenant tous les pièces
+     */
     public void initialiserUneGille(String tousPieces[])
     {
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pawns);
@@ -797,6 +843,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         r = getResources();
         mouvDispos = new ArrayList<>();
         mouvCauseMort = new ArrayList<>();
+        //Set les bouttons transparent et leur action a OnClick
         for (int j = 0; j < layout.getChildCount(); j++) {
             View v = layout.getChildAt(j);
             if (v instanceof Button) {
@@ -831,11 +878,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * TODO max ta toujours besoin de sa?
+     * @param ml
+     */
     public void addMoveListener(MoveListener ml)
     {
         lstMoveListener.add(ml);
     }
 
+    /**
+     * TODO max ta toujours besoin de sa?
+     */
     public void doMove()
     {
         for(MoveListener v : lstMoveListener)
