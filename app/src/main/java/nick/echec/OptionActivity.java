@@ -102,9 +102,5 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
         editor.putString(getString(R.string.NIVEAU_DIFFICULTER), spinner.getSelectedItem().toString());
         editor.putInt("APP_INT_NIVEAU_DIFF",spinner.getSelectedItemPosition());
         editor.commit();
-
-        //Todo: L'enlever le toast XD
-        Toast t = Toast.makeText(getApplicationContext(), pref.getString(getString(R.string.NIVEAU_DIFFICULTER),null),Toast.LENGTH_LONG);
-        t.show();
     }
 }

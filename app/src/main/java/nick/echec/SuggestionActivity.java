@@ -11,6 +11,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 /**
+ * Classe qui affiche les suggestions après une partie ou un défi et permet
+ * à l'utilisateur de recommencer sa partie ou son défi. Permet également un retour
+ * au menu principal
  * Created by Keven on 2016-05-11.
  */
 public class SuggestionActivity extends AppCompatActivity implements View.OnClickListener {
@@ -61,12 +64,18 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    /**
+     * Méthode qui relance la partie/défi avec les mêmes paramêtres
+     */
     public void rejouer(){
         Intent secondeActivite = new Intent(SuggestionActivity.this, MainActivity.class);
         secondeActivite.putExtra("defi",nomDefi);
         startActivity(secondeActivite);
     }
 
+    /**
+     * Méthode qui retourne l'utilisateur au menu principal
+     */
     public void menu(){
         Intent secondeActivite = new Intent(SuggestionActivity.this, MenuActivity.class);
         startActivity(secondeActivite);

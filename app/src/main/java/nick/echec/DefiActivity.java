@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-//Todo cleaner et finir defi
 /**
  * Classe qui permet à l'utilisateur de choisir le défi qu'il veux faire.
  * Affiche les catégories de défi ainsi que les défis de chaques catégories
@@ -139,6 +138,9 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
         //On definit une présentation du spinner quand il est déroulé
         lv.setAdapter(new DefiAdapter());
 
+        /**
+         * Méhode qui selectionne un défi dans la liste des défis
+         */
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -154,6 +156,7 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         listDefi = GestionnaireDefi.get(Integer.parseInt(spinD.getSelectedItem().toString()));
+        setListView();
     }
 
     /**
@@ -221,33 +224,22 @@ public class DefiActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         /**
-         * Getteur du RatingBar qui dit la difficulté du défi
-         * @return le RatingBar en question
-         */
-        public RatingBar getDiff(){
-            //if (diff == null) diff = (RatingBar) row.findViewById(R.id.rb_dif);
-            //if (diff == null) diff = (RatingBar) row.findViewById(R.id.rb_patate);
-            return diff;
-        }
-
-        /**
          * Méthode qui sette les donnée dans les éléments du layout row_defi.xml
          * @param d le Defi duquel vien les données
          */
         public void setDefi(Defi d, int p) {
             getNom().setText(d.getNom());
             getReussi().setChecked(trouverResultat(p));
-            //getDiff().setRating(d.getDifficulte());
         }
 
         /**
-         * Méthode
+         * Méthode qui retourne un boolean true si le defi i est réussie
+         * @param i la position du défi dans la List<ResultatDefi>
+         * @return un boolean  true si le defi est réussie, false si il est échoué.
          */
         public boolean trouverResultat(int i){
             List<ResultatDefi> resultatDefi = utilisateur.getResultats(listDefi);
-            //listDefi.get(i);
             return resultatDefi.get(i).isReussi();
-            //setDefi(listDefi.get(i),resultatDefi.get(i).isReussi());
         }
     }
 }

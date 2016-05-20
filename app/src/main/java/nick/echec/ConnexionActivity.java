@@ -45,7 +45,10 @@ public class ConnexionActivity extends AppCompatActivity implements View.OnClick
         retour.setOnClickListener(this);
     }
 
-
+    /**
+     * Méhode onClick qui gère les évènements clic de tous les boutons
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -78,15 +81,10 @@ public class ConnexionActivity extends AppCompatActivity implements View.OnClick
         String nom = etNom.getText().toString();
         String motDePasse = etMDP.getText().toString();
         if (!champVide()){
-            if (!champInexistant()) {
-                //todo adder utilisateur au preference
+            if (!champInexistant()){
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putString(getString(R.string.UTILISATEUR), nom);
                 editor.commit();
-
-                //Todo: L'enlever le toast XD
-                Toast k = Toast.makeText(getApplicationContext(), pref.getString(getString(R.string.UTILISATEUR),null),Toast.LENGTH_LONG);
-                k.show();
                 erreur = getString(R.string.c_connexion_ok).toString();
             }
         }
